@@ -78,6 +78,8 @@ const matches: Match[] = [
       { label: "۱", name: "برد رئال مادرید", odds: 2.04 },
       { label: "X", name: "مساوی", odds: 3.62 },
       { label: "۲", name: "برد بارسلونا", odds: 3.15 },
+      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.74 },
+      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.88 },
     ],
     insight: "داغ‌ترین مسابقهٔ امروز",
   },
@@ -95,6 +97,8 @@ const matches: Match[] = [
       { label: "۱", name: "برد آرسنال", odds: 2.28 },
       { label: "X", name: "مساوی", odds: 2.94 },
       { label: "۲", name: "برد چلسی", odds: 4.2 },
+      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.66 },
+      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.91 },
     ],
     insight: "ضریب‌ها در حال به‌روزرسانی",
   },
@@ -110,6 +114,8 @@ const matches: Match[] = [
       { label: "۱", name: "برد بایرن مونیخ", odds: 1.76 },
       { label: "X", name: "مساوی", odds: 4.18 },
       { label: "۲", name: "برد دورتموند", odds: 4.75 },
+      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.72 },
+      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.82 },
     ],
     insight: "بیش از ۳۴۰ انتخاب فعال",
   },
@@ -124,7 +130,8 @@ const matches: Match[] = [
     markets: [
       { label: "۱", name: "برد ی. سینر", odds: 1.92 },
       { label: "۲", name: "برد ک. آلکاراس", odds: 1.98 },
-      { label: "+", name: "بازارهای بیشتر", odds: 0 },
+      { label: "ست", name: "برد ۲–۰ در ست‌ها", odds: 2.35 },
+      { label: "گیم", name: "بیش از ۲۲٫۵ گیم", odds: 1.86 },
     ],
     insight: "فینال · زمین سخت",
   },
@@ -151,6 +158,7 @@ export default function Home() {
   const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
   const [activeFilter, setActiveFilter] = useState("همه");
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedMarketIds, setExpandedMarketIds] = useState<string[]>([]);
   const [selections, setSelections] = useState<Selection[]>([]);
   const [stake, setStake] = useState("25");
   const [network, setNetwork] = useState<keyof typeof networkInfo>("TRC-20");
@@ -310,9 +318,9 @@ export default function Home() {
 
       <section className="hero container" id="discover">
         <div className="hero-copy">
-          <div className="eyebrow"><Sparkles size={15} /> طراحی‌شده برای تصمیم‌های روشن</div>
+          <div className="eyebrow"><Sparkles size={15} /> همه‌چیز برای انتخاب سریع</div>
           <h1>مسابقه را ببین؛ انتخابت را ثبت کن.</h1>
-          <p>رویدادهای محبوب، ضرایب شفاف و کیف پول USDT شما؛ همه در یک تجربهٔ فارسی و امن.</p>
+          <p>بازی‌های مهم، بازارهای خوانا و کیف پول USDT؛ بدون شلوغی اضافه.</p>
           <div className="hero-cta">
             <Button className="primary-cta" onClick={() => scrollTo("live")}><Zap size={18} /> مشاهدهٔ مسابقات زنده</Button>
             <button className="text-cta" onClick={() => scrollTo("wallet")}>آشنایی با کیف پول <ArrowLeft size={17} /></button>
@@ -341,7 +349,7 @@ export default function Home() {
       <section className="content-grid container" id="live">
         <div className="events-column">
           <div className="section-heading">
-            <div><span className="section-kicker">اکنون در Nexus</span><h2>بازی‌های امروز</h2></div>
+            <div><div className="section-kicker">روی خط بازی</div><h2>بازی‌های امروز</h2></div>
             <div className="discover-tools"><label className="mobile-search"><Search size={15} /><input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="جست‌وجوی مسابقه یا لیگ" aria-label="جست‌وجوی مسابقه یا لیگ" /></label><button className="filter-control"><Filter size={17} /> فیلتر</button></div>
           </div>
           <div className="filter-row" role="tablist" aria-label="فیلتر ورزش">
@@ -361,7 +369,7 @@ export default function Home() {
               <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">انتخاب‌های دقیق امروز</h3></div></div>
               <button className="ai-refresh" onClick={() => aiQuery.refetch()} disabled={aiQuery.isFetching}>{aiQuery.isFetching ? "در حال تحلیل…" : "تحلیل مسابقات"}<ArrowLeft size={15} /></button>
             </div>
-            <p className="ai-subtitle">مدل، ضریب‌ها و محبوبیت بازار را مقایسه می‌کند؛ تصمیم نهایی همیشه با شماست.</p>
+            <p className="ai-subtitle">Nexus AI چند نشانه را کنار هم می‌گذارد؛ انتخاب نهایی با خودت است.</p>
             {!aiQuery.data && !aiQuery.isFetching && <div className="ai-empty"><span><Sparkles size={16} /></span><b>برای دیدن پیشنهادهای توضیح‌پذیر، تحلیل را شروع کنید.</b></div>}
             {aiQuery.isFetching && <div className="ai-empty"><span className="ai-pulse"><Activity size={16} /></span><b>در حال بررسی وضعیت مسابقات و بازارها…</b></div>}
             {aiQuery.data && !aiQuery.isFetching && <div className="ai-list">{aiQuery.data.picks.map((pick: AiPick) => <article className="ai-pick" key={`${pick.eventId}-${pick.marketLabel}`}><div className="ai-pick-top"><div><span className="ai-tags">{pick.tags.map((tag: string) => <em key={tag}>{tag}</em>)}</span><b>{pick.marketName}</b><small>{pick.match} · {pick.league}</small></div><strong>{numberFa(pick.odds)}</strong></div><div className="ai-pick-meta"><span className={`risk risk-${pick.risk === "کم" ? "low" : pick.risk === "متوسط" ? "mid" : "high"}`}>ریسک {pick.risk}</span><span>اعتماد {numberFa(pick.confidence, 0)}٪</span><button onClick={() => addAiPick(pick)}>{selections.some((selection) => selection.id === `${pick.eventId}-${pick.marketLabel}`) ? "در بلیت" : "افزودن"}{selections.some((selection) => selection.id === `${pick.eventId}-${pick.marketLabel}`) ? <Check size={14} /> : <Plus size={14} />}</button></div><p>{pick.rationale}</p></article>)}</div>}
@@ -382,18 +390,19 @@ export default function Home() {
                     <div><b>{match.away}</b><span className="team-badge muted">{match.away.slice(0, 1)}</span></div>
                   </div>
                   <div className="market-row">
-                    {match.markets.map((market) => {
+                    {(expandedMarketIds.includes(match.id) ? match.markets : match.markets.slice(0, 3)).map((market) => {
                       const isSelected = selections.some((selection) => selection.id === `${match.id}-${market.label}`);
                       return <button onClick={() => addSelection(match, market)} key={market.label} className={`odds-button ${isSelected ? "chosen" : ""} ${market.odds === 0 ? "more" : ""}`}>
                         <span>{market.label}</span><b>{market.odds ? numberFa(market.odds) : <Plus size={17} />}</b>
                       </button>;
                     })}
                   </div>
+                  {match.markets.length > 3 && <button className="markets-toggle" onClick={() => setExpandedMarketIds((ids) => ids.includes(match.id) ? ids.filter((id) => id !== match.id) : [...ids, match.id])}>{expandedMarketIds.includes(match.id) ? "بستن بازارها" : `+${match.markets.length - 3} بازار دیگر`}<ChevronDown size={14} className={expandedMarketIds.includes(match.id) ? "rotated" : ""} /></button>}
                 </div>
               </article>
             ))}
           </div>
-          <button className="show-more" onClick={() => toast.info("تقویم کامل مسابقات در حال آماده‌سازی است.")}>نمایش مسابقات بیشتر <ChevronDown size={17} /></button>
+          {(searchTerm || activeFilter !== "همه") && <button className="show-more" onClick={() => { setSearchTerm(""); setActiveFilter("همه"); }}>پاک‌کردن جست‌وجو و نمایش همه <ChevronDown size={17} /></button>}
         </div>
 
         <aside className={`slip-card glass-panel ${slipOpen ? "mobile-open" : ""}`} aria-label="بلیت پیش‌بینی">
@@ -466,7 +475,7 @@ export default function Home() {
         <div className="account-grid">
           <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>۲ بلیت فعال</b></div><button><ArrowLeft size={16} /></button></div><div className="open-bet-line"><div><span>رئال مادرید — بارسلونا</span><b>برد رئال مادرید</b></div><strong>۲٫۰۴</strong></div><div className="open-bet-footer"><span>مبلغ: ۵۰ USDT</span><span>بازده: ۱۰۲ USDT</span></div></article>
           <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>فعالیت کیف پول</span><b>امروز</b></div><button><ArrowLeft size={16} /></button></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>واریز USDT</b><span>TRC-20 · تأییدشده</span></div><strong className="income">+۲۵۰٫۰۰</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>ورودی شرط باز</b><span>قفل‌شده</span></div><strong>−۵۰٫۰۰</strong></div></article>
-          <article className="account-card glass-panel safety-card"><div className="card-header"><span className="icon-surface gold"><ShieldCheck size={19} /></span><div><span>امنیت و مسئولیت‌پذیری</span><b>حساب محافظت‌شده</b></div></div><div className="safety-items"><button onClick={() => toast.info("مدیریت محدودیت‌ها در پنل کاربری قابل تنظیم است.")}><span><Settings2 size={16} /> تنظیم محدودیت‌ها</span><ArrowLeft size={15} /></button><button onClick={() => toast.info("تنظیمات امنیتی و ورود دومرحله‌ای به‌زودی کامل می‌شود.")}><span><LockKeyhole size={16} /> تنظیمات امنیتی</span><ArrowLeft size={15} /></button></div></article>
+          <article className="account-card glass-panel history-card"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>تاریخچهٔ بلیت‌ها</span><b>آخرین تسویه‌ها</b></div><button onClick={() => toast.info("تاریخچهٔ کامل بلیت‌ها در حساب کاربری قابل مشاهده است.")}><ArrowLeft size={16} /></button></div><div className="history-line"><span>پاری‌سن‌ژرمن — لیون</span><strong className="income">+۳۸٫۵۰ USDT</strong></div><div className="history-line"><span>بارسلونا — سویا</span><strong>تسویه‌شده</strong></div></article><article className="account-card glass-panel safety-card"><div className="card-header"><span className="icon-surface gold"><ShieldCheck size={19} /></span><div><span>امنیت و مسئولیت‌پذیری</span><b>حساب محافظت‌شده</b></div></div><div className="safety-items"><button onClick={() => toast.info("مدیریت محدودیت‌ها در پنل کاربری قابل تنظیم است.")}><span><Settings2 size={16} /> تنظیم محدودیت‌ها</span><ArrowLeft size={15} /></button><button onClick={() => toast.info("تنظیمات امنیتی و ورود دومرحله‌ای به‌زودی کامل می‌شود.")}><span><LockKeyhole size={16} /> تنظیمات امنیتی</span><ArrowLeft size={15} /></button></div></article>
         </div>
       </section>
 
