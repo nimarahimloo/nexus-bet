@@ -272,7 +272,7 @@ export default function Home() {
       <div className="aurora aurora-two" />
       <header className="topbar glass-panel">
         <button className="brand" onClick={() => scrollTo("discover")} aria-label="Nexus Bet، صفحه نخست">
-          <span className="brand-mark">N</span>
+          <span className="brand-mark"><img src="/manus-storage/nexus-bet-logo_92fe8c09.png" alt="" /></span>
           <span>
             <b>NEXUS</b>
             <small>BET</small>
@@ -318,7 +318,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-score glass-panel">
+        <div className="hero-score glass-panel"><img className="hero-art" src="/manus-storage/nexus-bet-hero_64d33d2f.jpg" alt="استادیوم شبانه و شبکهٔ Nexus Bet" />
           <div className="nexus-network" aria-hidden="true"><i /><i /><i /><i /></div>
           <div className="score-top"><span className="live-tag"><i /> زنده</span><span>لیگ برتر انگلستان</span><button aria-label="افزودن به علاقه‌مندی‌ها"><Crown size={16} /></button></div>
           <div className="scoreboard">
@@ -349,7 +349,7 @@ export default function Home() {
             <button onClick={() => setActiveFilter("همه")}>نمایش <ArrowLeft size={15} /></button>
           </div>
 
-          <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title">
+          <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title"><img className="section-art ai-art" src="/manus-storage/nexus-bet-ai_93b4cb7e.jpg" alt="هستهٔ هوش مصنوعی Nexus AI" />
             <div className="ai-heading">
               <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">پیشنهادهای هوشمند امروز</h3></div></div>
               <button className="ai-refresh" onClick={() => aiQuery.refetch()} disabled={aiQuery.isFetching}>{aiQuery.isFetching ? "در حال تحلیل…" : "تحلیل مسابقات"}<ArrowLeft size={15} /></button>
@@ -363,7 +363,7 @@ export default function Home() {
 
           <div className="match-list">
             {filteredMatches.map((match) => (
-              <article className={`match-card glass-panel ${match.status === "زنده" ? "is-live" : ""}`} key={match.id}>
+              <article className={`match-card glass-panel ${match.status === "زنده" ? "is-live" : ""}`} key={match.id}>{match.status === "زنده" && <img className="match-art" src="/manus-storage/nexus-bet-live-match_f1d157ef.jpg" alt="توپ فوتبال در مسابقهٔ زنده" />}
                 <div className="match-meta">
                   <span className={match.status === "زنده" ? "status-live" : "status-upcoming"}>{match.status === "زنده" && <i />}{match.status}</span>
                   <span>{match.league}</span><span className="dot-divider">•</span><span>{match.insight}</span>
@@ -416,7 +416,7 @@ export default function Home() {
       <section className="wallet-section container" id="wallet">
         <div className="section-heading"><div><span className="section-kicker">دارایی‌های شما</span><h2>کیف پول، شفاف و تحت کنترل شما</h2></div><button className="text-link" onClick={() => scrollTo("account")}>همهٔ تراکنش‌ها <ArrowLeft size={16} /></button></div>
         <div className="wallet-layout">
-          <div className="balance-overview glass-panel">
+          <div className="balance-overview glass-panel"><img className="section-art wallet-art" src="/manus-storage/nexus-bet-wallet_041598ee.jpg" alt="کیف پول شیشه‌ای USDT" />
             <div className="wallet-card-top"><span className="wallet-logo"><WalletCards size={22} /></span><div><span>کیف پول اصلی</span><b>USDT <small>· Tether</small></b></div><button><Eye size={18} /></button></div>
             <div className="total-balance"><span>موجودی کل</span><strong>{numberFa(availableBalance + lockedBalance)} <small>USDT</small></strong><em>≈ {numberFa((availableBalance + lockedBalance) * 1.0, 0)} دلار آمریکا</em></div>
             <div className="balance-breakdown"><div><span>قابل‌استفاده</span><b>{numberFa(availableBalance)} USDT</b><i className="positive" /></div><div><span>قفل‌شده در شرط‌های باز</span><b>{numberFa(lockedBalance)} USDT</b><i className="locked" /></div></div>

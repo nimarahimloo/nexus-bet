@@ -109,3 +109,55 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 @keyframes insufficient-alert { 0% { opacity: .35; transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
 @keyframes balance-blink { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .balance-status.loading, .balance-live.loading::before, .input-error.live-insufficient { animation: none; } }
+
+/* Nexus Bet visual refresh: deep purple, no CSS gradients, Persian type system */
+@font-face { font-family: "Peyda"; src: url("/manus-storage/peydaWeb-extralight_9b077b3d.woff2") format("woff2"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/peydaWeb-light_e21725e1.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-Regular_35e5a81e.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-Medium_db337b6d.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-SemiBold_503a4181.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-Bold_751c3613.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-ExtraBold_6d44d531.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Peyda"; src: url("/manus-storage/PeydaWeb-Black_76fe7371.woff2") format("woff2"); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Thin_117eca4e.woff2") format("woff2"); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-ExtraLight_f5fcfb98.woff2") format("woff2"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Light_87941c6d.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Regular_c90fca9c.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Medium_85cde97d.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-SemiBold_97d2bafb.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Bold_2f46b867.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-ExtraBold_7ab64307.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Black_71da425f.woff2") format("woff2"); font-weight: 900; font-style: normal; font-display: swap; }
+
+:root { --nexus-bg: #07050c; --nexus-purple: #7d28ff; --nexus-purple-bright: #b78aff; --nexus-mint: #63e8d5; --nexus-panel: #21103d; --nexus-line: rgba(183,138,255,.2); --nexus-text-soft: #b8acc9; }
+* { letter-spacing: normal !important; }
+body { font-family: "Peyda", Tahoma, sans-serif; background: #07050c; }
+h1, h2, h3, h4, .brand, .section-kicker, .nav-link, button, input, select { font-family: "Kalameh", "Peyda", Tahoma, sans-serif; }
+.nexus-shell { background: #07050c; }
+.nexus-shell::before, .aurora { display: none; }
+.glass-panel { background: #21103d; border-color: rgba(183,138,255,.2); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.topbar { background: #160b29; }
+.primary-cta, .login-button { background: #7d28ff !important; box-shadow: 0 14px 32px rgba(125,40,255,.28); }
+.withdraw-button { background: #7d28ff !important; }
+.ticket-button { background: #63e8d5 !important; }
+.hero h1 em { background: none; color: #b78aff; -webkit-text-fill-color: #b78aff; }
+.hero-score, .ai-picks, .balance-overview, .match-card { position: relative; overflow: hidden; }
+.hero-score::after { display: none; }
+.hero-score > *:not(.hero-art), .ai-picks > *:not(.section-art), .balance-overview > *:not(.section-art), .match-card > *:not(.match-art) { position: relative; z-index: 1; }
+.hero-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .2; mix-blend-mode: screen; filter: saturate(.9) contrast(1.05); z-index: 0; }
+.section-art { position: absolute; pointer-events: none; object-fit: cover; opacity: .2; z-index: 0; }
+.ai-art { inset: 0 0 auto auto; width: 42%; height: 100%; object-position: left center; mix-blend-mode: screen; }
+.wallet-art { inset: 0 0 0 auto; width: 46%; height: 100%; object-position: left center; mix-blend-mode: screen; opacity: .18; }
+.match-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .08; mix-blend-mode: screen; pointer-events: none; }
+.brand-mark { background: #7d28ff; overflow: hidden; }
+.brand-mark img { width: 100%; height: 100%; object-fit: contain; padding: 5px; display: block; }
+.wallet-logo, .feature-icon { background: #7d28ff; color: #fff; }
+.team-orb.red { background: #8f2045; }.team-orb.blue { background: #3142a0; }
+.return-box { background: #2a164c; }.hero-market { background: #2a164c; }.odds-button.chosen { background: #2b5e59; }
+.ai-pick { background: #291647; border-color: rgba(183,138,255,.22); }
+@media (max-width: 720px) { .hero-art { opacity: .15; }.ai-art, .wallet-art { width: 58%; opacity: .14; } }
+
+/* Explicit no-gradient rule requested for the refreshed visual system */
+*, *::before, *::after { background-image: none !important; }
+.responsible, .ai-picks, .ai-picks::before, .selection-enter, .return-box::after, .wallet-warning { background-color: #21103d !important; }
+.ai-orb { background-color: #7d28ff !important; color: #fff; }
