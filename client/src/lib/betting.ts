@@ -23,3 +23,20 @@ export function toggleSelection<T extends { id: string }>(items: T[], selection:
     added: !exists,
   };
 }
+
+export type WalletStakeState = "guest" | "loading" | "error" | "insufficient" | "invalid" | "ready";
+
+export function validateStakeAgainstWallet(input: {
+  authenticated: boolean;
+  loading: boolean;
+  error: boolean;
+  stake: number;
+  availableBalance: number;
+}): { state: WalletStakeState; canPlace: boolean } {
+  if (!input.authenticated) return { state: "guest", canPlace: false };
+  if (input.loading) return { state: "loading", canPlace: false };
+  if (input.error) return { state: "error", canPlace: false };
+  if (!Number.isFinite(input.stake) || input.stake < 1) return { state: "invalid", canPlace: false };
+  if (input.stake > input.availableBalance) return { state: "insufficient", canPlace: false };
+  return { state: "ready", canPlace: true };
+}

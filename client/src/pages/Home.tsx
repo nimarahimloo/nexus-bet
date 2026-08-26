@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
-import { calculatePotentialReturn, combinedOdds, isValidUsdtStake, toggleSelection, type BettingSelection } from "@/lib/betting";
+import { calculatePotentialReturn, combinedOdds, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
 import {
@@ -147,6 +147,7 @@ function scrollTo(id: string) {
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
   const [activeFilter, setActiveFilter] = useState("همه");
   const [selections, setSelections] = useState<Selection[]>([]);
   const [stake, setStake] = useState("25");
@@ -160,14 +161,17 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [lastAddedSelectionId, setLastAddedSelectionId] = useState<string | null>(null);
   const [removingSelectionId, setRemovingSelectionId] = useState<string | null>(null);
-  const availableBalance = 1284.75;
-  const lockedBalance = 164.2;
+  const availableBalance = walletQuery.data?.availableBalance ?? 0;
+  const lockedBalance = walletQuery.data?.lockedBalance ?? 0;
+  const walletLoading = isAuthenticated && walletQuery.isLoading;
+  const walletError = isAuthenticated && !!walletQuery.error;
   const numericStake = Number(stake.replace(",", "."));
   const odds = useMemo(() => combinedOdds(selections), [selections]);
   const potentialReturn = calculatePotentialReturn(numericStake, odds);
   const potentialProfit = Math.max(0, Number((potentialReturn - numericStake).toFixed(2)));
   const liveReturnKey = `${stake}-${odds}-${potentialReturn}`;
-  const stakeValid = isValidUsdtStake(numericStake, availableBalance);
+  const stakeValidation = validateStakeAgainstWallet({ authenticated: isAuthenticated, loading: walletLoading, error: walletError, stake: numericStake, availableBalance });
+  const stakeValid = stakeValidation.canPlace;
   const filteredMatches = activeFilter === "همه" ? matches : matches.filter((match) => match.sport === activeFilter);
   const aiCandidates = useMemo(() => matches.flatMap((match) => match.markets.filter((market) => market.odds > 0).map((market, index) => ({
     eventId: match.id,
@@ -232,6 +236,19 @@ export default function Home() {
   };
 
   const showTicket = () => {
+    if (!isAuthenticated) {
+      toast.error("برای ثبت بلیت، ابتدا وارد حساب کاربری شوید.");
+      startLogin();
+      return;
+    }
+    if (walletLoading) {
+      toast.info("در حال دریافت موجودی کیف پول شما هستیم.");
+      return;
+    }
+    if (walletError) {
+      toast.error("موجودی کیف پول دریافت نشد؛ دوباره تلاش کنید.");
+      return;
+    }
     if (!selections.length) {
       toast.error("برای ادامه، حداقل یک بازار را انتخاب کنید.");
       return;
@@ -381,9 +398,13 @@ export default function Home() {
               <div className="selection-list">
                 {selections.map((selection) => <div className={`selection ${lastAddedSelectionId === selection.id ? "selection-enter" : ""} ${removingSelectionId === selection.id ? "selection-exit" : ""}`} key={selection.id}><button onClick={() => { setRemovingSelectionId(selection.id); window.setTimeout(() => { setSelections((items) => items.filter((item) => item.id !== selection.id)); setRemovingSelectionId(null); }, 280); toast.message("انتخاب از بلیت حذف شد."); }} aria-label="حذف انتخاب"><X size={15} /></button><div><b>{selection.market}</b><span>{selection.match}</span></div><strong>{numberFa(selection.odds)}</strong></div>)}
               </div>
-              <div className="slip-stats"><span>ضریب ترکیبی</span><b>{numberFa(odds)}</b></div>
+              <div className="slip-stats"><span>ضریب ترکیبی</span><b>{numberFa(odds)}</b><small className={walletLoading ? "balance-status loading" : "balance-status"}>{walletLoading ? "در حال همگام‌سازی" : `موجودی: ${numberFa(availableBalance)} USDT`}</small></div>
               <label className="stake-input"><span>مبلغ پیش‌بینی</span><div><input inputMode="decimal" value={stake} onChange={(event) => setStake(event.target.value)} aria-label="مبلغ به USDT"/><em>USDT</em></div></label>
-              {!stakeValid && stake && <p className="input-error">حداقل مبلغ ۱ USDT و حداکثر برابر موجودی شماست.</p>}
+              {walletLoading && <p className="balance-live loading">در حال دریافت موجودی واقعی کیف پول…</p>}
+              {walletError && <p className="input-error">موجودی کیف پول در دسترس نیست؛ لطفاً دوباره تلاش کنید.</p>}
+              {!isAuthenticated && <p className="balance-live login-required">برای استفاده از موجودی واقعی، وارد حساب کاربری شوید.</p>}
+              {isAuthenticated && !walletLoading && !walletError && stake && numericStake > availableBalance && <p className="input-error live-insufficient">موجودی کافی نیست؛ {numberFa(numericStake - availableBalance)} USDT دیگر نیاز دارید.</p>}
+              {isAuthenticated && !walletLoading && !walletError && stake && numericStake > 0 && numericStake <= availableBalance && numericStake < 1 && <p className="input-error">حداقل مبلغ شرط ۱ USDT است.</p>}
               <div className="return-box" key={liveReturnKey}><div className="return-label"><span>بازگشت کل احتمالی</span><em>USDT</em></div><b>{numberFa(potentialReturn)} <small>USDT</small></b><div className="profit-live"><span>سود احتمالی زنده</span><strong>+{numberFa(potentialProfit)} <small>USDT</small></strong></div></div>
               <Button className="ticket-button" onClick={showTicket}>بررسی بلیت <ArrowLeft size={17} /></Button>
             </>

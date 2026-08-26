@@ -1,7 +1,8 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { getOrCreateWalletByUserId } from "./db";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import { fallbackSmartPicks } from "../shared/ai";
@@ -17,6 +18,22 @@ export const appRouter = router({
       return {
         success: true,
       } as const;
+    }),
+  }),
+
+  wallet: router({
+    status: publicProcedure.query(({ ctx }) => ({
+      authenticated: Boolean(ctx.user),
+      currency: "USDT" as const,
+      requiresLogin: !ctx.user,
+    })),
+    me: protectedProcedure.query(async ({ ctx }) => {
+      const wallet = await getOrCreateWalletByUserId(ctx.user.id);
+      return wallet ? {
+        currency: wallet.currency,
+        availableBalance: Number(wallet.availableBalance),
+        lockedBalance: Number(wallet.lockedBalance),
+      } : null;
     }),
   }),
 

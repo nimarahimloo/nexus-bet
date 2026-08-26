@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, wallets } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,17 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getOrCreateWalletByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get wallet: database not available");
+    return undefined;
+  }
+
+  await db.insert(wallets).values({ userId }).onDuplicateKeyUpdate({
+    set: { updatedAt: new Date() },
+  });
+
+  const result = await db.select().from(wallets).where(eq(wallets.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
