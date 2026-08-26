@@ -1,7 +1,9 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
-import { calculatePotentialReturn, combinedOdds, isValidUsdtStake, type BettingSelection } from "@/lib/betting";
+import { calculatePotentialReturn, combinedOdds, isValidUsdtStake, toggleSelection, type BettingSelection } from "@/lib/betting";
+import { trpc } from "@/lib/trpc";
+import type { AiPick } from "@shared/ai";
 import {
   Activity,
   ArrowDownLeft,
@@ -163,6 +165,18 @@ export default function Home() {
   const potentialReturn = calculatePotentialReturn(numericStake, odds);
   const stakeValid = isValidUsdtStake(numericStake, availableBalance);
   const filteredMatches = activeFilter === "همه" ? matches : matches.filter((match) => match.sport === activeFilter);
+  const aiCandidates = useMemo(() => matches.flatMap((match) => match.markets.filter((market) => market.odds > 0).map((market, index) => ({
+    eventId: match.id,
+    league: match.league,
+    match: `${match.home} — ${match.away}`,
+    sport: match.sport,
+    marketLabel: market.label,
+    marketName: market.name,
+    odds: market.odds,
+    status: match.status,
+    popularity: Math.max(58, 94 - index * 8 - (match.status === "فردا" ? 7 : 0)),
+  }))), []);
+  const aiQuery = trpc.ai.smartPicks.useQuery({ candidates: aiCandidates }, { enabled: false, staleTime: 60_000 });
 
   const addSelection = (match: Match, market: Match["markets"][number]) => {
     if (market.odds === 0) {
@@ -175,17 +189,21 @@ export default function Home() {
       return;
     }
     const selectionId = `${match.id}-${market.label}`;
-    if (selections.some((selection) => selection.id === selectionId)) {
-      setSelections((items) => items.filter((selection) => selection.id !== selectionId));
+    const selection = { id: selectionId, match: `${match.home} — ${match.away}`, market: market.name, odds: market.odds };
+    if (selections.some((item) => item.id === selectionId)) {
+      setSelections((items) => toggleSelection(items, selection).items);
       toast.message("انتخاب از بلیت حذف شد.");
       return;
     }
-    setSelections((items) => [
-      ...items,
-      { id: selectionId, match: `${match.home} — ${match.away}`, market: market.name, odds: market.odds },
-    ]);
+    setSelections((items) => toggleSelection(items, selection).items);
     setSlipOpen(true);
     toast.success("انتخاب به بلیت شما افزوده شد.");
+  };
+
+  const addAiPick = (pick: AiPick) => {
+    const match = matches.find((item) => item.id === pick.eventId);
+    const market = match?.markets.find((item) => item.label === pick.marketLabel);
+    if (match && market) addSelection(match, market);
   };
 
   const requestWithdrawal = () => {
@@ -303,6 +321,18 @@ export default function Home() {
             <div><span>انتخاب سردبیر</span><b>۳ مسابقهٔ پرطرفدار امروز</b></div>
             <button onClick={() => setActiveFilter("همه")}>نمایش <ArrowLeft size={15} /></button>
           </div>
+
+          <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title">
+            <div className="ai-heading">
+              <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">پیشنهادهای هوشمند امروز</h3></div></div>
+              <button className="ai-refresh" onClick={() => aiQuery.refetch()} disabled={aiQuery.isFetching}>{aiQuery.isFetching ? "در حال تحلیل…" : "تحلیل مسابقات"}<ArrowLeft size={15} /></button>
+            </div>
+            <p className="ai-subtitle">مدل، ضریب‌ها و محبوبیت بازار را مقایسه می‌کند؛ تصمیم نهایی همیشه با شماست.</p>
+            {!aiQuery.data && !aiQuery.isFetching && <div className="ai-empty"><span><Sparkles size={16} /></span><b>برای دیدن پیشنهادهای توضیح‌پذیر، تحلیل را شروع کنید.</b></div>}
+            {aiQuery.isFetching && <div className="ai-empty"><span className="ai-pulse"><Activity size={16} /></span><b>در حال بررسی وضعیت مسابقات و بازارها…</b></div>}
+            {aiQuery.data && !aiQuery.isFetching && <div className="ai-list">{aiQuery.data.picks.map((pick: AiPick) => <article className="ai-pick" key={`${pick.eventId}-${pick.marketLabel}`}><div className="ai-pick-top"><div><span className="ai-tags">{pick.tags.map((tag: string) => <em key={tag}>{tag}</em>)}</span><b>{pick.marketName}</b><small>{pick.match} · {pick.league}</small></div><strong>{numberFa(pick.odds)}</strong></div><div className="ai-pick-meta"><span className={`risk risk-${pick.risk === "کم" ? "low" : pick.risk === "متوسط" ? "mid" : "high"}`}>ریسک {pick.risk}</span><span>اعتماد {numberFa(pick.confidence, 0)}٪</span><button onClick={() => addAiPick(pick)}>{selections.some((selection) => selection.id === `${pick.eventId}-${pick.marketLabel}`) ? "در بلیت" : "افزودن"}{selections.some((selection) => selection.id === `${pick.eventId}-${pick.marketLabel}`) ? <Check size={14} /> : <Plus size={14} />}</button></div><p>{pick.rationale}</p></article>)}</div>}
+            <div className="ai-disclaimer"><ShieldCheck size={13} /> پیشنهاد الگوریتمی است و تضمین سود یا نتیجه محسوب نمی‌شود.</div>
+          </section>
 
           <div className="match-list">
             {filteredMatches.map((match) => (

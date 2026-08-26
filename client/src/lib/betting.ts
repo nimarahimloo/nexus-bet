@@ -15,3 +15,11 @@ export function calculatePotentialReturn(stake: number, odds: number): number {
 export function isValidUsdtStake(stake: number, availableBalance: number): boolean {
   return Number.isFinite(stake) && stake >= 1 && stake <= availableBalance;
 }
+
+export function toggleSelection<T extends { id: string }>(items: T[], selection: T): { items: T[]; added: boolean } {
+  const exists = items.some((item) => item.id === selection.id);
+  return {
+    items: exists ? items.filter((item) => item.id !== selection.id) : [...items, selection],
+    added: !exists,
+  };
+}
