@@ -5,7 +5,9 @@ describe("Nexus Bet betting calculations", () => {
   it("calculates combined odds and potential USDT return", () => {
     const odds = combinedOdds([{ odds: 1.85 }, { odds: 2.1 }]);
     expect(odds).toBe(3.89);
-    expect(calculatePotentialReturn(25, odds)).toBe(97.25);
+    const totalReturn = calculatePotentialReturn(25, odds);
+    expect(totalReturn).toBe(97.25);
+    expect(Number((totalReturn - 25).toFixed(2))).toBe(72.25);
   });
 
   it("accepts stakes in the valid USDT balance range only", () => {

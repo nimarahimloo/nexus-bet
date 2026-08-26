@@ -158,11 +158,15 @@ export default function Home() {
   const [ageAccepted, setAgeAccepted] = useState(false);
   const [ageOpen, setAgeOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lastAddedSelectionId, setLastAddedSelectionId] = useState<string | null>(null);
+  const [removingSelectionId, setRemovingSelectionId] = useState<string | null>(null);
   const availableBalance = 1284.75;
   const lockedBalance = 164.2;
   const numericStake = Number(stake.replace(",", "."));
   const odds = useMemo(() => combinedOdds(selections), [selections]);
   const potentialReturn = calculatePotentialReturn(numericStake, odds);
+  const potentialProfit = Math.max(0, Number((potentialReturn - numericStake).toFixed(2)));
+  const liveReturnKey = `${stake}-${odds}-${potentialReturn}`;
   const stakeValid = isValidUsdtStake(numericStake, availableBalance);
   const filteredMatches = activeFilter === "همه" ? matches : matches.filter((match) => match.sport === activeFilter);
   const aiCandidates = useMemo(() => matches.flatMap((match) => match.markets.filter((market) => market.odds > 0).map((market, index) => ({
@@ -191,11 +195,17 @@ export default function Home() {
     const selectionId = `${match.id}-${market.label}`;
     const selection = { id: selectionId, match: `${match.home} — ${match.away}`, market: market.name, odds: market.odds };
     if (selections.some((item) => item.id === selectionId)) {
-      setSelections((items) => toggleSelection(items, selection).items);
+      setRemovingSelectionId(selectionId);
+      window.setTimeout(() => {
+        setSelections((items) => toggleSelection(items, selection).items);
+        setRemovingSelectionId((current) => current === selectionId ? null : current);
+      }, 280);
       toast.message("انتخاب از بلیت حذف شد.");
       return;
     }
     setSelections((items) => toggleSelection(items, selection).items);
+    setLastAddedSelectionId(selectionId);
+    window.setTimeout(() => setLastAddedSelectionId((current) => current === selectionId ? null : current), 650);
     setSlipOpen(true);
     toast.success("انتخاب به بلیت شما افزوده شد.");
   };
@@ -369,12 +379,12 @@ export default function Home() {
           ) : (
             <>
               <div className="selection-list">
-                {selections.map((selection) => <div className="selection" key={selection.id}><button onClick={() => setSelections((items) => items.filter((item) => item.id !== selection.id))} aria-label="حذف انتخاب"><X size={15} /></button><div><b>{selection.market}</b><span>{selection.match}</span></div><strong>{numberFa(selection.odds)}</strong></div>)}
+                {selections.map((selection) => <div className={`selection ${lastAddedSelectionId === selection.id ? "selection-enter" : ""} ${removingSelectionId === selection.id ? "selection-exit" : ""}`} key={selection.id}><button onClick={() => { setRemovingSelectionId(selection.id); window.setTimeout(() => { setSelections((items) => items.filter((item) => item.id !== selection.id)); setRemovingSelectionId(null); }, 280); toast.message("انتخاب از بلیت حذف شد."); }} aria-label="حذف انتخاب"><X size={15} /></button><div><b>{selection.market}</b><span>{selection.match}</span></div><strong>{numberFa(selection.odds)}</strong></div>)}
               </div>
               <div className="slip-stats"><span>ضریب ترکیبی</span><b>{numberFa(odds)}</b></div>
               <label className="stake-input"><span>مبلغ پیش‌بینی</span><div><input inputMode="decimal" value={stake} onChange={(event) => setStake(event.target.value)} aria-label="مبلغ به USDT"/><em>USDT</em></div></label>
               {!stakeValid && stake && <p className="input-error">حداقل مبلغ ۱ USDT و حداکثر برابر موجودی شماست.</p>}
-              <div className="return-box"><span>بازده احتمالی</span><b>{numberFa(potentialReturn)} <small>USDT</small></b></div>
+              <div className="return-box" key={liveReturnKey}><div className="return-label"><span>بازگشت کل احتمالی</span><em>USDT</em></div><b>{numberFa(potentialReturn)} <small>USDT</small></b><div className="profit-live"><span>سود احتمالی زنده</span><strong>+{numberFa(potentialProfit)} <small>USDT</small></strong></div></div>
               <Button className="ticket-button" onClick={showTicket}>بررسی بلیت <ArrowLeft size={17} /></Button>
             </>
           )}
