@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { calculatePotentialReturn, combinedOdds, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
+import { getVipProgress } from "@/lib/vip";
 import {
   Activity,
   ArrowDownLeft,
@@ -161,6 +162,8 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [lastAddedSelectionId, setLastAddedSelectionId] = useState<string | null>(null);
   const [removingSelectionId, setRemovingSelectionId] = useState<string | null>(null);
+  const [vipDetailReward, setVipDetailReward] = useState<string | null>(null);
+  const vip = useMemo(() => getVipProgress(1820), []);
   const availableBalance = walletQuery.data?.availableBalance ?? 0;
   const lockedBalance = walletQuery.data?.lockedBalance ?? 0;
   const walletLoading = isAuthenticated && walletQuery.isLoading;
@@ -438,6 +441,18 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="vip-section container" id="vip">
+        <div className="section-heading"><div><span className="section-kicker"><Crown size={14} /> باشگاه مشتریان Nexus</span><h2>Nexus VIP؛ هر فعالیت، یک امتیاز ارزشمند</h2></div><button className="text-link" onClick={() => toast.info("امتیازها با ثبت فعالیت‌های واجد شرایط به‌روزرسانی می‌شوند.")}>راهنمای VIP <ArrowLeft size={16} /></button></div>
+        <div className="vip-panel glass-panel">
+          <div className="vip-hero-copy"><div className={`vip-emblem ${vip.current.color}`}><Crown size={25} /></div><div><span className="vip-overline">سطح فعلی شما</span><h3>{vip.current.label}</h3><p>{vip.next ? `فقط ${numberFa(vip.pointsToNext, 0)} امتیاز تا ${vip.next.label}` : "شما به بالاترین سطح باشگاه رسیده‌اید."}</p></div></div>
+          <div className="vip-progress-wrap"><div className="vip-progress-head"><span>پیشرفت سطح</span><strong>{numberFa(vip.points, 0)} <small>امتیاز</small></strong></div><div className="vip-progress-track"><span style={{ width: `${vip.progress}%` }} /></div><div className="vip-progress-foot"><span>{vip.current.label}</span><b>{numberFa(vip.progress, 0)}٪</b><span>{vip.next?.label ?? "حداکثر سطح"}</span></div></div>
+          <div className="vip-rewards"><div className="vip-rewards-head"><div><span className="section-kicker">پاداش‌های اختصاصی</span><h3>مزایای فعال شما</h3></div><span className="vip-status"><Sparkles size={14} /> مزایای اختصاصی</span></div><div className="reward-grid"><article className="reward-card unlocked"><span className="reward-icon"><Zap size={18} /></span><div><b>تحلیل ویژه Nexus AI</b><p>دسترسی زودتر به تحلیل‌های توضیح‌پذیر مسابقات.</p></div><button onClick={() => setVipDetailReward("ai")}>جزئیات</button></article><article className="reward-card unlocked"><span className="reward-icon"><WalletCards size={18} /></span><div><b>اولویت خدمات کیف پول</b><p>مسیر سریع‌تر برای پیگیری درخواست‌های پشتیبانی.</p></div><button onClick={() => setVipDetailReward("wallet")}>جزئیات</button></article><article className="reward-card locked"><span className="reward-icon"><LockKeyhole size={18} /></span><div><b>بنفش سلطنتی</b><p>با رسیدن به سطح بعدی، مزایای ویژهٔ بیشتری باز می‌شود.</p></div><button onClick={() => setVipDetailReward("royal")}>جزئیات</button></article></div></div>
+          <p className="vip-note"><ShieldCheck size={14} /> مزایا برای فعالیت‌های واجد شرایط تعریف می‌شوند و هیچ‌کدام تضمین سود یا نتیجهٔ شرط نیستند.</p>
+        </div>
+      </section>
+
+      {vipDetailReward && <div className="vip-detail-backdrop" role="presentation" onClick={() => setVipDetailReward(null)}><div className="vip-detail-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="vip-detail-title" onClick={(event) => event.stopPropagation()}><button className="vip-detail-close" onClick={() => setVipDetailReward(null)} aria-label="بستن جزئیات"><X size={16} /></button><span className="vip-detail-icon"><Crown size={22} /></span><span className="section-kicker">جزئیات مزیت VIP</span><h3 id="vip-detail-title">{vipDetailReward === "ai" ? "تحلیل ویژه Nexus AI" : vipDetailReward === "wallet" ? "اولویت خدمات کیف پول" : "مزایای بنفش سلطنتی"}</h3><p>{vipDetailReward === "ai" ? "پیشنهادهای توضیح‌پذیر Nexus AI زودتر در فضای VIP قابل مشاهده می‌شوند." : vipDetailReward === "wallet" ? "در نسخهٔ کامل، درخواست‌های واجد شرایط کیف پول در مسیر پشتیبانی اولویت‌بندی می‌شوند." : `برای باز شدن این سطح، ${numberFa(vip.pointsToNext, 0)} امتیاز دیگر لازم است.`}</p><div className="vip-detail-state">{vipDetailReward === "royal" ? <><LockKeyhole size={15} /> این مزیت هنوز قفل است</> : <><ShieldCheck size={15} /> وضعیت فعلی: آمادهٔ اتصال به سیستم مزایا</>}</div><button className="vip-detail-action" onClick={() => { toast.info("سیستم فعال‌سازی و ثبت مزایا پس از اتصال backend در دسترس قرار می‌گیرد."); setVipDetailReward(null); }}>متوجه شدم</button></div></div>}
 
       <section className="account-section container" id="account">
         <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>مرور سریع حساب کاربری</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
