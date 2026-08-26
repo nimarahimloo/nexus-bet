@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
-import { calculatePotentialReturn, combinedOdds, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
+import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
 import { getVipProgress } from "@/lib/vip";
@@ -150,6 +150,7 @@ export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
   const [activeFilter, setActiveFilter] = useState("همه");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selections, setSelections] = useState<Selection[]>([]);
   const [stake, setStake] = useState("25");
   const [network, setNetwork] = useState<keyof typeof networkInfo>("TRC-20");
@@ -175,7 +176,7 @@ export default function Home() {
   const liveReturnKey = `${stake}-${odds}-${potentialReturn}`;
   const stakeValidation = validateStakeAgainstWallet({ authenticated: isAuthenticated, loading: walletLoading, error: walletError, stake: numericStake, availableBalance });
   const stakeValid = stakeValidation.canPlace;
-  const filteredMatches = activeFilter === "همه" ? matches : matches.filter((match) => match.sport === activeFilter);
+  const filteredMatches = matches.filter((match) => (activeFilter === "همه" || match.sport === activeFilter) && `${match.league} ${match.home} ${match.away} ${match.insight}`.toLowerCase().includes(searchTerm.trim().toLowerCase()));
   const aiCandidates = useMemo(() => matches.flatMap((match) => match.markets.filter((market) => market.odds > 0).map((market, index) => ({
     eventId: match.id,
     league: match.league,
@@ -239,24 +240,25 @@ export default function Home() {
   };
 
   const showTicket = () => {
-    if (!isAuthenticated) {
+    const confirmationState = getTicketConfirmationState({ selectionCount: selections.length, authenticated: isAuthenticated, loading: walletLoading, error: walletError, stake: numericStake, availableBalance });
+    if (confirmationState === "guest") {
       toast.error("برای ثبت بلیت، ابتدا وارد حساب کاربری شوید.");
       startLogin();
       return;
     }
-    if (walletLoading) {
+    if (confirmationState === "loading") {
       toast.info("در حال دریافت موجودی کیف پول شما هستیم.");
       return;
     }
-    if (walletError) {
+    if (confirmationState === "error") {
       toast.error("موجودی کیف پول دریافت نشد؛ دوباره تلاش کنید.");
       return;
     }
-    if (!selections.length) {
+    if (confirmationState === "empty") {
       toast.error("برای ادامه، حداقل یک بازار را انتخاب کنید.");
       return;
     }
-    if (!stakeValid) {
+    if (confirmationState !== "ready" || !stakeValid) {
       toast.error("مبلغ باید بین ۱ و موجودی قابل‌استفادهٔ شما باشد.");
       return;
     }
@@ -309,7 +311,7 @@ export default function Home() {
       <section className="hero container" id="discover">
         <div className="hero-copy">
           <div className="eyebrow"><Sparkles size={15} /> طراحی‌شده برای تصمیم‌های روشن</div>
-          <h1>هر مسابقه، یک <em>تصمیم بهتر.</em></h1>
+          <h1>مسابقه را ببین؛ انتخابت را ثبت کن.</h1>
           <p>رویدادهای محبوب، ضرایب شفاف و کیف پول USDT شما؛ همه در یک تجربهٔ فارسی و امن.</p>
           <div className="hero-cta">
             <Button className="primary-cta" onClick={() => scrollTo("live")}><Zap size={18} /> مشاهدهٔ مسابقات زنده</Button>
@@ -339,12 +341,14 @@ export default function Home() {
       <section className="content-grid container" id="live">
         <div className="events-column">
           <div className="section-heading">
-            <div><span className="section-kicker">اکنون در Nexus</span><h2>مسابقه‌ای برای دنبال‌کردن</h2></div>
-            <button className="filter-control"><Filter size={17} /> فیلترهای پیشرفته</button>
+            <div><span className="section-kicker">اکنون در Nexus</span><h2>بازی‌های امروز</h2></div>
+            <div className="discover-tools"><label className="mobile-search"><Search size={15} /><input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="جست‌وجوی مسابقه یا لیگ" aria-label="جست‌وجوی مسابقه یا لیگ" /></label><button className="filter-control"><Filter size={17} /> فیلتر</button></div>
           </div>
           <div className="filter-row" role="tablist" aria-label="فیلتر ورزش">
             {leagues.map((league) => <button key={league} onClick={() => setActiveFilter(league)} className={`filter-pill ${activeFilter === league ? "selected" : ""}`}>{league}{league === "فوتبال" && <span>۱۸</span>}</button>)}
           </div>
+
+          <div className="live-center glass-panel"><div className="live-center-top"><span className="status-live"><i /> مرکز زنده</span><b>آرسنال — چلسی</b><small>دقیقهٔ ۶۷ · ۱ — ۱</small></div><div className="live-pulse-line"><span style={{ width: "67%" }} /></div><div className="live-center-bottom"><span>۲۷ بازار فعال</span><button onClick={() => setActiveFilter("فوتبال")}>مشاهدهٔ بازارهای زنده <ArrowLeft size={14} /></button></div></div>
 
           <div className="feature-strip glass-panel">
             <div className="feature-icon"><Trophy size={20} /></div>
@@ -354,7 +358,7 @@ export default function Home() {
 
           <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title"><img className="section-art ai-art" src="/manus-storage/nexus-bet-ai_93b4cb7e.jpg" alt="هستهٔ هوش مصنوعی Nexus AI" />
             <div className="ai-heading">
-              <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">پیشنهادهای هوشمند امروز</h3></div></div>
+              <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">انتخاب‌های دقیق امروز</h3></div></div>
               <button className="ai-refresh" onClick={() => aiQuery.refetch()} disabled={aiQuery.isFetching}>{aiQuery.isFetching ? "در حال تحلیل…" : "تحلیل مسابقات"}<ArrowLeft size={15} /></button>
             </div>
             <p className="ai-subtitle">مدل، ضریب‌ها و محبوبیت بازار را مقایسه می‌کند؛ تصمیم نهایی همیشه با شماست.</p>
@@ -393,9 +397,9 @@ export default function Home() {
         </div>
 
         <aside className={`slip-card glass-panel ${slipOpen ? "mobile-open" : ""}`} aria-label="بلیت پیش‌بینی">
-          <div className="slip-head"><div><ReceiptText size={20} /><h3>بلیت پیش‌بینی</h3><span>{selections.length} انتخاب</span></div><button onClick={() => setSelections([])} disabled={!selections.length}>پاک‌سازی</button></div>
+          <div className="slip-head"><div><ReceiptText size={20} /><h3>بلیت من</h3><span>{selections.length} انتخاب</span></div><div className="slip-head-actions"><button onClick={() => setSelections([])} disabled={!selections.length}>پاک‌سازی</button><button className="slip-mobile-close" onClick={() => setSlipOpen(false)} aria-label="بستن بلیت"><X size={16} /></button></div></div>
           {selections.length === 0 ? (
-            <div className="slip-empty"><div><LayoutGrid size={25} /></div><b>بلیت شما خالی است</b><p>روی یک ضریب از مسابقات بزنید تا اینجا ظاهر شود.</p></div>
+            <div className="slip-empty"><div><LayoutGrid size={25} /></div><b>هنوز انتخابی ندارید</b><p>یک ضریب از مسابقات را لمس کنید تا بلیت شما آماده شود.</p></div>
           ) : (
             <>
               <div className="selection-list">
@@ -409,15 +413,15 @@ export default function Home() {
               {isAuthenticated && !walletLoading && !walletError && stake && numericStake > availableBalance && <p className="input-error live-insufficient">موجودی کافی نیست؛ {numberFa(numericStake - availableBalance)} USDT دیگر نیاز دارید.</p>}
               {isAuthenticated && !walletLoading && !walletError && stake && numericStake > 0 && numericStake <= availableBalance && numericStake < 1 && <p className="input-error">حداقل مبلغ شرط ۱ USDT است.</p>}
               <div className="return-box" key={liveReturnKey}><div className="return-label"><span>بازگشت کل احتمالی</span><em>USDT</em></div><b>{numberFa(potentialReturn)} <small>USDT</small></b><div className="profit-live"><span>سود احتمالی زنده</span><strong>+{numberFa(potentialProfit)} <small>USDT</small></strong></div></div>
-              <Button className="ticket-button" onClick={showTicket}>بررسی بلیت <ArrowLeft size={17} /></Button>
+              <Button className="ticket-button" onClick={showTicket}>ادامه و بررسی بلیت <ArrowLeft size={17} /></Button>
             </>
           )}
-          <p className="slip-note"><ShieldCheck size={14} /> با ادامه، شرایط استفاده و بازی مسئولانه را می‌پذیرید.</p>
+          <p className="slip-note"><ShieldCheck size={14} /> قبل از ثبت نهایی، مبلغ و ضریب را دوباره بررسی کنید.</p>
         </aside>
       </section>
 
       <section className="wallet-section container" id="wallet">
-        <div className="section-heading"><div><span className="section-kicker">دارایی‌های شما</span><h2>کیف پول، شفاف و تحت کنترل شما</h2></div><button className="text-link" onClick={() => scrollTo("account")}>همهٔ تراکنش‌ها <ArrowLeft size={16} /></button></div>
+        <div className="section-heading"><div><span className="section-kicker">دارایی‌های شما</span><h2>موجودی‌ات، یک نگاه</h2></div><button className="text-link" onClick={() => scrollTo("account")}>همهٔ تراکنش‌ها <ArrowLeft size={16} /></button></div>
         <div className="wallet-layout">
           <div className="balance-overview glass-panel"><img className="section-art wallet-art" src="/manus-storage/nexus-bet-wallet_041598ee.jpg" alt="کیف پول شیشه‌ای USDT" />
             <div className="wallet-card-top"><span className="wallet-logo"><WalletCards size={22} /></span><div><span>کیف پول اصلی</span><b>USDT <small>· Tether</small></b></div><button><Eye size={18} /></button></div>
@@ -442,8 +446,11 @@ export default function Home() {
         </div>
       </section>
 
+      {selections.length > 0 && <button className="mobile-slip-dock" onClick={() => setSlipOpen(true)}><span><ReceiptText size={17} /> {selections.length} انتخاب</span><b>{numberFa(potentialReturn)} USDT</b><ArrowLeft size={16} /></button>}
+      <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><button className="is-active" onClick={() => scrollTo("discover")}><LayoutGrid size={18} /><span>خانه</span></button><button onClick={() => scrollTo("live")}><Activity size={18} /><span>زنده</span></button><button onClick={() => setSlipOpen(true)}><ReceiptText size={18} /><span>بلیت</span>{selections.length > 0 && <em>{selections.length}</em>}</button><button onClick={() => scrollTo("wallet")}><WalletCards size={18} /><span>کیف پول</span></button><button onClick={() => scrollTo("account")}><UserRound size={18} /><span>حساب</span></button></nav>
+
       <section className="vip-section container" id="vip">
-        <div className="section-heading"><div><span className="section-kicker"><Crown size={14} /> باشگاه مشتریان Nexus</span><h2>Nexus VIP؛ هر فعالیت، یک امتیاز ارزشمند</h2></div><button className="text-link" onClick={() => toast.info("امتیازها با ثبت فعالیت‌های واجد شرایط به‌روزرسانی می‌شوند.")}>راهنمای VIP <ArrowLeft size={16} /></button></div>
+        <div className="section-heading"><div><span className="section-kicker"><Crown size={14} /> باشگاه مشتریان Nexus</span><h2>فعال بمان؛ سطح بالاتری بگیر</h2></div><button className="text-link" onClick={() => toast.info("امتیازها با ثبت فعالیت‌های واجد شرایط به‌روزرسانی می‌شوند.")}>راهنمای VIP <ArrowLeft size={16} /></button></div>
         <div className="vip-panel glass-panel">
           <div className="vip-hero-copy"><div className={`vip-emblem ${vip.current.color}`}><Crown size={25} /></div><div><span className="vip-overline">سطح فعلی شما</span><h3>{vip.current.label}</h3><p>{vip.next ? `فقط ${numberFa(vip.pointsToNext, 0)} امتیاز تا ${vip.next.label}` : "شما به بالاترین سطح باشگاه رسیده‌اید."}</p></div></div>
           <div className="vip-progress-wrap"><div className="vip-progress-head"><span>پیشرفت سطح</span><strong>{numberFa(vip.points, 0)} <small>امتیاز</small></strong></div><div className="vip-progress-track"><span style={{ width: `${vip.progress}%` }} /></div><div className="vip-progress-foot"><span>{vip.current.label}</span><b>{numberFa(vip.progress, 0)}٪</b><span>{vip.next?.label ?? "حداکثر سطح"}</span></div></div>
@@ -455,7 +462,7 @@ export default function Home() {
       {vipDetailReward && <div className="vip-detail-backdrop" role="presentation" onClick={() => setVipDetailReward(null)}><div className="vip-detail-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="vip-detail-title" onClick={(event) => event.stopPropagation()}><button className="vip-detail-close" onClick={() => setVipDetailReward(null)} aria-label="بستن جزئیات"><X size={16} /></button><span className="vip-detail-icon"><Crown size={22} /></span><span className="section-kicker">جزئیات مزیت VIP</span><h3 id="vip-detail-title">{vipDetailReward === "ai" ? "تحلیل ویژه Nexus AI" : vipDetailReward === "wallet" ? "اولویت خدمات کیف پول" : "مزایای بنفش سلطنتی"}</h3><p>{vipDetailReward === "ai" ? "پیشنهادهای توضیح‌پذیر Nexus AI زودتر در فضای VIP قابل مشاهده می‌شوند." : vipDetailReward === "wallet" ? "در نسخهٔ کامل، درخواست‌های واجد شرایط کیف پول در مسیر پشتیبانی اولویت‌بندی می‌شوند." : `برای باز شدن این سطح، ${numberFa(vip.pointsToNext, 0)} امتیاز دیگر لازم است.`}</p><div className="vip-detail-state">{vipDetailReward === "royal" ? <><LockKeyhole size={15} /> این مزیت هنوز قفل است</> : <><ShieldCheck size={15} /> وضعیت فعلی: آمادهٔ اتصال به سیستم مزایا</>}</div><button className="vip-detail-action" onClick={() => { toast.info("سیستم فعال‌سازی و ثبت مزایا پس از اتصال backend در دسترس قرار می‌گیرد."); setVipDetailReward(null); }}>متوجه شدم</button></div></div>}
 
       <section className="account-section container" id="account">
-        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>مرور سریع حساب کاربری</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
+        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
         <div className="account-grid">
           <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>۲ بلیت فعال</b></div><button><ArrowLeft size={16} /></button></div><div className="open-bet-line"><div><span>رئال مادرید — بارسلونا</span><b>برد رئال مادرید</b></div><strong>۲٫۰۴</strong></div><div className="open-bet-footer"><span>مبلغ: ۵۰ USDT</span><span>بازده: ۱۰۲ USDT</span></div></article>
           <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>فعالیت کیف پول</span><b>امروز</b></div><button><ArrowLeft size={16} /></button></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>واریز USDT</b><span>TRC-20 · تأییدشده</span></div><strong className="income">+۲۵۰٫۰۰</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>ورودی شرط باز</b><span>قفل‌شده</span></div><strong>−۵۰٫۰۰</strong></div></article>

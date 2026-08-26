@@ -25,6 +25,19 @@ export function toggleSelection<T extends { id: string }>(items: T[], selection:
 }
 
 export type WalletStakeState = "guest" | "loading" | "error" | "insufficient" | "invalid" | "ready";
+export type TicketConfirmationState = WalletStakeState | "empty";
+
+export function getTicketConfirmationState(input: {
+  selectionCount: number;
+  authenticated: boolean;
+  loading: boolean;
+  error: boolean;
+  stake: number;
+  availableBalance: number;
+}): TicketConfirmationState {
+  if (input.selectionCount < 1) return "empty";
+  return validateStakeAgainstWallet(input).state;
+}
 
 export function validateStakeAgainstWallet(input: {
   authenticated: boolean;

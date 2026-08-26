@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculatePotentialReturn, combinedOdds, isValidUsdtStake, validateStakeAgainstWallet } from "../client/src/lib/betting";
+import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, isValidUsdtStake, validateStakeAgainstWallet } from "../client/src/lib/betting";
 
 describe("Nexus Bet betting calculations", () => {
   it("calculates combined odds and potential USDT return", () => {
@@ -15,6 +15,16 @@ describe("Nexus Bet betting calculations", () => {
     expect(isValidUsdtStake(1284.76, 1284.75)).toBe(false);
     expect(isValidUsdtStake(0.99, 1284.75)).toBe(false);
     expect(isValidUsdtStake(25, 0)).toBe(false);
+  });
+
+  it("maps the mobile confirmation flow to explicit states", () => {
+    const base = { authenticated: true, loading: false, error: false, stake: 25, availableBalance: 30 };
+    expect(getTicketConfirmationState({ ...base, selectionCount: 0 })).toBe("empty");
+    expect(getTicketConfirmationState({ ...base, authenticated: false, selectionCount: 1 })).toBe("guest");
+    expect(getTicketConfirmationState({ ...base, loading: true, selectionCount: 1 })).toBe("loading");
+    expect(getTicketConfirmationState({ ...base, error: true, selectionCount: 1 })).toBe("error");
+    expect(getTicketConfirmationState({ ...base, availableBalance: 0, selectionCount: 1 })).toBe("insufficient");
+    expect(getTicketConfirmationState({ ...base, selectionCount: 1 })).toBe("ready");
   });
 
   it("blocks ticket placement for guest, loading, error, and insufficient balance states", () => {
