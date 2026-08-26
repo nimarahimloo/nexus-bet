@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
 import { buildDemoMatchesFromAdapter, type MatchCardData } from "@shared/sports";
 import { getVipProgress } from "@/lib/vip";
+import { formatFaDecimal, formatFaNumber } from "@shared/format";
 import {
   Activity,
   ArrowDownLeft,
@@ -144,7 +145,7 @@ const networkInfo = {
 const leagues = ["همه", "فوتبال", "تنیس", "بسکتبال", "والیبال"];
 
 function numberFa(value: number, digits = 2) {
-  return new Intl.NumberFormat("fa-IR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+  return digits === 0 ? formatFaNumber(value, { maximumFractionDigits: 0 }) : formatFaDecimal(value, digits);
 }
 
 function scrollTo(id: string) {
@@ -286,10 +287,10 @@ export default function Home() {
         </button>
 
         <nav className={`main-nav ${menuOpen ? "is-open" : ""}`} aria-label="ناوبری اصلی">
-          <button className="nav-link is-active" onClick={() => scrollTo("discover")}>مسابقات</button>
-          <button className="nav-link" onClick={() => scrollTo("live")}>زنده <i className="live-dot" /></button>
-          <button className="nav-link" onClick={() => scrollTo("wallet")}>کیف پول</button>
-          <button className="nav-link" onClick={() => scrollTo("account")}>حساب من</button>
+          <a className="nav-link is-active" href="/matches">مسابقات</a>
+          <a className="nav-link" href="/#live">زنده <i className="live-dot" /></a>
+          <a className="nav-link" href="/wallet">کیف پول</a>
+          <a className="nav-link" href="/account">حساب من</a>
         </nav>
 
         <div className="header-actions">
