@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
+import { buildDemoMatchesFromAdapter, type MatchCardData } from "@shared/sports";
 import { getVipProgress } from "@/lib/vip";
 import {
   Activity,
@@ -43,21 +44,9 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-type EventStatus = "زنده" | "امروز" | "فردا";
+type EventStatus = "نمونه" | "امروز" | "فردا";
 
-type Match = {
-  id: string;
-  league: string;
-  sport: string;
-  status: EventStatus;
-  time: string;
-  minute?: string;
-  home: string;
-  away: string;
-  score?: string;
-  markets: { label: string; name: string; odds: number }[];
-  insight: string;
-};
+type Match = MatchCardData;
 
 type Selection = BettingSelection & {
   id: string;
@@ -65,15 +54,17 @@ type Selection = BettingSelection & {
   market: string;
 };
 
-const matches: Match[] = [
+const demoMatchSeed: Match[] = [
   {
     id: "rma-bar",
     league: "لالیگا · اسپانیا",
     sport: "فوتبال",
-    status: "امروز",
+    status: "نمونه",
     time: "۲۲:۳۰",
     home: "رئال مادرید",
+    homeLogo: "/manus-storage/real-madrid_189097ef.png",
     away: "بارسلونا",
+    awayLogo: "/manus-storage/barcelona_36dcce68.png",
     markets: [
       { label: "۱", name: "برد رئال مادرید", odds: 2.04 },
       { label: "X", name: "مساوی", odds: 3.62 },
@@ -87,12 +78,12 @@ const matches: Match[] = [
     id: "ars-che",
     league: "لیگ برتر · انگلیس",
     sport: "فوتبال",
-    status: "زنده",
-    time: "نیمهٔ دوم",
-    minute: "۶۷′",
+    status: "نمونه",
+    time: "۲۲:۳۰",
     home: "آرسنال",
+    homeLogo: "/manus-storage/arsenal_81af535e.jpg",
     away: "چلسی",
-    score: "۱ — ۱",
+    awayLogo: "/manus-storage/chelsea_7ee36ece.png",
     markets: [
       { label: "۱", name: "برد آرسنال", odds: 2.28 },
       { label: "X", name: "مساوی", odds: 2.94 },
@@ -100,16 +91,18 @@ const matches: Match[] = [
       { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.66 },
       { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.91 },
     ],
-    insight: "ضریب‌ها در حال به‌روزرسانی",
+    insight: "دادهٔ نمایشی برای بررسی تجربه",
   },
   {
     id: "bayern-dortmund",
     league: "بوندس‌لیگا · آلمان",
     sport: "فوتبال",
-    status: "فردا",
+    status: "نمونه",
     time: "۲۰:۰۰",
     home: "بایرن مونیخ",
+    homeLogo: "/manus-storage/bayern_70a7fa9c.png",
     away: "دورتموند",
+    awayLogo: "/manus-storage/dortmund_990aaa2a.webp",
     markets: [
       { label: "۱", name: "برد بایرن مونیخ", odds: 1.76 },
       { label: "X", name: "مساوی", odds: 4.18 },
@@ -117,16 +110,18 @@ const matches: Match[] = [
       { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.72 },
       { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.82 },
     ],
-    insight: "بیش از ۳۴۰ انتخاب فعال",
+    insight: "دادهٔ نمایشی برای بررسی تجربه",
   },
   {
     id: "sinner-alcaraz",
     league: "مسترز · تنیس",
     sport: "تنیس",
-    status: "امروز",
+    status: "نمونه",
     time: "۱۹:۴۵",
     home: "ی. سینر",
+    homeLogo: "",
     away: "ک. آلکاراس",
+    awayLogo: "",
     markets: [
       { label: "۱", name: "برد ی. سینر", odds: 1.92 },
       { label: "۲", name: "برد ک. آلکاراس", odds: 1.98 },
@@ -136,6 +131,9 @@ const matches: Match[] = [
     insight: "فینال · زمین سخت",
   },
 ];
+
+// The demo feed uses the same adapter as the future API response, so replacing it requires no UI-model rewrite.
+const matches: Match[] = buildDemoMatchesFromAdapter(demoMatchSeed);
 
 const networkInfo = {
   "TRC-20": { address: "TUf9...8bM2", confirmations: "۱ تأیید", fee: "۱ USDT" },
@@ -166,12 +164,12 @@ export default function Home() {
   const [withdrawAddress, setWithdrawAddress] = useState("");
   const [slipOpen, setSlipOpen] = useState(false);
   const [ticketOpen, setTicketOpen] = useState(false);
-  const [ageAccepted, setAgeAccepted] = useState(false);
-  const [ageOpen, setAgeOpen] = useState(true);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [lastAddedSelectionId, setLastAddedSelectionId] = useState<string | null>(null);
   const [removingSelectionId, setRemovingSelectionId] = useState<string | null>(null);
   const [vipDetailReward, setVipDetailReward] = useState<string | null>(null);
+  const [responsibleConfirmed, setResponsibleConfirmed] = useState(false);
   const vip = useMemo(() => getVipProgress(1820), []);
   const availableBalance = walletQuery.data?.availableBalance ?? 0;
   const lockedBalance = walletQuery.data?.lockedBalance ?? 0;
@@ -201,11 +199,6 @@ export default function Home() {
   const addSelection = (match: Match, market: Match["markets"][number]) => {
     if (market.odds === 0) {
       toast.info("بازارهای تکمیلی این رویداد به‌زودی در دسترس قرار می‌گیرد.");
-      return;
-    }
-    if (!ageAccepted) {
-      setAgeOpen(true);
-      toast.warning("ابتدا تأیید سن و اطلاع از ریسک لازم است.");
       return;
     }
     const selectionId = `${match.id}-${market.label}`;
@@ -333,10 +326,10 @@ export default function Home() {
 
         <div className="hero-score glass-panel"><img className="hero-art" src="/manus-storage/nexus-bet-hero_64d33d2f.jpg" alt="استادیوم شبانه و شبکهٔ Nexus Bet" />
           <div className="nexus-network" aria-hidden="true"><i /><i /><i /><i /></div>
-          <div className="score-top"><span className="live-tag"><i /> زنده</span><span>لیگ برتر انگلستان</span><button aria-label="افزودن به علاقه‌مندی‌ها"><Crown size={16} /></button></div>
+          <div className="score-top"><span className="demo-tag">نمونه</span><span>لیگ برتر انگلستان</span><button aria-label="افزودن به علاقه‌مندی‌ها"><Crown size={16} /></button></div>
           <div className="scoreboard">
             <div><span className="team-orb red">A</span><b>آرسنال</b></div>
-            <div className="score-center"><strong>۱ <small>—</small> ۱</strong><span>دقیقهٔ ۶۷</span></div>
+            <div className="score-center"><strong>— <small>·</small> —</strong><span>نمایش آزمایشی</span></div>
             <div><span className="team-orb blue">C</span><b>چلسی</b></div>
           </div>
           <div className="hero-market">
@@ -378,16 +371,16 @@ export default function Home() {
 
           <div className="match-list">
             {filteredMatches.map((match) => (
-              <article className={`match-card glass-panel ${match.status === "زنده" ? "is-live" : ""}`} key={match.id}>{match.status === "زنده" && <img className="match-art" src="/manus-storage/nexus-bet-live-match_f1d157ef.jpg" alt="توپ فوتبال در مسابقهٔ زنده" />}
+              <article className={`match-card glass-panel ${match.status === "نمونه" ? "is-demo" : ""}`} key={match.id}>{match.status === "نمونه" && <img className="match-art" src="/manus-storage/nexus-bet-live-match_f1d157ef.jpg" alt="تصویر تزئینی مسابقات فوتبال" />}
                 <div className="match-meta">
-                  <span className={match.status === "زنده" ? "status-live" : "status-upcoming"}>{match.status === "زنده" && <i />}{match.status}</span>
+                  <span className={match.status === "نمونه" ? "status-demo" : "status-upcoming"}>{match.status}</span>
                   <span>{match.league}</span><span className="dot-divider">•</span><span>{match.insight}</span>
                 </div>
                 <div className="match-body">
                   <div className="teams">
-                    <div><span className="team-badge">{match.home.slice(0, 1)}</span><b>{match.home}</b></div>
+                    <div><span className={`team-badge ${match.homeLogo ? "team-logo" : "sport-logo"}`}>{match.homeLogo ? <img src={match.homeLogo} alt="" loading="lazy" /> : <Trophy size={15} />}</span><b>{match.home}</b></div>
                     <div className="match-time">{match.score ? <strong>{match.score}</strong> : <strong>{match.time}</strong>}<small>{match.minute ?? "شروع مسابقه"}</small></div>
-                    <div><b>{match.away}</b><span className="team-badge muted">{match.away.slice(0, 1)}</span></div>
+                    <div><b>{match.away}</b><span className={`team-badge ${match.awayLogo ? "team-logo muted" : "sport-logo muted"}`}>{match.awayLogo ? <img src={match.awayLogo} alt="" loading="lazy" /> : <Trophy size={15} />}</span></div>
                   </div>
                   <div className="market-row">
                     {(expandedMarketIds.includes(match.id) ? match.markets : match.markets.slice(0, 3)).map((market) => {
@@ -479,15 +472,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="responsible container">
-        <div className="responsible-icon"><ShieldCheck size={22} /></div><div><b>پیش‌بینی آگاهانه شروع می‌شود.</b><p>برای خودتان حد تعیین کنید و در صورت نیاز، دسترسی به بازی را موقتاً متوقف کنید.</p></div><button onClick={() => toast.info("مرکز بازی مسئولانه آمادهٔ تنظیم محدودیت‌هاست.")}>بازی مسئولانه <ArrowLeft size={16} /></button>
+      <section className="responsible container" id="responsible"><div className="demo-disclosure"><span><ShieldCheck size={15} /> داده‌های مسابقات فعلاً نمایشی‌اند</span><small>پس از فعال‌شدن API، زمان، نتیجه و وضعیت زنده از منبع واقعی خوانده می‌شود.</small></div>
+        <div className="responsible-content"><div className="responsible-icon"><ShieldCheck size={22} /></div><div><b>قبل از بازی، حد خودت را مشخص کن.</b><p>این سرویس برای افراد بالای ۱۸ سال است. شرط‌بندی ریسک مالی دارد و سود تضمین‌شده‌ای وجود ندارد.</p></div></div><div className="responsible-actions"><button className={responsibleConfirmed ? "is-confirmed" : ""} onClick={() => { setResponsibleConfirmed(true); toast.success("تأیید سن ثبت شد؛ با آگاهی ادامه بده."); }}>{responsibleConfirmed ? <><Check size={15} /> تأیید شد</> : "بالای ۱۸ سال هستم"}</button><button onClick={() => toast.info("محدودیت مبلغ و زمان را از همین بخش مدیریت کن.")}>تعیین محدودیت <ArrowLeft size={16} /></button></div><div className="responsible-links"><button onClick={() => scrollTo("terms")}>شرایط استفاده</button><span>·</span><button onClick={() => scrollTo("responsible")}>بازی مسئولانه</button></div>
       </section>
+      <section className="terms-strip container" id="terms"><span><FileClock size={15} /> قوانین کوتاه و روشن</span><p>احراز سن، کنترل مبلغ و توقف دسترسی باید همیشه در اختیار کاربر باشد. در صورت از دست‌دادن کنترل، ادامه نده و از پشتیبانی کمک بگیر.</p></section>
 
-      <footer className="site-footer container"><div className="footer-brand"><span className="brand-mark">N</span><b>NEXUS BET</b><p>تجربهٔ نوین پیش‌بینی ورزشی با USDT</p></div><div className="footer-links"><a href="#discover">مسابقات</a><a href="#wallet">کیف پول</a><button onClick={() => setAgeOpen(true)}>قوانین و ریسک</button><button onClick={() => toast.info("شرایط استفاده در نسخهٔ حقوقی نهایی قرار می‌گیرد.")}>شرایط استفاده</button></div><span className="age-mark">+۱۸</span></footer>
+      <footer className="site-footer container"><div className="footer-brand"><span className="brand-mark">N</span><b>NEXUS BET</b><p>تجربهٔ نوین پیش‌بینی ورزشی با USDT</p></div><div className="footer-links"><a href="#discover">مسابقات</a><a href="#wallet">کیف پول</a><button onClick={() => scrollTo("responsible")}>قوانین و ریسک</button><button onClick={() => scrollTo("terms")}>شرایط استفاده</button></div><span className="age-mark">+۱۸</span></footer>
 
       <button className="mobile-slip-trigger" onClick={() => setSlipOpen(true)} aria-label="باز کردن بلیت"><ReceiptText size={18} /><span>{selections.length ? selections.length : "بلیت"}</span></button>
-
-      {ageOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="تأیید سن"><div className="age-modal glass-panel"><button className="modal-close" onClick={() => setAgeOpen(false)} aria-label="بستن"><X size={18} /></button><div className="age-icon"><ShieldCheck size={25} /></div><span className="section-kicker">NEXUS CARE</span><h2>پیش از شروع، یک تأیید کوتاه</h2><p>این سرویس فقط برای افراد بالای ۱۸ سال است. لطفاً با آگاهی از ریسک مالی و مسئولیت شخصی ادامه دهید.</p><Button className="age-confirm" onClick={() => { setAgeAccepted(true); setAgeOpen(false); toast.success("تأیید شما ثبت شد. با آگاهی پیش بروید."); }}><Check size={17} /> بالای ۱۸ سال هستم و می‌پذیرم</Button><button className="age-limit" onClick={() => toast.info("می‌توانید برای دریافت راهنمایی با پشتیبانی تماس بگیرید.")}>مدیریت محدودیت‌ها و بازی مسئولانه</button></div></div>}
 
       {ticketOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="خلاصه بلیت"><div className="ticket-modal glass-panel"><button className="modal-close" onClick={() => setTicketOpen(false)} aria-label="بستن"><X size={18} /></button><div className="ticket-success"><Check size={20} /></div><span className="section-kicker">بازبینی نهایی</span><h2>بلیت شما آمادهٔ ثبت است</h2><div className="ticket-summary">{selections.map((selection) => <div key={selection.id}><span>{selection.market}<small>{selection.match}</small></span><b>{numberFa(selection.odds)}</b></div>)}</div><div className="ticket-total"><span>مبلغ</span><b>{numberFa(numericStake)} USDT</b><span>بازده احتمالی</span><strong>{numberFa(potentialReturn)} USDT</strong></div><Button className="age-confirm" onClick={confirmTicket}>تأیید و ثبت بلیت <ArrowLeft size={17} /></Button><p>پس از ثبت، بلیت در بخش شرط‌های باز قابل پیگیری است.</p></div></div>}
     </main>
