@@ -1,8 +1,10 @@
 import { COOKIE_NAME } from "@shared/const";
+import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { getOrCreateWalletByUserId, getUserBets, placeBet } from "./db";
+import { getOrCreateWalletByUserId, getUserBets, getWheelHistory, getWheelStatus, placeBet, spinLuckyWheel } from "./db";
+import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import { fallbackSmartPicks } from "../shared/ai";
@@ -41,6 +43,25 @@ export const appRouter = router({
       const combinedOdds = Number(input.selections.reduce((total, selection) => total * selection.odds, 1).toFixed(2));
       const potentialReturn = Number((input.stake * combinedOdds).toFixed(2));
       return placeBet({ userId: ctx.user.id, stake: input.stake, combinedOdds, potentialReturn, selections: input.selections });
+    }),
+  }),
+
+  rewards: router({
+    segments: publicProcedure.query(() => ({ source: "backend" as const, segments: getWheelSegments() })),
+    status: protectedProcedure.query(({ ctx }) => getWheelStatus(ctx.user.id)),
+    history: protectedProcedure.query(({ ctx }) => getWheelHistory(ctx.user.id)),
+    spin: protectedProcedure.mutation(async ({ ctx }) => {
+      try {
+        const status = await getWheelStatus(ctx.user.id);
+        if (!status.canSpin) throw new TRPCError({ code: "BAD_REQUEST", message: "امروز قبلاً از گردونه استفاده کرده‌ای." });
+        return await spinLuckyWheel(ctx.user.id);
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        if (String(error).includes("wheelSpins_user_day_unique")) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "امروز قبلاً از گردونه استفاده کرده‌ای." });
+        }
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ثبت نتیجهٔ گردونه ممکن نشد." });
+      }
     }),
   }),
 

@@ -1,6 +1,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, bets, users, wallets } from "../drizzle/schema";
+import { InsertUser, bets, rewardLedger, users, wallets, wheelSpins } from "../drizzle/schema";
+import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomUUID } from "node:crypto";
 import { ENV } from './_core/env';
 
@@ -137,6 +138,57 @@ export async function getUserBets(userId: number) {
   if (!db) return [];
   const rows = await db.select().from(bets).where(eq(bets.userId, userId)).orderBy(desc(bets.createdAt)).limit(20);
   return rows.map((bet) => ({ ...bet, stake: Number(bet.stake), combinedOdds: Number(bet.combinedOdds), potentialReturn: Number(bet.potentialReturn), selections: JSON.parse(bet.selectionsJson) as Array<{ id: string; match: string; market: string; odds: number }> }));
+}
+
+export async function spinLuckyWheel(userId: number, now = new Date()) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const spinDate = getUtcDateKey(now);
+
+  return db.transaction(async (tx) => {
+    const reward = selectWheelReward();
+    const insertedSpin = await tx.insert(wheelSpins).values({
+      userId,
+      spinDate,
+      rewardCode: reward.code,
+      rewardLabel: reward.label,
+      rewardType: reward.type,
+      rewardAmount: reward.amount.toFixed(6),
+    });
+    const spinId = Number(insertedSpin[0].insertId);
+
+    if (reward.type === "usdt" && reward.amount > 0) {
+      await tx.insert(wallets).values({ userId }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
+      await tx.update(wallets).set({
+        availableBalance: sql`${wallets.availableBalance} + ${reward.amount}`,
+        updatedAt: new Date(),
+      }).where(eq(wallets.userId, userId));
+      await tx.insert(rewardLedger).values({
+        userId,
+        spinId,
+        currency: "USDT",
+        amount: reward.amount.toFixed(6),
+        entryType: "wheel_reward",
+      });
+    }
+
+    return { spinId, spinDate, reward: { code: reward.code, label: reward.label, type: reward.type, amount: reward.amount } };
+  });
+}
+
+export async function getWheelHistory(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(wheelSpins).where(eq(wheelSpins.userId, userId)).orderBy(desc(wheelSpins.createdAt)).limit(20);
+  return rows.map((spin) => ({ ...spin, rewardAmount: Number(spin.rewardAmount) }));
+}
+
+export async function getWheelStatus(userId: number, now = new Date()) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const spinDate = getUtcDateKey(now);
+  const rows = await db.select({ id: wheelSpins.id, createdAt: wheelSpins.createdAt }).from(wheelSpins).where(and(eq(wheelSpins.userId, userId), eq(wheelSpins.spinDate, spinDate))).limit(1);
+  return { canSpin: rows.length === 0, spinDate, lastSpinAt: rows[0]?.createdAt ?? null };
 }
 
 export async function getOrCreateWalletByUserId(userId: number) {

@@ -199,3 +199,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن واکشی odds رسمی API-Football و نگاشت عددی بدون مقدار پیش‌فرض.
 - [x] حذف seedها و fallbackهای مسابقه از runtime و تبدیل جزئیات ناموجود به empty state.
 - [x] افزودن تست audit برای یک header، یک BetSheet و نبود catalog ساختگی.
+
+## Operational lucky wheel
+- [x] ممیزی UI و قرارداد فعلی گردونهٔ شانس و تعیین مدل جایزه/شرایط spin.
+- [x] افزودن schema و migration برای spin history و reward ledger اتمیک.
+- [x] افزودن procedure امن برای spin، محدودیت دفعات و اعطای جایزه به wallet.
+- [x] اتصال UI گردونه به backend و نمایش نتیجه/تاریخچهٔ واقعی.
+- [x] افزودن تست‌های backend/UI و بازبینی responsive گردونه.

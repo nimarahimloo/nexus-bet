@@ -1,4 +1,4 @@
-import { decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { decimal, int, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -54,3 +54,32 @@ export const bets = mysqlTable("bets", {
 
 export type Bet = typeof bets.$inferSelect;
 export type InsertBet = typeof bets.$inferInsert;
+
+export const wheelSpins = mysqlTable("wheelSpins", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  spinDate: varchar("spinDate", { length: 10 }).notNull(),
+  rewardCode: varchar("rewardCode", { length: 32 }).notNull(),
+  rewardLabel: varchar("rewardLabel", { length: 96 }).notNull(),
+  rewardType: mysqlEnum("rewardType", ["none", "usdt"]).notNull(),
+  rewardAmount: decimal("rewardAmount", { precision: 20, scale: 6 }).default("0").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userDayUnique: uniqueIndex("wheelSpins_user_day_unique").on(table.userId, table.spinDate),
+}));
+
+export type WheelSpin = typeof wheelSpins.$inferSelect;
+export type InsertWheelSpin = typeof wheelSpins.$inferInsert;
+
+export const rewardLedger = mysqlTable("rewardLedger", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  spinId: int("spinId").notNull().unique().references(() => wheelSpins.id),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
+  amount: decimal("amount", { precision: 20, scale: 6 }).notNull(),
+  entryType: mysqlEnum("entryType", ["wheel_reward"]).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type RewardLedgerEntry = typeof rewardLedger.$inferSelect;
+export type InsertRewardLedgerEntry = typeof rewardLedger.$inferInsert;

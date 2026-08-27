@@ -25,4 +25,15 @@ describe("platform truth and UI consolidation", () => {
     expect(featurePages).not.toMatch(/const offers|const tournaments|const games/);
     expect(featurePages).toContain("OperationalEmpty");
   });
+
+  it("keeps the lucky wheel operational and backend-driven", () => {
+    const featurePages = read("../client/src/pages/FeaturePages.tsx");
+    const routers = read("./routers.ts");
+    const db = read("./db.ts");
+    expect(featurePages).toContain("trpc.rewards.spin.useMutation");
+    expect(featurePages).toContain("trpc.rewards.history.useQuery");
+    expect(routers).toContain("rewards: router");
+    expect(routers).toContain("spinLuckyWheel");
+    expect(db).toContain("rewardLedger");
+  });
 });
