@@ -15,6 +15,13 @@
       "when": 1787779283086,
       "tag": "0001_slim_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787850718939,
+      "tag": "0002_hard_spyke",
+      "breakpoints": true
     }
   ]
 }

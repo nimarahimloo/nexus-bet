@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { getOrCreateWalletByUserId } from "./db";
+import { getOrCreateWalletByUserId, placeBet } from "./db";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import { fallbackSmartPicks } from "../shared/ai";
@@ -30,6 +30,17 @@ export const appRouter = router({
     fixtures: publicProcedure
       .input(z.object({ next: z.number().int().min(1).max(20).default(10) }).optional())
       .query(({ input }) => fetchSportsFeed(`fixtures?next=${input?.next ?? 10}`, ENV.sportsApiKey)),
+  }),
+
+  bet: router({
+    place: protectedProcedure.input(z.object({
+      stake: z.number().finite().min(1).max(1_000_000),
+      selections: z.array(z.object({ id: z.string().min(1), match: z.string().min(1), market: z.string().min(1), odds: z.number().finite().positive().max(1_000) })).min(1).max(20),
+    })).mutation(async ({ ctx, input }) => {
+      const combinedOdds = Number(input.selections.reduce((total, selection) => total * selection.odds, 1).toFixed(2));
+      const potentialReturn = Number((input.stake * combinedOdds).toFixed(2));
+      return placeBet({ userId: ctx.user.id, stake: input.stake, combinedOdds, potentialReturn, selections: input.selections });
+    }),
   }),
 
   wallet: router({

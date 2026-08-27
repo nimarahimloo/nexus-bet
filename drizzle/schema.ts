@@ -37,3 +37,20 @@ export const wallets = mysqlTable("wallets", {
 
 export type Wallet = typeof wallets.$inferSelect;
 export type InsertWallet = typeof wallets.$inferInsert;
+
+export const bets = mysqlTable("bets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  ticketCode: varchar("ticketCode", { length: 32 }).notNull().unique(),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
+  stake: decimal("stake", { precision: 20, scale: 6 }).notNull(),
+  combinedOdds: decimal("combinedOdds", { precision: 12, scale: 4 }).notNull(),
+  potentialReturn: decimal("potentialReturn", { precision: 20, scale: 6 }).notNull(),
+  selectionsJson: text("selectionsJson").notNull(),
+  status: mysqlEnum("status", ["pending", "won", "lost", "void"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Bet = typeof bets.$inferSelect;
+export type InsertBet = typeof bets.$inferInsert;

@@ -1,6 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, wallets } from "../drizzle/schema";
+import { InsertUser, bets, users, wallets } from "../drizzle/schema";
+import { randomUUID } from "node:crypto";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -87,6 +88,48 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+export type PlaceBetInput = {
+  userId: number;
+  stake: number;
+  combinedOdds: number;
+  potentialReturn: number;
+  selections: Array<{ id: string; match: string; market: string; odds: number }>;
+};
+
+export async function placeBet(input: PlaceBetInput) {
+  if (!Number.isFinite(input.stake) || input.stake < 1) throw new Error("INVALID_STAKE");
+  if (!Number.isFinite(input.combinedOdds) || input.combinedOdds <= 0) throw new Error("INVALID_ODDS");
+  if (!input.selections.length) throw new Error("EMPTY_SELECTIONS");
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+
+  return db.transaction(async (tx) => {
+    const walletRows = await tx.select().from(wallets).where(eq(wallets.userId, input.userId)).limit(1);
+    const wallet = walletRows[0];
+    if (!wallet || Number(wallet.availableBalance) < input.stake) throw new Error("INSUFFICIENT_BALANCE");
+
+    const updated = await tx.update(wallets).set({
+      availableBalance: sql`${wallets.availableBalance} - ${input.stake}`,
+      lockedBalance: sql`${wallets.lockedBalance} + ${input.stake}`,
+      updatedAt: new Date(),
+    }).where(and(eq(wallets.userId, input.userId), gte(wallets.availableBalance, input.stake.toFixed(6))));
+    if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
+
+    const ticketCode = `NX-${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+    const inserted = await tx.insert(bets).values({
+      userId: input.userId,
+      ticketCode,
+      currency: "USDT",
+      stake: input.stake.toFixed(6),
+      combinedOdds: input.combinedOdds.toFixed(4),
+      potentialReturn: input.potentialReturn.toFixed(6),
+      selectionsJson: JSON.stringify(input.selections),
+      status: "pending",
+    });
+    return { id: Number(inserted[0].insertId), ticketCode, stake: input.stake, potentialReturn: input.potentialReturn, status: "pending" as const };
+  });
 }
 
 export async function getOrCreateWalletByUserId(userId: number) {

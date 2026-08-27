@@ -177,3 +177,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] تبدیل bet slip موبایل به bottom sheet با handle، خلاصهٔ انتخاب‌ها، مبلغ USDT و بازگشت احتمالی.
 - [x] افزودن تعامل باز/بسته‌شدن، backdrop، Escape، focus و motion قابل‌کنترل.
 - [x] اجرای تست، بازبینی موبایل/دسکتاپ و ثبت checkpoint جدید.
+
+## Real bet placement pass
+- [x] ممیزی schema و helperهای wallet برای طراحی ثبت اتمیک بلیت و قفل‌کردن موجودی.
+- [x] افزودن جدول/قرارداد bet slip و procedure protected برای validate مبلغ، موجودی و odds.
+- [x] اتصال CTA bottom sheet به mutation و نمایش confirmation/error واقعی.
+- [x] افزودن فیلتر لیگ و هشدار odds تغییرکرده پیش از ثبت.
+- [x] افزودن تست‌های backend و UI، بازبینی موبایل و ثبت checkpoint جدید.
