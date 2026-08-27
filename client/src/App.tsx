@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Matches from "./pages/Matches";
 import Crash from "./pages/Crash";
 import { AccountPage, AiPage, VipPage, WalletPage } from "./pages/SupportingPages";
+import { CasinoPage, PromotionsPage, RewardsPage, TournamentsPage } from "./pages/FeaturePages";
 import { appRoutePaths } from "@shared/routes";
 
 function Router() {
@@ -20,6 +21,10 @@ function Router() {
       <Route path={appRoutePaths[4]} component={VipPage} />
       <Route path={appRoutePaths[5]} component={AccountPage} />
       <Route path={appRoutePaths[6]} component={Crash} />
+      <Route path={appRoutePaths[7]} component={PromotionsPage} />
+      <Route path={appRoutePaths[8]} component={TournamentsPage} />
+      <Route path={appRoutePaths[9]} component={RewardsPage} />
+      <Route path={appRoutePaths[10]} component={CasinoPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

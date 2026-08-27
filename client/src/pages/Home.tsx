@@ -8,6 +8,7 @@ import { buildDemoMatchesFromAdapter, type MatchCardData } from "@shared/sports"
 import { getVipProgress } from "@/lib/vip";
 import { formatFaDecimal, formatFaNumber } from "@shared/format";
 import { formatSportsFeedStatus } from "@shared/sportsDisplay";
+import { FeatureHub } from "./FeaturePages";
 import {
   Activity,
   ArrowDownLeft,
@@ -45,6 +46,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 type EventStatus = "نمونه" | "امروز" | "فردا";
 
@@ -154,6 +156,7 @@ function scrollTo(id: string) {
 }
 
 export default function Home() {
+  const [location] = useLocation();
   const { user, isAuthenticated } = useAuth();
   const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
   const sportsQuery = trpc.sports.fixtures.useQuery({ next: 10 }, { staleTime: 30_000, refetchInterval: 60_000 });
@@ -292,10 +295,13 @@ export default function Home() {
         </button>
 
         <nav className={`main-nav ${menuOpen ? "is-open" : ""}`} aria-label="ناوبری اصلی">
-          <a className="nav-link is-active" href="/matches">مسابقات</a>
-          <a className="nav-link" href="/#live">زنده <i className="live-dot" /></a>
-          <a className="nav-link" href="/wallet">کیف پول</a>
-          <a className="nav-link" href="/account">حساب من</a>
+          <a className={`nav-link ${location === "/" ? "is-active" : ""}`} href="/">خانه</a>
+          <a className={`nav-link ${location.startsWith("/matches") ? "is-active" : ""}`} href="/matches">مسابقات <i className="live-dot" /></a>
+          <a className={`nav-link ${location.startsWith("/crash") ? "is-active" : ""}`} href="/crash">انفجار</a>
+          <a className={`nav-link ${location.startsWith("/promotions") ? "is-active" : ""}`} href="/promotions">پیشنهادها</a>
+          <a className={`nav-link ${location.startsWith("/tournaments") ? "is-active" : ""}`} href="/tournaments">تورنمنت‌ها</a>
+          <a className={`nav-link ${location.startsWith("/wallet") ? "is-active" : ""}`} href="/wallet">کیف پول</a>
+          <a className={`nav-link ${location.startsWith("/account") ? "is-active" : ""}`} href="/account">حساب من</a>
         </nav>
 
         <div className="header-actions">
@@ -344,6 +350,8 @@ export default function Home() {
           <div className="signal-row"><span><Activity size={14} /> ۲۷ بازار فعال</span><span>به‌روزرسانی لحظه‌ای</span></div>
         </div>
       </section>
+
+      <FeatureHub />
 
       <section className="content-grid container" id="live">
         <div className="events-column">

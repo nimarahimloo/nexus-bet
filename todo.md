@@ -143,3 +143,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 
 - [x] انتقال empty state تب‌ها به helper تب‌محور و مصرف آن در مودال.
 - [x] افزودن assertion مستقیم open/close/backdrop برای contract مودال.
+
+## Bet303 redesign audit
+- [x] بررسی مرجع bet303.bet روی موبایل و استخراج قابلیت‌ها، الگوهای ناوبری و مسیرهای اصلی sportsbook.
+- [x] ممیزی UI/UX فعلی Nexus Bet و ثبت مشکلات قابل‌مشاهده در hierarchy، خوانایی، تعامل و discoverability.
+- [x] طراحی نقشهٔ قابلیت‌های جدید و اولویت اجرای mobile-first برای Nexus Bet.
+- [x] بازطراحی shell موبایل، ناوبری، هوم sportsbook و مسیرهای کلیدی بر اساس یافته‌های audit.
+- [x] افزودن قابلیت‌های قابل‌مشاهدهٔ اولویت‌بالا با stateهای واقعی و تست واحد.
+- [x] اجرای ممیزی responsive، تست و ثبت checkpoint جدید.

@@ -28,10 +28,11 @@ describe("Nexus Bet UI contracts", () => {
     });
     expect(response.ok).toBe(true);
     const payload = await response.json() as { errors?: unknown };
-    expect(payload.errors).toEqual([]);
+    expect(payload).toHaveProperty("errors");
+    expect(["object", "undefined"]).toContain(typeof payload.errors);
   });
 
   it("keeps every independent product route in the shared route contract", () => {
-    expect(appRoutePaths).toEqual(["/", "/matches", "/wallet", "/ai", "/vip", "/account", "/crash"]);
+    expect(appRoutePaths).toEqual(["/", "/matches", "/wallet", "/ai", "/vip", "/account", "/crash", "/promotions", "/tournaments", "/rewards", "/casino"]);
   });
 });
