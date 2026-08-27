@@ -24,11 +24,25 @@ function OperationalEmpty({ title, detail, href = "/matches", cta = "بازگش�
 }
 
 export function PromotionsPage() {
-  return <PageShell eyebrow="پیشنهادها" title="پیشنهاد معتبر، نه کارت تزئینی" description="کمپین فقط وقتی نمایش داده می‌شود که منبع، شرایط، مهلت و مسیر ثبت آن از backend قابل‌ردیابی باشد." heroImage="/manus-storage/nexus-bet-ai-hero-v2_ad9c88ae.png"><PreviewNotice label="بونوس‌ها" /><OperationalEmpty title="کمپین عملیاتی در دسترس نیست" detail="هیچ بونوس یا ضریب تبلیغاتی به‌عنوان فعال نمایش داده نمی‌شود تا سرویس کمپین و ledger واقعی متصل شوند." /><div className="responsible-inline"><ShieldCheck size={17} /><span>این صفحه عمداً از مبلغ، درصد، مهلت یا فعال‌سازی ساختگی استفاده نمی‌کند.</span></div></PageShell>;
+  const promotionsQuery = trpc.promotions.active.useQuery();
+  const claimMutation = trpc.promotions.claim.useMutation({ onSuccess: () => void promotionsQuery.refetch() });
+  const promotions = promotionsQuery.data ?? [];
+  return <PageShell eyebrow="پیشنهادها" title="پیشنهاد معتبر، نه کارت تزئینی" description="کمپین‌ها، شرایط و مهلت از دیتابیس backend خوانده می‌شوند و فعال‌سازی هر پیشنهاد قابل‌ردیابی است." heroImage="/manus-storage/nexus-bet-ai-hero-v2_ad9c88ae.png">
+    {promotionsQuery.error && <div className="inline-alert">کمپین‌ها فعلاً از backend دریافت نشدند.</div>}
+    {promotionsQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت کمپین‌های فعال…</div> : promotions.length ? <div className="offer-grid">{promotions.map((promotion) => <article className="offer-card glass-panel" key={promotion.id}><span className="sample-chip">{promotion.rewardType.toUpperCase()}</span><h2>{promotion.title}</h2><p>{promotion.description}</p><small>{promotion.terms}</small><div className="offer-card-footer"><span>تا {new Date(promotion.endsAt).toLocaleDateString("fa-IR")}</span><button className="solid-cta" disabled={claimMutation.isPending} onClick={() => claimMutation.mutate({ promotionId: promotion.id })}>فعال‌سازی <ArrowLeft size={15} /></button></div></article>)}</div> : <OperationalEmpty title="کمپین فعال پیدا نشد" detail="هیچ کمپین فعالی در دیتابیس وجود ندارد؛ این صفحه عمداً مبلغ یا درصد ساختگی نمایش نمی‌دهد." />}
+    <div className="responsible-inline"><ShieldCheck size={17} /><span>هر کمپین باید از backend، با شرایط و مهلت معتبر منتشر شود.</span></div>
+  </PageShell>;
 }
 
 export function TournamentsPage() {
-  return <PageShell eyebrow="رقابت‌ها" title="رقابت را با جدول واقعی شروع کن" description="رتبه‌بندی، امتیاز، جایزه و قوانین باید از رویداد رسمی خوانده شوند؛ دادهٔ نمونه به‌جای وضعیت کاربر نمایش داده نمی‌شود." heroImage="/manus-storage/nexus-bet-matches-hero-v2_fbfab850.png"><PreviewNotice label="تورنمنت‌ها" /><OperationalEmpty title="تورنمنت فعال پیدا نشد" detail="تا اتصال سرویس رقابت و event ledger، هیچ رتبه، امتیاز، تعداد شرکت‌کننده یا جایزه‌ای حدس زده نمی‌شود." /><div className="rules-card glass-panel"><div><CircleCheck size={18} /><b>شرایط روشن</b><p>قوانین رسمی، زمان پایان و نحوهٔ امتیازدهی قبل از ثبت‌نام نمایش داده خواهند شد.</p></div><div><ShieldCheck size={18} /><b>بدون جایزهٔ ساختگی</b><p>موجودی یا پاداشی بدون ثبت در ledger به حساب کاربر اضافه نمی‌شود.</p></div></div></PageShell>;
+  const tournamentsQuery = trpc.tournaments.active.useQuery();
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const tournaments = tournamentsQuery.data ?? [];
+  const selected = tournaments.find((item) => item.id === (selectedId ?? tournaments[0]?.id));
+  const leaderboardQuery = trpc.tournaments.leaderboard.useQuery({ tournamentId: selected?.id ?? 0 }, { enabled: Boolean(selected?.id) });
+  return <PageShell eyebrow="رقابت‌ها" title="رقابت را با جدول واقعی شروع کن" description="رتبه‌بندی، امتیاز، جایزه و قوانین از جدول‌های backend خوانده می‌شوند؛ هیچ participant یا prize pool ساختگی ساخته نمی‌شود." heroImage="/manus-storage/nexus-bet-matches-hero-v2_fbfab850.png">
+    {tournamentsQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت رقابت‌ها…</div> : tournaments.length ? <><div className="feature-filter-row">{tournaments.map((tournament) => <button className={selected?.id === tournament.id ? "selected" : ""} key={tournament.id} onClick={() => setSelectedId(tournament.id)}>{tournament.title}</button>)}</div>{selected && <div className="tournament-feature glass-panel"><div><span className="sample-chip">{selected.status}</span><h2>{selected.title}</h2><p>{selected.description}</p><small>{selected.rules}</small></div><strong>{formatFaDecimal(Number(selected.prizePool))} {selected.currency}</strong></div>}<div className="standings-grid">{leaderboardQuery.data?.map((entry) => <article className="standings-card glass-panel" key={entry.id}><b>{entry.rank ?? "—"}</b><span>{entry.userName}</span><strong>{formatFaDecimal(entry.points)}</strong></article>)}</div>{selected && !leaderboardQuery.data?.length && <div className="empty-state glass-panel">هنوز ورودی یا امتیاز ثبت‌شده‌ای برای این رقابت وجود ندارد.</div>}</> : <OperationalEmpty title="تورنمنت فعال پیدا نشد" detail="داده‌ای از جدول tournaments در backend منتشر نشده است." />}
+  </PageShell>;
 }
 
 export function RewardsPage() {
@@ -64,7 +78,12 @@ export function RewardsPage() {
 }
 
 export function CasinoPage() {
-  return <PageShell eyebrow="مرکز بازی‌ها" title="کتابخانهٔ بازی از catalog واقعی" description="مرکز بازی فقط بازی‌هایی را نشان می‌دهد که سرویس catalog آن‌ها را فعال و قابل‌ورود اعلام کرده باشد." heroImage="/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png"><PreviewNotice label="مرکز بازی‌ها" /><div className="game-grid"><article className="game-card glass-panel"><div className="game-card-icon"><Zap size={21} /></div><span>کرش</span><h3>Crash Arena</h3><p>بازی انفجار مستقل Nexus Bet با وضعیت و تاریخچهٔ محلی قابل مشاهده است.</p><Link href="/crash" className="outline-cta">ورود به Crash <Zap size={15} /></Link></article></div><div className="responsible-inline"><WalletCards size={17} /><span>سایر بازی‌ها تا دریافت catalog و قوانین رسمی عمداً در این صفحه فهرست نمی‌شوند.</span></div></PageShell>;
+  const catalogQuery = trpc.games.catalog.useQuery();
+  const games = catalogQuery.data ?? [];
+  return <PageShell eyebrow="مرکز بازی‌ها" title="کتابخانهٔ بازی از catalog واقعی" description="فقط بازی‌هایی نمایش داده می‌شوند که catalog backend آن‌ها را فعال و قابل‌ورود اعلام کرده باشد." heroImage="/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png">
+    {catalogQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت catalog بازی‌ها…</div> : games.length ? <div className="game-grid">{games.map((game) => <article className="game-card glass-panel" key={game.id}><div className="game-card-icon"><Zap size={21} /></div><span>{game.provider}</span><h3>{game.title}</h3><p>وضعیت: {game.status}</p><a href={game.launchUrl} className="outline-cta">ورود به بازی <Zap size={15} /></a></article>)}</div> : <OperationalEmpty title="بازی فعالی در catalog نیست" detail="تا زمانی که provider بازی و لینک launch واقعی ثبت نشوند، هیچ کارت بازی ساختگی نمایش داده نمی‌شود." />}
+    <div className="responsible-inline"><WalletCards size={17} /><span>catalog و provider هر بازی باید در backend ثبت و قابل‌پیگیری باشد.</span></div>
+  </PageShell>;
 }
 
 export function FeatureHub() {

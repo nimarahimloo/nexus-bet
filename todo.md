@@ -206,3 +206,15 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن procedure امن برای spin، محدودیت دفعات و اعطای جایزه به wallet.
 - [x] اتصال UI گردونه به backend و نمایش نتیجه/تاریخچهٔ واقعی.
 - [x] افزودن تست‌های backend/UI و بازبینی responsive گردونه.
+
+## Full real-data migration
+- [x] ممیزی همهٔ mock/demo/fallbackهای باقی‌مانده و تعیین منبع حقیقت هر route.
+- [x] تبدیل Promotions به campaign و activation واقعی از backend.
+- [x] تبدیل Tournaments به leaderboard و event ledger واقعی از backend.
+- [x] اتصال VIP به activity ledger و محاسبهٔ واقعی tier و progress.
+- [x] اتصال Wallet به deposit/withdrawal request و transaction ledger واقعی.
+- [x] اتصال Casino/Cash/Crash به catalog، round و settlement واقعی یا حذف صریح مسیرهای فاقد provider.
+- [x] تکمیل Account با bet history، reward history و wallet transaction history واقعی.
+- [x] حذف fallbackهای عملیاتی گمراه‌کننده و افزودن source/error/empty state صریح.
+- [x] افزودن تست‌های data-truth، procedure و route برای تمام مسیرهای مهاجرت‌یافته.
+- [x] بازبینی responsive و ثبت checkpoint مهاجرت دادهٔ واقعی.

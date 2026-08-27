@@ -83,3 +83,118 @@ export const rewardLedger = mysqlTable("rewardLedger", {
 
 export type RewardLedgerEntry = typeof rewardLedger.$inferSelect;
 export type InsertRewardLedgerEntry = typeof rewardLedger.$inferInsert;
+
+export const promotions = mysqlTable("promotions", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 48 }).notNull().unique(),
+  title: varchar("title", { length: 160 }).notNull(),
+  description: text("description").notNull(),
+  terms: text("terms").notNull(),
+  rewardType: mysqlEnum("rewardType", ["usdt", "free_bet", "cashback"]).notNull(),
+  rewardAmount: decimal("rewardAmount", { precision: 20, scale: 6 }).notNull(),
+  status: mysqlEnum("status", ["draft", "active", "expired"]).default("draft").notNull(),
+  startsAt: timestamp("startsAt").notNull(),
+  endsAt: timestamp("endsAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const promotionClaims = mysqlTable("promotionClaims", {
+  id: int("id").autoincrement().primaryKey(),
+  promotionId: int("promotionId").notNull().references(() => promotions.id),
+  userId: int("userId").notNull().references(() => users.id),
+  status: mysqlEnum("status", ["claimed", "used", "expired"]).default("claimed").notNull(),
+  claimedAt: timestamp("claimedAt").defaultNow().notNull(),
+  usedAt: timestamp("usedAt"),
+}, (table) => ({ promotionUserUnique: uniqueIndex("promotionClaims_promotion_user_unique").on(table.promotionId, table.userId) }));
+
+export const tournaments = mysqlTable("tournaments", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 80 }).notNull().unique(),
+  title: varchar("title", { length: 160 }).notNull(),
+  description: text("description").notNull(),
+  rules: text("rules").notNull(),
+  prizePool: decimal("prizePool", { precision: 20, scale: 6 }).notNull(),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
+  status: mysqlEnum("status", ["upcoming", "live", "ended"]).default("upcoming").notNull(),
+  startsAt: timestamp("startsAt").notNull(),
+  endsAt: timestamp("endsAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const tournamentEntries = mysqlTable("tournamentEntries", {
+  id: int("id").autoincrement().primaryKey(),
+  tournamentId: int("tournamentId").notNull().references(() => tournaments.id),
+  userId: int("userId").notNull().references(() => users.id),
+  points: decimal("points", { precision: 20, scale: 6 }).default("0").notNull(),
+  rank: int("rank"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ tournamentUserUnique: uniqueIndex("tournamentEntries_tournament_user_unique").on(table.tournamentId, table.userId) }));
+
+export const vipActivity = mysqlTable("vipActivity", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  eventType: varchar("eventType", { length: 48 }).notNull(),
+  points: decimal("points", { precision: 20, scale: 6 }).notNull(),
+  referenceId: varchar("referenceId", { length: 96 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const walletTransactions = mysqlTable("walletTransactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  type: mysqlEnum("type", ["deposit", "withdrawal", "bet_lock", "bet_settlement", "wheel_reward", "crash_settlement"]).notNull(),
+  status: mysqlEnum("status", ["pending", "confirmed", "failed", "cancelled"]).default("pending").notNull(),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
+  amount: decimal("amount", { precision: 20, scale: 6 }).notNull(),
+  network: varchar("network", { length: 24 }),
+  address: varchar("address", { length: 160 }),
+  txHash: varchar("txHash", { length: 160 }),
+  referenceId: varchar("referenceId", { length: 96 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const gameCatalog = mysqlTable("gameCatalog", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 80 }).notNull().unique(),
+  title: varchar("title", { length: 160 }).notNull(),
+  provider: varchar("provider", { length: 96 }).notNull(),
+  launchUrl: varchar("launchUrl", { length: 320 }).notNull(),
+  status: mysqlEnum("status", ["active", "maintenance", "disabled"]).default("disabled").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Promotion = typeof promotions.$inferSelect;
+export type Tournament = typeof tournaments.$inferSelect;
+export type VipActivity = typeof vipActivity.$inferSelect;
+export type WalletTransaction = typeof walletTransactions.$inferSelect;
+export type GameCatalogItem = typeof gameCatalog.$inferSelect;
+
+export const crashRounds = mysqlTable("crashRounds", {
+  id: int("id").autoincrement().primaryKey(),
+  roundCode: varchar("roundCode", { length: 40 }).notNull().unique(),
+  status: mysqlEnum("status", ["running", "crashed"]).default("running").notNull(),
+  crashMultiplier: decimal("crashMultiplier", { precision: 12, scale: 4 }).notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  crashedAt: timestamp("crashedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const crashBets = mysqlTable("crashBets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  roundId: int("roundId").notNull().references(() => crashRounds.id),
+  stake: decimal("stake", { precision: 20, scale: 6 }).notNull(),
+  cashoutMultiplier: decimal("cashoutMultiplier", { precision: 12, scale: 4 }),
+  payout: decimal("payout", { precision: 20, scale: 6 }).default("0").notNull(),
+  status: mysqlEnum("status", ["pending", "won", "lost"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ roundUserUnique: uniqueIndex("crashBets_round_user_unique").on(table.roundId, table.userId) }));
+
+export type CrashRound = typeof crashRounds.$inferSelect;
+export type CrashBet = typeof crashBets.$inferSelect;

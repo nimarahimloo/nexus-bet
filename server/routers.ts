@@ -3,11 +3,10 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { getOrCreateWalletByUserId, getUserBets, getWheelHistory, getWheelStatus, placeBet, spinLuckyWheel } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getOrCreateWalletByUserId, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, spinLuckyWheel } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
-import { fallbackSmartPicks } from "../shared/ai";
 import { ENV } from "./_core/env";
 import { type MatchCardData } from "../shared/sports";
 import { fetchSportsDetails, fetchSportsFeed } from "./sportsFeed";
@@ -46,6 +45,13 @@ export const appRouter = router({
     }),
   }),
 
+  crash: router({
+    current: publicProcedure.query(async () => (await getActiveCrashRound()) ?? createCrashRound()),
+    history: publicProcedure.query(() => getCrashHistory()),
+    place: protectedProcedure.input(z.object({ roundId: z.number().int().positive(), stake: z.number().finite().min(1).max(1_000_000) })).mutation(({ ctx, input }) => placeCrashBet(ctx.user.id, input.roundId, input.stake)),
+    cashout: protectedProcedure.input(z.object({ betId: z.number().int().positive() })).mutation(({ ctx, input }) => cashoutCrashBet(ctx.user.id, input.betId)),
+  }),
+
   rewards: router({
     segments: publicProcedure.query(() => ({ source: "backend" as const, segments: getWheelSegments() })),
     status: protectedProcedure.query(({ ctx }) => getWheelStatus(ctx.user.id)),
@@ -65,6 +71,24 @@ export const appRouter = router({
     }),
   }),
 
+  promotions: router({
+    active: publicProcedure.query(() => getActivePromotions()),
+    claim: protectedProcedure.input(z.object({ promotionId: z.number().int().positive() })).mutation(({ ctx, input }) => claimPromotion(ctx.user.id, input.promotionId)),
+  }),
+
+  tournaments: router({
+    active: publicProcedure.query(() => getTournaments()),
+    leaderboard: publicProcedure.input(z.object({ tournamentId: z.number().int().positive() })).query(({ input }) => getTournamentLeaderboard(input.tournamentId)),
+  }),
+
+  vip: router({
+    summary: protectedProcedure.query(({ ctx }) => getVipSummary(ctx.user.id)),
+  }),
+
+  games: router({
+    catalog: publicProcedure.query(() => getActiveGameCatalog()),
+  }),
+
   wallet: router({
     status: publicProcedure.query(({ ctx }) => ({
       authenticated: Boolean(ctx.user),
@@ -79,6 +103,12 @@ export const appRouter = router({
         lockedBalance: Number(wallet.lockedBalance),
       } : null;
     }),
+    transactions: protectedProcedure.query(({ ctx }) => getWalletTransactions(ctx.user.id)),
+    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => requestWalletTransaction({ ...input, userId: ctx.user.id })),
+  }),
+
+  account: router({
+    overview: protectedProcedure.query(async ({ ctx }) => ({ bets: await getUserBets(ctx.user.id), wheelSpins: await getWheelHistory(ctx.user.id), walletTransactions: await getWalletTransactions(ctx.user.id) })),
   }),
 
   ai: router({
@@ -91,7 +121,6 @@ export const appRouter = router({
         })).min(1).max(24),
       }))
       .query(async ({ input }) => {
-        const fallback = fallbackSmartPicks(input.candidates);
         try {
           const response = await invokeLLM({
             model: "gpt-5-mini",
@@ -138,10 +167,10 @@ export const appRouter = router({
             const candidate = input.candidates.find((item) => item.eventId === pick.eventId && item.marketLabel === pick.marketLabel);
             return candidate ? { ...candidate, ...pick } : null;
           }).filter(Boolean);
-          return { picks: enriched.length ? enriched : fallback, source: enriched.length ? "ai" as const : "fallback" as const };
+          return { picks: enriched, source: enriched.length ? "ai" as const : "empty" as const };
         } catch (error) {
-          console.warn("[Nexus AI] Falling back to explainable picks:", error);
-          return { picks: fallback, source: "fallback" as const };
+          console.warn("[Nexus AI] Model unavailable; returning empty result:", error);
+          return { picks: [], source: "empty" as const };
         }
       }),
   }),

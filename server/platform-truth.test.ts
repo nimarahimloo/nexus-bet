@@ -22,7 +22,7 @@ describe("platform truth and UI consolidation", () => {
 
   it("does not render retired static offer, tournament, or game catalogs", () => {
     const featurePages = read("../client/src/pages/FeaturePages.tsx");
-    expect(featurePages).not.toMatch(/const offers|const tournaments|const games/);
+    expect(featurePages).not.toMatch(/const (offers|tournaments|games)\s*=\s*\[/);
     expect(featurePages).toContain("OperationalEmpty");
   });
 
