@@ -22,13 +22,13 @@ const moreNav = [
   ["/casino", "مرکز بازی‌ها", Gamepad2],
 ] as const;
 
-export function PageShell({ title, eyebrow, description, heroImage, children }: { title: string; eyebrow: string; description: string; heroImage: string; children: ReactNode }) {
+export function PageShell({ title, eyebrow, description, heroImage, children, isHome = false }: { title?: string; eyebrow?: string; description?: string; heroImage?: string; children: ReactNode; isHome?: boolean }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
   const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
-  return <main className="nexus-shell subpage-shell">
+  return <main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"}`}>
     <header className="topbar glass-panel">
-      <Link href="/" className="brand" onClick={() => setOpen(false)}><span className="brand-mark">N</span><span><b>NEXUS</b><small>BET</small></span></Link>
+      <Link href="/" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><img src="/manus-storage/nexus-bet-logo_92fe8c09.png" alt="" /></span><span><b>NEXUS</b><small>BET</small></span></Link>
       <nav className={`main-nav ${open ? "is-open" : ""}`} aria-label="ناوبری اصلی">
         {primaryNav.map(([href, label]) => <Link key={href} href={href} className={`nav-link ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}>{label}{href === "/matches" && <i className="live-dot" />}</Link>)}
         <span className="nav-divider" aria-hidden="true" />
@@ -36,8 +36,8 @@ export function PageShell({ title, eyebrow, description, heroImage, children }: 
       </nav>
       <div className="header-actions"><button className="icon-button" aria-label="اعلان‌ها"><Bell size={17} /></button><Link href="/account" className="login-button" onClick={() => setOpen(false)}><UserRound size={16} /> ورود امن</Link><button className="icon-button mobile-menu" onClick={() => setOpen(!open)} aria-label={open ? "بستن منو" : "بازکردن منو"}>{open ? <X size={19} /> : <Menu size={19} />}</button></div>
     </header>
-    <section className="subpage-hero container"><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></section>
-    <section className="subpage-content container">{children}</section>
+    {!isHome && title && <section className="subpage-hero container"><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></section>}
+    <section className={`${isHome ? "" : "subpage-content"} container`}>{children}</section>
     <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><Link href="/" className={isActive("/") ? "is-active" : ""}><Home size={17} /><span>خانه</span></Link><Link href="/matches" className={isActive("/matches") ? "is-active" : ""}><Trophy size={17} /><span>مسابقات</span></Link><Link href="/crash" className={isActive("/crash") ? "is-active" : ""}><ReceiptText size={17} /><span>انفجار</span></Link><Link href="/wallet" className={isActive("/wallet") ? "is-active" : ""}><WalletCards size={17} /><span>کیف پول</span></Link><Link href="/account" className={isActive("/account") ? "is-active" : ""}><UserRound size={17} /><span>حساب</span></Link></nav>
   </main>;
 }

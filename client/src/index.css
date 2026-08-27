@@ -413,3 +413,18 @@ button:active, .solid-cta:active, .primary-cta:active, .outline-cta:active, .log
 .sheet-status { margin: 9px 0 0; padding: 8px 10px; border-radius: 9px; font-size: 9px; line-height: 1.8; text-align: center; }
 .sheet-status-error { color: #f3b1b7; border: 1px solid rgba(243,177,183,.18); background: rgba(243,100,117,.08); }
 .sheet-status-success { color: #9be9df; border: 1px solid rgba(99,232,213,.2); background: rgba(99,232,213,.08); }
+
+/* Unified mobile betting surface: the same sheet is used by Home and Matches. */
+.bet-sheet-layer { position: fixed; z-index: 40; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 12px; background: rgba(4, 3, 8, .62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); animation: fade-in .2s var(--ease-out); }
+.bet-sheet { width: min(520px, 100%); max-height: min(680px, calc(100dvh - 24px)); overflow: auto; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); border: 1px solid rgba(255, 255, 255, .14); border-radius: 25px 25px 18px 18px; background: rgba(28, 18, 45, .88); box-shadow: 0 -22px 80px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .1); transform-origin: bottom; animation: sheet-up .28s var(--ease-out); }
+.bet-sheet .sheet-submit { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 46px; color: #1a1129; border: 0; border-radius: 13px; background: var(--nexus-mint); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; transition: transform .16s var(--ease-out), filter .16s var(--ease-out), opacity .16s var(--ease-out); }
+.bet-sheet .sheet-submit:active { transform: scale(.98); }
+.bet-sheet .sheet-submit:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.65); }
+.sheet-empty { padding: 20px 12px; color: #958b9e; font-size: 10px; line-height: 1.9; text-align: center; }
+@media (max-width: 720px) { .bet-sheet-layer { padding: 0; } .bet-sheet { max-height: calc(100dvh - 8px); border-radius: 25px 25px 0 0; padding-bottom: calc(18px + env(safe-area-inset-bottom)); } }
+@media (min-width: 721px) { .bet-sheet-layer { display: none; } }
+@media (prefers-reduced-motion: reduce) { .bet-sheet, .bet-sheet-layer { animation: none; } .bet-sheet .sheet-submit { transition: none; } }
+.address-box.is-unavailable { align-items: center; opacity: .8; }
+.address-box.is-unavailable > svg { flex: none; color: #a99ab6; }
+.data-state { margin: 10px 0 0; color: #9e93a8; font-size: 10px; line-height: 1.8; }
+.data-state.error, .inline-alert { color: #f0b1b7; }

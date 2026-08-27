@@ -184,3 +184,18 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اتصال CTA bottom sheet به mutation و نمایش confirmation/error واقعی.
 - [x] افزودن فیلتر لیگ و هشدار odds تغییرکرده پیش از ثبت.
 - [x] افزودن تست‌های backend و UI، بازبینی موبایل و ثبت checkpoint جدید.
+
+## Platform truth and UI consolidation pass
+- [x] ممیزی همهٔ صفحات و مشخص‌کردن هر منبع داده: API واقعی، backend واقعی، نمونهٔ موقت یا متن تزئینی.
+- [x] حذف دادهٔ نمونه از مسیرهای عملیاتی یا نمایش برچسب شفاف demo در جاهایی که منبع واقعی نداریم.
+- [x] تعریف قرارداد source of truth برای مسابقات، odds، wallet، bets، bonuses و tournaments.
+- [x] انتخاب و پیاده‌سازی یک header واحد برای desktop/mobile و حذف variantهای تکراری.
+- [x] انتخاب و پیاده‌سازی یک bottom sheet واحد برای bet slip و تعاملات موبایل.
+- [x] یکپارچه‌سازی design tokens، spacing، radius، blur و stateهای تعاملی در مسیرهای اصلی.
+- [x] افزودن تست audit برای جلوگیری از بازگشت fake data و variantهای duplicate.
+- [x] اجرای تست و بازبینی responsive پیش از checkpoint مرحلهٔ اول.
+
+## Operational feed cleanup
+- [x] افزودن واکشی odds رسمی API-Football و نگاشت عددی بدون مقدار پیش‌فرض.
+- [x] حذف seedها و fallbackهای مسابقه از runtime و تبدیل جزئیات ناموجود به empty state.
+- [x] افزودن تست audit برای یک header، یک BetSheet و نبود catalog ساختگی.

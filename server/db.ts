@@ -1,4 +1,4 @@
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, bets, users, wallets } from "../drizzle/schema";
 import { randomUUID } from "node:crypto";
@@ -130,6 +130,13 @@ export async function placeBet(input: PlaceBetInput) {
     });
     return { id: Number(inserted[0].insertId), ticketCode, stake: input.stake, potentialReturn: input.potentialReturn, status: "pending" as const };
   });
+}
+
+export async function getUserBets(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(bets).where(eq(bets.userId, userId)).orderBy(desc(bets.createdAt)).limit(20);
+  return rows.map((bet) => ({ ...bet, stake: Number(bet.stake), combinedOdds: Number(bet.combinedOdds), potentialReturn: Number(bet.potentialReturn), selections: JSON.parse(bet.selectionsJson) as Array<{ id: string; match: string; market: string; odds: number }> }));
 }
 
 export async function getOrCreateWalletByUserId(userId: number) {

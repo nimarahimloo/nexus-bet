@@ -76,12 +76,28 @@ export function mapSportsFixtures(fixtures: SportsApiFixture[]): MatchCardData[]
  */
 export type MatchDetailData = {
   fixtureId: string;
-  source: "api" | "demo" | "fallback";
+  source: "api" | "demo" | "fallback" | "empty";
   error: string | null;
   statistics: { label: string; home: string; away: string }[];
   lineups: { team: string; formation?: string; players: { name: string; position: string; number?: number }[] }[];
   events: { minute: string; team: string; player: string; type: string; detail?: string }[];
 };
+
+export type SportsApiOddsValue = { value?: string; odd?: string };
+export type SportsApiOddsPayload = { bookmakers?: { bets?: { name?: string; values?: SportsApiOddsValue[] }[] }[] };
+
+export function mapSportsOdds(payload: SportsApiOddsPayload | undefined) {
+  const bets = payload?.bookmakers?.flatMap((bookmaker) => bookmaker.bets ?? []) ?? [];
+  const winnerBet = bets.find((bet) => (bet.values?.length ?? 0) >= 2 && /match winner|1x2|winner/i.test(bet.name ?? "")) ?? bets.find((bet) => (bet.values?.length ?? 0) >= 2);
+  if (!winnerBet?.values?.length) return [];
+  return winnerBet.values.slice(0, 3).flatMap((value, index) => {
+    const odds = Number(value.odd);
+    if (!Number.isFinite(odds) || odds <= 1) return [];
+    const labels = ["۱", "X", "۲"];
+    const names = ["برد میزبان", "مساوی", "برد مهمان"];
+    return [{ label: labels[index] ?? String(index + 1), name: value.value ?? names[index] ?? `بازار ${index + 1}`, odds }];
+  });
+}
 
 export type SportsApiDetailPayload = {
   statistics?: { team?: { name?: string }; statistics?: { type?: string; value?: string | number | null }[] }[];
@@ -96,20 +112,3 @@ export function mapSportsDetails(fixtureId: string, payloads: { statistics?: Spo
   return { fixtureId, source: "api", error: null, statistics, lineups, events };
 }
 
-export function buildDemoDetail(fixture: MatchCardData): MatchDetailData {
-  return { fixtureId: fixture.id, source: "demo", error: "جزئیات این مسابقه نمونه هستند و از سرویس واقعی دریافت نشده‌اند.", statistics: [{ label: "مالکیت", home: "۵۴٪", away: "۴۶٪" }, { label: "شوت در چارچوب", home: "۶", away: "۴" }, { label: "کرنر", home: "۵", away: "۳" }], lineups: [{ team: fixture.home, formation: "۴-۳-۳", players: ["دروازه‌بان اصلی", "مدافع راست", "مدافع میانی", "هافبک مرکزی", "مهاجم هدف"].map((name, index) => ({ name, position: index === 0 ? "GK" : index === 4 ? "FW" : "MF", number: index + 1 })) }, { team: fixture.away, formation: "۴-۲-۳-۱", players: ["دروازه‌بان اصلی", "مدافع چپ", "هافبک دفاعی", "هافبک هجومی", "مهاجم هدف"].map((name, index) => ({ name, position: index === 0 ? "GK" : index === 4 ? "FW" : "MF", number: index + 11 })) }], events: [{ minute: "۲۳′", team: fixture.home, player: "بازیکن نمونه", type: "کارت زرد", detail: "دادهٔ نمونه" }, { minute: "۶۷′", team: fixture.away, player: "بازیکن نمونه", type: "تعویض", detail: "دادهٔ نمونه" }] };
-}
-
-export function buildDemoMatchesFromAdapter(seeds: MatchCardData[]): MatchCardData[] {
-  return seeds.flatMap((seed, index) => {
-    const mapped = mapSportsFixture({
-      fixture: { id: index + 1, date: "2026-08-27T18:30:00Z", status: { short: "NS", elapsed: null } },
-      league: { name: seed.league },
-      teams: {
-        home: { name: seed.home, logo: seed.homeLogo },
-        away: { name: seed.away, logo: seed.awayLogo },
-      },
-    });
-    return mapped ? [{ ...mapped, ...seed }] : [];
-  });
-}

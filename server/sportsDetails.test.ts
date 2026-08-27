@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDemoDetail, mapSportsDetails } from "../shared/sports";
+import { mapSportsDetails } from "../shared/sports";
 import { closeMatchModal, closesMatchModal, getMatchDetailsStatus, getTabEmptyMessage, matchModalTabs, openMatchModal, shouldCloseFromBackdrop } from "../shared/matchModal";
 
 describe("sports match details", () => {
@@ -32,10 +32,4 @@ describe("sports match details", () => {
     expect(getTabEmptyMessage("events")).toContain("رویداد");
   });
 
-  it("provides clearly marked demo details when a fixture has no API detail", () => {
-    const detail = buildDemoDetail({ id: "demo-1", league: "لیگ نمونه", sport: "فوتبال", status: "نمونه", time: "۲۰:۰۰", home: "میزبان", homeLogo: "", away: "مهمان", awayLogo: "", markets: [], insight: "دادهٔ نمایشی" });
-    expect(detail.statistics.length).toBeGreaterThan(0);
-    expect(detail.lineups).toHaveLength(2);
-    expect(detail.events.every((event) => event.detail === "دادهٔ نمونه")).toBe(true);
-  });
 });

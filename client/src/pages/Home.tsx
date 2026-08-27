@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
 import type { AiPick } from "@shared/ai";
-import { buildDemoMatchesFromAdapter, type MatchCardData } from "@shared/sports";
-import { getVipProgress } from "@/lib/vip";
+import type { MatchCardData } from "@shared/sports";
 import { formatFaDecimal, formatFaNumber } from "@shared/format";
 import { formatSportsFeedStatus } from "@shared/sportsDisplay";
 import { FeatureHub } from "./FeaturePages";
@@ -45,8 +44,10 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { PageShell } from "@/components/PageShell";
+import { BetSheet } from "@/components/BetSheet";
 import { toast } from "sonner";
-import { useLocation } from "wouter";
+import { Link } from "wouter";
 
 type EventStatus = "نمونه" | "امروز" | "فردا";
 
@@ -58,91 +59,10 @@ type Selection = BettingSelection & {
   market: string;
 };
 
-const demoMatchSeed: Match[] = [
-  {
-    id: "rma-bar",
-    league: "لالیگا · اسپانیا",
-    sport: "فوتبال",
-    status: "نمونه",
-    time: "۲۲:۳۰",
-    home: "رئال مادرید",
-    homeLogo: "/manus-storage/real-madrid_189097ef.png",
-    away: "بارسلونا",
-    awayLogo: "/manus-storage/barcelona_36dcce68.png",
-    markets: [
-      { label: "۱", name: "برد رئال مادرید", odds: 2.04 },
-      { label: "X", name: "مساوی", odds: 3.62 },
-      { label: "۲", name: "برد بارسلونا", odds: 3.15 },
-      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.74 },
-      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.88 },
-    ],
-    insight: "داغ‌ترین مسابقهٔ امروز",
-  },
-  {
-    id: "ars-che",
-    league: "لیگ برتر · انگلیس",
-    sport: "فوتبال",
-    status: "نمونه",
-    time: "۲۲:۳۰",
-    home: "آرسنال",
-    homeLogo: "/manus-storage/arsenal_81af535e.jpg",
-    away: "چلسی",
-    awayLogo: "/manus-storage/chelsea_7ee36ece.png",
-    markets: [
-      { label: "۱", name: "برد آرسنال", odds: 2.28 },
-      { label: "X", name: "مساوی", odds: 2.94 },
-      { label: "۲", name: "برد چلسی", odds: 4.2 },
-      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.66 },
-      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.91 },
-    ],
-    insight: "دادهٔ نمایشی برای بررسی تجربه",
-  },
-  {
-    id: "bayern-dortmund",
-    league: "بوندس‌لیگا · آلمان",
-    sport: "فوتبال",
-    status: "نمونه",
-    time: "۲۰:۰۰",
-    home: "بایرن مونیخ",
-    homeLogo: "/manus-storage/bayern_70a7fa9c.png",
-    away: "دورتموند",
-    awayLogo: "/manus-storage/dortmund_990aaa2a.webp",
-    markets: [
-      { label: "۱", name: "برد بایرن مونیخ", odds: 1.76 },
-      { label: "X", name: "مساوی", odds: 4.18 },
-      { label: "۲", name: "برد دورتموند", odds: 4.75 },
-      { label: "گل", name: "هر دو تیم گل می‌زنند", odds: 1.72 },
-      { label: "O/U", name: "بیش از ۲٫۵ گل", odds: 1.82 },
-    ],
-    insight: "دادهٔ نمایشی برای بررسی تجربه",
-  },
-  {
-    id: "sinner-alcaraz",
-    league: "مسترز · تنیس",
-    sport: "تنیس",
-    status: "نمونه",
-    time: "۱۹:۴۵",
-    home: "ی. سینر",
-    homeLogo: "",
-    away: "ک. آلکاراس",
-    awayLogo: "",
-    markets: [
-      { label: "۱", name: "برد ی. سینر", odds: 1.92 },
-      { label: "۲", name: "برد ک. آلکاراس", odds: 1.98 },
-      { label: "ست", name: "برد ۲–۰ در ست‌ها", odds: 2.35 },
-      { label: "گیم", name: "بیش از ۲۲٫۵ گیم", odds: 1.86 },
-    ],
-    insight: "فینال · زمین سخت",
-  },
-];
-
-// The demo feed uses the same adapter as the future API response, so replacing it requires no UI-model rewrite.
-const demoMatches: MatchCardData[] = buildDemoMatchesFromAdapter(demoMatchSeed);
-
 const networkInfo = {
-  "TRC-20": { address: "TUf9...8bM2", confirmations: "۱ تأیید", fee: "۱ USDT" },
-  "TON": { address: "UQD4...nF9", confirmations: "۲ تأیید", fee: "۰٫۵ USDT" },
-  "ERC-20": { address: "0x72A4...D09E", confirmations: "۱۲ تأیید", fee: "۶ USDT" },
+  "TRC-20": { status: "در انتظار اتصال ledger واقعی" },
+  "TON": { status: "در انتظار اتصال ledger واقعی" },
+  "ERC-20": { status: "در انتظار اتصال ledger واقعی" },
 };
 
 const leagues = ["همه", "فوتبال", "تنیس", "بسکتبال", "والیبال"];
@@ -156,13 +76,18 @@ function scrollTo(id: string) {
 }
 
 export default function Home() {
-  const [location] = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
+  const betsQuery = trpc.bet.mine.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
+  const wallet = walletQuery.data;
+  const bets = betsQuery.data ?? [];
+  const openBets = bets.filter((bet) => bet.status === "pending");
   const sportsQuery = trpc.sports.fixtures.useQuery({ next: 10 }, { staleTime: 30_000, refetchInterval: 60_000 });
   const liveQuery = trpc.sports.live.useQuery(undefined, { staleTime: 15_000, refetchInterval: 30_000 });
-  const matches: MatchCardData[] = sportsQuery.data?.matches?.length ? sportsQuery.data.matches : demoMatches;
+  const matches: MatchCardData[] = sportsQuery.data?.matches ?? [];
   const liveMatch = liveQuery.data?.matches?.[0];
+  const featuredMatch = matches[0];
+  const featuredMarket = featuredMatch?.markets[0];
   const [activeFilter, setActiveFilter] = useState("همه");
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMarketIds, setExpandedMarketIds] = useState<string[]>([]);
@@ -173,13 +98,11 @@ export default function Home() {
   const [withdrawAddress, setWithdrawAddress] = useState("");
   const [slipOpen, setSlipOpen] = useState(false);
   const [ticketOpen, setTicketOpen] = useState(false);
+  const placeBetMutation = trpc.bet.place.useMutation({ onSuccess: (result) => { setTicketOpen(false); setSelections([]); toast.success(`بلیت ${result.ticketCode} ثبت شد.`); void walletQuery.refetch(); }, onError: (error) => { toast.error(error.message.includes("INSUFFICIENT") ? "موجودی برای این بلیت کافی نیست." : "ثبت بلیت انجام نشد؛ دوباره بررسی کن."); } });
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const [lastAddedSelectionId, setLastAddedSelectionId] = useState<string | null>(null);
   const [removingSelectionId, setRemovingSelectionId] = useState<string | null>(null);
-  const [vipDetailReward, setVipDetailReward] = useState<string | null>(null);
   const [responsibleConfirmed, setResponsibleConfirmed] = useState(false);
-  const vip = useMemo(() => getVipProgress(1820), []);
   const availableBalance = walletQuery.data?.availableBalance ?? 0;
   const lockedBalance = walletQuery.data?.lockedBalance ?? 0;
   const walletLoading = isAuthenticated && walletQuery.isLoading;
@@ -244,9 +167,7 @@ export default function Home() {
       toast.error("مبلغ برداشت نمی‌تواند از موجودی قابل‌استفاده بیشتر باشد.");
       return;
     }
-    toast.success("درخواست برداشت برای بررسی امنیتی ثبت شد.");
-    setWithdrawAmount("");
-    setWithdrawAddress("");
+    toast.info("ثبت برداشت واقعی پس از اتصال ledger و بررسی امنیتی فعال می‌شود.");
   };
 
   const showTicket = () => {
@@ -272,54 +193,21 @@ export default function Home() {
       toast.error("مبلغ باید بین ۱ و موجودی قابل‌استفادهٔ شما باشد.");
       return;
     }
+    setSlipOpen(false);
     setTicketOpen(true);
   };
 
+  const sheetStatusMessage = !isAuthenticated ? "برای ثبت بلیت ابتدا وارد حساب شوید." : walletLoading ? "در حال دریافت موجودی واقعی کیف پول…" : walletError ? "موجودی کیف پول در دسترس نیست." : stakeValidation.state === "insufficient" ? `موجودی کافی نیست؛ ${numberFa(numericStake - availableBalance)} USDT دیگر نیاز دارید.` : stakeValidation.state === "invalid" ? "مبلغ باید حداقل ۱ USDT باشد." : null;
+
   const confirmTicket = () => {
-    setTicketOpen(false);
-    setSelections([]);
-    toast.success("بلیت شما ثبت شد و در بخش شرط‌های باز قابل پیگیری است.");
+    if (!stakeValid || !selections.length || placeBetMutation.isPending) return;
+    placeBetMutation.mutate({ stake: numericStake, selections });
   };
 
   return (
-    <main className="nexus-shell">
+    <PageShell isHome>
       <div className="aurora aurora-one" />
       <div className="aurora aurora-two" />
-      <header className="topbar glass-panel">
-        <button className="brand" onClick={() => scrollTo("discover")} aria-label="Nexus Bet، صفحه نخست">
-          <span className="brand-mark"><img src="/manus-storage/nexus-bet-logo_92fe8c09.png" alt="" /></span>
-          <span>
-            <b>NEXUS</b>
-            <small>BET</small>
-          </span>
-        </button>
-
-        <nav className={`main-nav ${menuOpen ? "is-open" : ""}`} aria-label="ناوبری اصلی">
-          <a className={`nav-link ${location === "/" ? "is-active" : ""}`} href="/">خانه</a>
-          <a className={`nav-link ${location.startsWith("/matches") ? "is-active" : ""}`} href="/matches">مسابقات <i className="live-dot" /></a>
-          <a className={`nav-link ${location.startsWith("/crash") ? "is-active" : ""}`} href="/crash">انفجار</a>
-          <a className={`nav-link ${location.startsWith("/promotions") ? "is-active" : ""}`} href="/promotions">پیشنهادها</a>
-          <a className={`nav-link ${location.startsWith("/tournaments") ? "is-active" : ""}`} href="/tournaments">تورنمنت‌ها</a>
-          <a className={`nav-link ${location.startsWith("/wallet") ? "is-active" : ""}`} href="/wallet">کیف پول</a>
-          <a className={`nav-link ${location.startsWith("/account") ? "is-active" : ""}`} href="/account">حساب من</a>
-        </nav>
-
-        <div className="header-actions">
-          <button className="icon-button notification" aria-label="اعلان‌ها"><Bell size={18} /><span /></button>
-          <button className="balance-chip" onClick={() => scrollTo("wallet")}>
-            <span className="coin">₮</span>
-            <span><b>{numberFa(availableBalance)} USDT</b><small>کیف پول شما</small></span>
-            <ChevronDown size={16} />
-          </button>
-          <Button className="login-button" onClick={() => (isAuthenticated ? scrollTo("account") : startLogin())}>
-            <UserRound size={17} />
-            {isAuthenticated ? (user?.name ?? "حساب کاربری") : "ورود امن"}
-          </Button>
-          <button className="icon-button mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="منو">
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </header>
 
       <section className="hero container" id="discover">
         <div className="hero-copy">
@@ -338,16 +226,7 @@ export default function Home() {
 
         <div className="hero-score glass-panel"><img className="hero-art" src="/manus-storage/nexus-bet-hero_64d33d2f.jpg" alt="استادیوم شبانه و شبکهٔ Nexus Bet" />
           <div className="nexus-network" aria-hidden="true"><i /><i /><i /><i /></div>
-          <div className="score-top"><span className="demo-tag">نمونه</span><span>لیگ برتر انگلستان</span><button aria-label="افزودن به علاقه‌مندی‌ها"><Crown size={16} /></button></div>
-          <div className="scoreboard">
-            <div><span className="team-orb red">A</span><b>آرسنال</b></div>
-            <div className="score-center"><strong>— <small>·</small> —</strong><span>نمایش آزمایشی</span></div>
-            <div><span className="team-orb blue">C</span><b>چلسی</b></div>
-          </div>
-          <div className="hero-market">
-            <span>بیش از ۱٫۵ گل</span><b>۱٫۷۲</b><button onClick={() => addSelection(matches[1], { label: "o15", name: "بیش از ۱٫۵ گل", odds: 1.72 })}><Plus size={17} /></button>
-          </div>
-          <div className="signal-row"><span><Activity size={14} /> ۲۷ بازار فعال</span><span>به‌روزرسانی لحظه‌ای</span></div>
+          {featuredMatch ? <><div className="score-top"><span className={sportsQuery.data?.source === "api" ? "live-chip" : "demo-tag"}>{sportsQuery.data?.source === "api" ? "API واقعی" : "بدون دادهٔ عملیاتی"}</span><span>{featuredMatch.league}</span><span aria-hidden="true"><Crown size={16} /></span></div><div className="scoreboard"><div><span className="team-orb red">{featuredMatch.home.slice(0, 1)}</span><b>{featuredMatch.home}</b></div><div className="score-center"><strong>{featuredMatch.score ?? "— · —"}</strong><span>{featuredMatch.status}</span></div><div><span className="team-orb blue">{featuredMatch.away.slice(0, 1)}</span><b>{featuredMatch.away}</b></div></div>{featuredMarket ? <div className="hero-market"><span>{featuredMarket.name}</span><b>{numberFa(featuredMarket.odds)}</b><button onClick={() => addSelection(featuredMatch, featuredMarket)} aria-label="افزودن بازار به بلیت"><Plus size={17} /></button></div> : <div className="hero-market is-unavailable"><span>بازار رسمی این مسابقه هنوز دریافت نشده است</span><span>—</span></div>}<div className="signal-row"><span><Activity size={14} /> {formatFaNumber(featuredMatch.markets.length, { maximumFractionDigits: 0 })} بازار رسمی</span><span>{sportsQuery.data?.source === "api" ? "فید API" : "در انتظار منبع"}</span></div></> : <div className="hero-empty"><span><Activity size={18} /></span><b>هنوز مسابقهٔ قابل‌نمایشی از منبع واقعی دریافت نشده است.</b><small>{sportsQuery.isLoading ? "در حال دریافت فید مسابقات…" : sportsQuery.data?.error ?? "به‌محض آماده‌شدن فید، این بخش به‌روزرسانی می‌شود."}</small><Link href="/matches" className="outline-cta">رفتن به مرکز مسابقات <ArrowLeft size={15} /></Link></div>}
         </div>
       </section>
 
@@ -413,7 +292,7 @@ export default function Home() {
           {(searchTerm || activeFilter !== "همه") && <button className="show-more" onClick={() => { setSearchTerm(""); setActiveFilter("همه"); }}>پاک‌کردن جست‌وجو و نمایش همه <ChevronDown size={17} /></button>}
         </div>
 
-        <aside className={`slip-card glass-panel ${slipOpen ? "mobile-open" : ""}`} aria-label="بلیت پیش‌بینی">
+          <aside className="slip-card glass-panel" aria-label="بلیت پیش‌بینی">
           <div className="slip-head"><div><ReceiptText size={20} /><h3>بلیت من</h3><span>{selections.length} انتخاب</span></div><div className="slip-head-actions"><button onClick={() => setSelections([])} disabled={!selections.length}>پاک‌سازی</button><button className="slip-mobile-close" onClick={() => setSlipOpen(false)} aria-label="بستن بلیت"><X size={16} /></button></div></div>
           {selections.length === 0 ? (
             <div className="slip-empty"><div><LayoutGrid size={25} /></div><b>هنوز انتخابی ندارید</b><p>یک ضریب از مسابقات را لمس کنید تا بلیت شما آماده شود.</p></div>
@@ -450,8 +329,8 @@ export default function Home() {
           <div className="deposit-panel glass-panel" id="deposit">
             <div className="panel-title"><div><span className="section-kicker">واریز USDT</span><h3>یک شبکه را انتخاب کنید</h3></div><span className="secure-chip"><ShieldCheck size={14} /> امن</span></div>
             <div className="network-tabs">{(Object.keys(networkInfo) as (keyof typeof networkInfo)[]).map((item) => <button key={item} className={network === item ? "active" : ""} onClick={() => setNetwork(item)}>{item}</button>)}</div>
-            <div className="address-box"><div><span>آدرس واریز شما</span><b dir="ltr">{networkInfo[network].address}</b></div><button onClick={() => { navigator.clipboard?.writeText(networkInfo[network].address); toast.success("آدرس شبکه کپی شد."); }} aria-label="کپی آدرس"><Copy size={18} /></button></div>
-            <div className="network-detail"><span><Clock3 size={15} /> واریز پس از {networkInfo[network].confirmations}</span><span>کارمزد شبکه: {networkInfo[network].fee}</span></div>
+            <div className="address-box is-unavailable"><div><span>آدرس واریز</span><b>{networkInfo[network].status}</b></div><LockKeyhole size={18} /></div>
+            <div className="network-detail"><span><Clock3 size={15} /> وضعیت شبکه: در انتظار فعال‌سازی</span><span>کارمزد: پس از اتصال مشخص می‌شود</span></div>
             <p className="wallet-warning"><CircleHelp size={15} /> فقط USDT روی شبکهٔ انتخاب‌شده را به این آدرس ارسال کنید.</p>
           </div>
 
@@ -464,39 +343,32 @@ export default function Home() {
       </section>
 
       {selections.length > 0 && <button className="mobile-slip-dock" onClick={() => setSlipOpen(true)}><span><ReceiptText size={17} /> {selections.length} انتخاب</span><b>{numberFa(potentialReturn)} USDT</b><ArrowLeft size={16} /></button>}
-      <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><button className="is-active" onClick={() => scrollTo("discover")}><LayoutGrid size={18} /><span>خانه</span></button><button onClick={() => scrollTo("live")}><Activity size={18} /><span>زنده</span></button><button onClick={() => setSlipOpen(true)}><ReceiptText size={18} /><span>بلیت</span>{selections.length > 0 && <em>{selections.length}</em>}</button><button onClick={() => scrollTo("wallet")}><WalletCards size={18} /><span>کیف پول</span></button><button onClick={() => scrollTo("account")}><UserRound size={18} /><span>حساب</span></button></nav>
+
+      <BetSheet selections={selections} stake={stake} setStake={setStake} odds={odds} open={slipOpen} onClose={() => setSlipOpen(false)} onSubmit={showTicket} canSubmit={Boolean(stakeValid && selections.length && !placeBetMutation.isPending)} statusMessage={sheetStatusMessage} isSubmitting={placeBetMutation.isPending} />
 
       <section className="vip-section container" id="vip">
-        <div className="section-heading"><div><span className="section-kicker"><Crown size={14} /> باشگاه مشتریان Nexus</span><h2>فعال بمان؛ سطح بالاتری بگیر</h2></div><button className="text-link" onClick={() => toast.info("امتیازها با ثبت فعالیت‌های واجد شرایط به‌روزرسانی می‌شوند.")}>راهنمای VIP <ArrowLeft size={16} /></button></div>
-        <div className="vip-panel glass-panel">
-          <div className="vip-hero-copy"><div className={`vip-emblem ${vip.current.color}`}><Crown size={25} /></div><div><span className="vip-overline">سطح فعلی شما</span><h3>{vip.current.label}</h3><p>{vip.next ? `فقط ${numberFa(vip.pointsToNext, 0)} امتیاز تا ${vip.next.label}` : "شما به بالاترین سطح باشگاه رسیده‌اید."}</p></div></div>
-          <div className="vip-progress-wrap"><div className="vip-progress-head"><span>پیشرفت سطح</span><strong>{numberFa(vip.points, 0)} <small>امتیاز</small></strong></div><div className="vip-progress-track"><span style={{ width: `${vip.progress}%` }} /></div><div className="vip-progress-foot"><span>{vip.current.label}</span><b>{numberFa(vip.progress, 0)}٪</b><span>{vip.next?.label ?? "حداکثر سطح"}</span></div></div>
-          <div className="vip-rewards"><div className="vip-rewards-head"><div><span className="section-kicker">پاداش‌های اختصاصی</span><h3>مزایای فعال شما</h3></div><span className="vip-status"><Sparkles size={14} /> مزایای اختصاصی</span></div><div className="reward-grid"><article className="reward-card unlocked"><span className="reward-icon"><Zap size={18} /></span><div><b>تحلیل ویژه Nexus AI</b><p>دسترسی زودتر به تحلیل‌های توضیح‌پذیر مسابقات.</p></div><button onClick={() => setVipDetailReward("ai")}>جزئیات</button></article><article className="reward-card unlocked"><span className="reward-icon"><WalletCards size={18} /></span><div><b>اولویت خدمات کیف پول</b><p>مسیر سریع‌تر برای پیگیری درخواست‌های پشتیبانی.</p></div><button onClick={() => setVipDetailReward("wallet")}>جزئیات</button></article><article className="reward-card locked"><span className="reward-icon"><LockKeyhole size={18} /></span><div><b>بنفش سلطنتی</b><p>با رسیدن به سطح بعدی، مزایای ویژهٔ بیشتری باز می‌شود.</p></div><button onClick={() => setVipDetailReward("royal")}>جزئیات</button></article></div></div>
-          <p className="vip-note"><ShieldCheck size={14} /> مزایا برای فعالیت‌های واجد شرایط تعریف می‌شوند و هیچ‌کدام تضمین سود یا نتیجهٔ شرط نیستند.</p>
-        </div>
+        <div className="section-heading"><div><span className="section-kicker"><Crown size={14} /> باشگاه مشتریان Nexus</span><h2>سطح VIP بر اساس فعالیت واقعی</h2></div><Link href="/vip" className="text-link">مشاهده وضعیت <ArrowLeft size={16} /></Link></div>
+        <div className="vip-panel glass-panel"><div className="vip-hero-copy"><div className="vip-emblem"><Crown size={25} /></div><div><span className="vip-overline">وضعیت داده</span><h3>در انتظار اتصال event ledger</h3><p>تا زمانی که فعالیت معتبر ثبت نشود، امتیاز و progress ساختگی نمایش داده نمی‌شود.</p></div></div><div className="vip-progress-wrap"><div className="vip-progress-head"><span>پیشرفت سطح</span><strong>—</strong></div><div className="vip-progress-track"><span style={{ width: "0%" }} /></div><div className="vip-progress-foot"><span>پس از اتصال محاسبه می‌شود</span><b>—</b><span>سطح بعدی</span></div></div><p className="vip-note"><ShieldCheck size={14} /> مزایا بعد از اتصال backend باشگاه و ثبت رویدادهای واقعی فعال می‌شوند.</p></div>
       </section>
 
-      {vipDetailReward && <div className="vip-detail-backdrop" role="presentation" onClick={() => setVipDetailReward(null)}><div className="vip-detail-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="vip-detail-title" onClick={(event) => event.stopPropagation()}><button className="vip-detail-close" onClick={() => setVipDetailReward(null)} aria-label="بستن جزئیات"><X size={16} /></button><span className="vip-detail-icon"><Crown size={22} /></span><span className="section-kicker">جزئیات مزیت VIP</span><h3 id="vip-detail-title">{vipDetailReward === "ai" ? "تحلیل ویژه Nexus AI" : vipDetailReward === "wallet" ? "اولویت خدمات کیف پول" : "مزایای بنفش سلطنتی"}</h3><p>{vipDetailReward === "ai" ? "پیشنهادهای توضیح‌پذیر Nexus AI زودتر در فضای VIP قابل مشاهده می‌شوند." : vipDetailReward === "wallet" ? "در نسخهٔ کامل، درخواست‌های واجد شرایط کیف پول در مسیر پشتیبانی اولویت‌بندی می‌شوند." : `برای باز شدن این سطح، ${numberFa(vip.pointsToNext, 0)} امتیاز دیگر لازم است.`}</p><div className="vip-detail-state">{vipDetailReward === "royal" ? <><LockKeyhole size={15} /> این مزیت هنوز قفل است</> : <><ShieldCheck size={15} /> وضعیت فعلی: آمادهٔ اتصال به سیستم مزایا</>}</div><button className="vip-detail-action" onClick={() => { toast.info("سیستم فعال‌سازی و ثبت مزایا پس از اتصال backend در دسترس قرار می‌گیرد."); setVipDetailReward(null); }}>متوجه شدم</button></div></div>}
 
       <section className="account-section container" id="account">
         <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
         <div className="account-grid">
-          <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>۲ بلیت فعال</b></div><button><ArrowLeft size={16} /></button></div><div className="open-bet-line"><div><span>رئال مادرید — بارسلونا</span><b>برد رئال مادرید</b></div><strong>۲٫۰۴</strong></div><div className="open-bet-footer"><span>مبلغ: ۵۰ USDT</span><span>بازده: ۱۰۲ USDT</span></div></article>
-          <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>فعالیت کیف پول</span><b>امروز</b></div><button><ArrowLeft size={16} /></button></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>واریز USDT</b><span>TRC-20 · تأییدشده</span></div><strong className="income">+۲۵۰٫۰۰</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>ورودی شرط باز</b><span>قفل‌شده</span></div><strong>−۵۰٫۰۰</strong></div></article>
-          <article className="account-card glass-panel history-card"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>تاریخچهٔ بلیت‌ها</span><b>آخرین تسویه‌ها</b></div><button onClick={() => toast.info("تاریخچهٔ کامل بلیت‌ها در حساب کاربری قابل مشاهده است.")}><ArrowLeft size={16} /></button></div><div className="history-line"><span>پاری‌سن‌ژرمن — لیون</span><strong className="income">+۳۸٫۵۰ USDT</strong></div><div className="history-line"><span>بارسلونا — سویا</span><strong>تسویه‌شده</strong></div></article><article className="account-card glass-panel safety-card"><div className="card-header"><span className="icon-surface gold"><ShieldCheck size={19} /></span><div><span>امنیت و مسئولیت‌پذیری</span><b>حساب محافظت‌شده</b></div></div><div className="safety-items"><button onClick={() => toast.info("مدیریت محدودیت‌ها در پنل کاربری قابل تنظیم است.")}><span><Settings2 size={16} /> تنظیم محدودیت‌ها</span><ArrowLeft size={15} /></button><button onClick={() => toast.info("تنظیمات امنیتی و ورود دومرحله‌ای به‌زودی کامل می‌شود.")}><span><LockKeyhole size={16} /> تنظیمات امنیتی</span><ArrowLeft size={15} /></button></div></article>
+          <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>{isAuthenticated ? `${formatFaNumber(openBets.length, { maximumFractionDigits: 0 })} بلیت فعال` : "ورود لازم است"}</b></div><Link href="/account" aria-label="مشاهدهٔ شرط‌های باز"><ArrowLeft size={16} /></Link></div>{openBets[0] ? <><div className="open-bet-line"><div><span>{openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"}</span><b>{openBets[0].selections[0]?.market ?? "بازار ثبت‌شده"}</b></div><strong>{numberFa(openBets[0].combinedOdds)}</strong></div><div className="open-bet-footer"><span>مبلغ: {numberFa(openBets[0].stake)} USDT</span><span>بازگشت: {numberFa(openBets[0].potentialReturn)} USDT</span></div></> : <p className="data-state">{betsQuery.isLoading ? "در حال دریافت…" : isAuthenticated ? "هنوز بلیت باز ندارید." : "برای مشاهدهٔ بلیت‌های واقعی وارد شوید."}</p>}</article>
+          <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>وضعیت کیف پول</span><b>{isAuthenticated ? "backend واقعی" : "ورود لازم است"}</b></div><Link href="/wallet" aria-label="مشاهدهٔ کیف پول"><ArrowLeft size={16} /></Link></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>قابل‌استفاده</b><span>موجودی منبع wallet.me</span></div><strong className="income">{isAuthenticated && wallet ? `${numberFa(availableBalance)} USDT` : "—"}</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>قفل‌شده</b><span>در بلیت‌های باز</span></div><strong>{isAuthenticated && wallet ? `${numberFa(lockedBalance)} USDT` : "—"}</strong></div></article>
+          <article className="account-card glass-panel history-card"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>تاریخچهٔ بلیت‌ها</span><b>{isAuthenticated ? "از backend" : "بدون داده"}</b></div><Link href="/account" aria-label="مشاهدهٔ تاریخچه"><ArrowLeft size={16} /></Link></div>{betsQuery.isLoading ? <p className="data-state">در حال دریافت تاریخچه…</p> : bets.slice(0, 2).map((bet) => <div className="history-line" key={bet.id}><span>{bet.selections[0]?.match ?? "بلیت"}</span><strong>{bet.status === "pending" ? "باز" : bet.status}</strong></div>)}{isAuthenticated && !betsQuery.isLoading && !bets.length && <p className="data-state">هنوز فعالیت ثبت‌شده‌ای وجود ندارد.</p>}</article><article className="account-card glass-panel safety-card"><div className="card-header"><span className="icon-surface gold"><ShieldCheck size={19} /></span><div><span>امنیت و مسئولیت‌پذیری</span><b>حفاظت فعال</b></div></div><div className="safety-items"><button onClick={() => toast.info("مدیریت محدودیت‌ها در پنل کاربری قابل تنظیم است.")}><span><Settings2 size={16} /> تنظیم محدودیت‌ها</span><ArrowLeft size={15} /></button><button onClick={() => toast.info("تنظیمات امنیتی و ورود دومرحله‌ای به‌زودی کامل می‌شود.")}><span><LockKeyhole size={16} /> تنظیمات امنیتی</span><ArrowLeft size={15} /></button></div></article>
         </div>
       </section>
 
-      <section className="responsible container" id="responsible"><div className="demo-disclosure"><span><ShieldCheck size={15} /> داده‌های مسابقات فعلاً نمایشی‌اند</span><small>پس از فعال‌شدن API، زمان، نتیجه و وضعیت زنده از منبع واقعی خوانده می‌شود.</small></div>
+      <section className="responsible container" id="responsible"><div className="demo-disclosure"><span><ShieldCheck size={15} /> {sportsQuery.data?.source === "api" ? "دادهٔ مسابقات از API واقعی" : "دادهٔ عملیاتی مسابقات در دسترس نیست"}</span><small>{sportsQuery.data?.source === "api" ? "زمان، نتیجه و وضعیت از آخرین پاسخ سرویس ورزشی خوانده می‌شود؛ odds فقط در صورت ارائهٔ provider رسمی نمایش داده می‌شود." : sportsQuery.data?.error ?? "در این وضعیت هیچ odds یا نتیجه‌ای به‌عنوان دادهٔ واقعی نمایش داده نمی‌شود."}</small></div>
         <div className="responsible-content"><div className="responsible-icon"><ShieldCheck size={22} /></div><div><b>قبل از بازی، حد خودت را مشخص کن.</b><p>این سرویس برای افراد بالای ۱۸ سال است. شرط‌بندی ریسک مالی دارد و سود تضمین‌شده‌ای وجود ندارد.</p></div></div><div className="responsible-actions"><button className={responsibleConfirmed ? "is-confirmed" : ""} onClick={() => { setResponsibleConfirmed(true); toast.success("تأیید سن ثبت شد؛ با آگاهی ادامه بده."); }}>{responsibleConfirmed ? <><Check size={15} /> تأیید شد</> : "بالای ۱۸ سال هستم"}</button><button onClick={() => toast.info("محدودیت مبلغ و زمان را از همین بخش مدیریت کن.")}>تعیین محدودیت <ArrowLeft size={16} /></button></div><div className="responsible-links"><button onClick={() => scrollTo("terms")}>شرایط استفاده</button><span>·</span><button onClick={() => scrollTo("responsible")}>بازی مسئولانه</button></div>
       </section>
       <section className="terms-strip container" id="terms"><span><FileClock size={15} /> قوانین کوتاه و روشن</span><p>احراز سن، کنترل مبلغ و توقف دسترسی باید همیشه در اختیار کاربر باشد. در صورت از دست‌دادن کنترل، ادامه نده و از پشتیبانی کمک بگیر.</p></section>
 
       <footer className="site-footer container"><div className="footer-brand"><span className="brand-mark">N</span><b>NEXUS BET</b><p>تجربهٔ نوین پیش‌بینی ورزشی با USDT</p></div><div className="footer-links"><a href="#discover">مسابقات</a><a href="#wallet">کیف پول</a><button onClick={() => scrollTo("responsible")}>قوانین و ریسک</button><button onClick={() => scrollTo("terms")}>شرایط استفاده</button></div><span className="age-mark">+۱۸</span></footer>
 
-      <button className="mobile-slip-trigger" onClick={() => setSlipOpen(true)} aria-label="باز کردن بلیت"><ReceiptText size={18} /><span>{selections.length ? selections.length : "بلیت"}</span></button>
-
-      {ticketOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="خلاصه بلیت"><div className="ticket-modal glass-panel"><button className="modal-close" onClick={() => setTicketOpen(false)} aria-label="بستن"><X size={18} /></button><div className="ticket-success"><Check size={20} /></div><span className="section-kicker">بازبینی نهایی</span><h2>بلیت شما آمادهٔ ثبت است</h2><div className="ticket-summary">{selections.map((selection) => <div key={selection.id}><span>{selection.market}<small>{selection.match}</small></span><b>{numberFa(selection.odds)}</b></div>)}</div><div className="ticket-total"><span>مبلغ</span><b>{numberFa(numericStake)} USDT</b><span>بازده احتمالی</span><strong>{numberFa(potentialReturn)} USDT</strong></div><Button className="age-confirm" onClick={confirmTicket}>تأیید و ثبت بلیت <ArrowLeft size={17} /></Button><p>پس از ثبت، بلیت در بخش شرط‌های باز قابل پیگیری است.</p></div></div>}
-    </main>
+      {ticketOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="خلاصه بلیت"><div className="ticket-modal glass-panel"><button className="modal-close" onClick={() => setTicketOpen(false)} aria-label="بستن"><X size={18} /></button><div className="ticket-success"><Check size={20} /></div><span className="section-kicker">بازبینی نهایی</span><h2>بلیت شما آمادهٔ ثبت است</h2><div className="ticket-summary">{selections.map((selection) => <div key={selection.id}><span>{selection.market}<small>{selection.match}</small></span><b>{numberFa(selection.odds)}</b></div>)}</div><div className="ticket-total"><span>مبلغ</span><b>{numberFa(numericStake)} USDT</b><span>بازده احتمالی</span><strong>{numberFa(potentialReturn)} USDT</strong></div><Button className="age-confirm" onClick={confirmTicket} disabled={placeBetMutation.isPending}>{placeBetMutation.isPending ? "در حال ثبت…" : "تأیید و ثبت بلیت"} {!placeBetMutation.isPending && <ArrowLeft size={17} />}</Button><p>پس از ثبت، بلیت در بخش شرط‌های باز قابل پیگیری است.</p></div></div>}
+    </PageShell>
   );
 }

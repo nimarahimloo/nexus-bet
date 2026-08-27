@@ -14,6 +14,15 @@ describe("sports feed contract", () => {
     expect(result.matches[0]?.minute).toBe("۳۲′");
   });
 
+  it("enriches API fixtures with numeric odds from the official odds response", async () => {
+    vi.stubGlobal("fetch", vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ errors: [], response: [{ fixture: { id: 8, date: "2026-08-27T18:30:00Z", status: { short: "NS", elapsed: null } }, league: { name: "Premier League" }, teams: { home: { name: "Home FC" }, away: { name: "Away FC" } } }] }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ errors: [], response: [{ bookmakers: [{ bets: [{ name: "Match Winner", values: [{ value: "Home", odd: "2.10" }, { value: "Draw", odd: "3.30" }, { value: "Away", odd: "3.80" }] }] }] } ] }), { status: 200 })));
+    const result = await fetchSportsFeed("fixtures?next=10", "test-key");
+    expect(result.source).toBe("api");
+    expect(result.matches[0]?.markets).toEqual([{ label: "۱", name: "Home", odds: 2.1 }, { label: "X", name: "Draw", odds: 3.3 }, { label: "۲", name: "Away", odds: 3.8 }]);
+  });
+
   it("returns an explicit fallback error for failed fixtures/live calls", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("upstream failure", { status: 503 })));
     const result = await fetchSportsFeed("fixtures?live=all", "test-key");
