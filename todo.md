@@ -171,3 +171,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازطراحی mobile shell با bottom dock، drawer، safe-area و hierarchy قابل اسکن.
 - [x] بازطراحی glass material با لایه‌های translucent، hairline border، blur و stateهای لمسی.
 - [x] افزودن تست contract برای source/error و مسیرهای mobile و ثبت checkpoint جدید.
+
+## Mobile matches bottom-sheet pass
+- [x] بازطراحی صفحهٔ Matches برای فیلترهای sticky با safe-area و وضعیت active واضح.
+- [x] تبدیل bet slip موبایل به bottom sheet با handle، خلاصهٔ انتخاب‌ها، مبلغ USDT و بازگشت احتمالی.
+- [x] افزودن تعامل باز/بسته‌شدن، backdrop، Escape، focus و motion قابل‌کنترل.
+- [x] اجرای تست، بازبینی موبایل/دسکتاپ و ثبت checkpoint جدید.
