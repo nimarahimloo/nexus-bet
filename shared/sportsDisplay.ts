@@ -19,3 +19,9 @@ export function formatCrashStakeLabel(amount: number): string {
 export function formatCrashCashoutLabel(amount: number): string {
   return `${formatCrashAmount(amount)} USDT`;
 }
+
+export function formatSportsFeedStatus(input: { loading: boolean; source?: "api" | "fallback"; error?: string | null }): string {
+  if (input.loading) return "در حال دریافت آخرین مسابقات…";
+  if (input.source === "api") return "آخرین مسابقات از API ورزشی";
+  return input.error ?? "نمایش فید نمونه تا زمان دسترسی به دادهٔ واقعی";
+}

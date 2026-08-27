@@ -7,6 +7,7 @@ import type { AiPick } from "@shared/ai";
 import { buildDemoMatchesFromAdapter, type MatchCardData } from "@shared/sports";
 import { getVipProgress } from "@/lib/vip";
 import { formatFaDecimal, formatFaNumber } from "@shared/format";
+import { formatSportsFeedStatus } from "@shared/sportsDisplay";
 import {
   Activity,
   ArrowDownLeft,
@@ -134,7 +135,7 @@ const demoMatchSeed: Match[] = [
 ];
 
 // The demo feed uses the same adapter as the future API response, so replacing it requires no UI-model rewrite.
-const matches: Match[] = buildDemoMatchesFromAdapter(demoMatchSeed);
+const demoMatches: MatchCardData[] = buildDemoMatchesFromAdapter(demoMatchSeed);
 
 const networkInfo = {
   "TRC-20": { address: "TUf9...8bM2", confirmations: "۱ تأیید", fee: "۱ USDT" },
@@ -155,6 +156,10 @@ function scrollTo(id: string) {
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
+  const sportsQuery = trpc.sports.fixtures.useQuery({ next: 10 }, { staleTime: 30_000, refetchInterval: 60_000 });
+  const liveQuery = trpc.sports.live.useQuery(undefined, { staleTime: 15_000, refetchInterval: 30_000 });
+  const matches: MatchCardData[] = sportsQuery.data?.matches?.length ? sportsQuery.data.matches : demoMatches;
+  const liveMatch = liveQuery.data?.matches?.[0];
   const [activeFilter, setActiveFilter] = useState("همه");
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMarketIds, setExpandedMarketIds] = useState<string[]>([]);
@@ -194,7 +199,7 @@ export default function Home() {
     odds: market.odds,
     status: match.status,
     popularity: Math.max(58, 94 - index * 8 - (match.status === "فردا" ? 7 : 0)),
-  }))), []);
+  }))), [matches]);
   const aiQuery = trpc.ai.smartPicks.useQuery({ candidates: aiCandidates }, { enabled: false, staleTime: 60_000 });
 
   const addSelection = (match: Match, market: Match["markets"][number]) => {
@@ -349,8 +354,9 @@ export default function Home() {
           <div className="filter-row" role="tablist" aria-label="فیلتر ورزش">
             {leagues.map((league) => <button key={league} onClick={() => setActiveFilter(league)} className={`filter-pill ${activeFilter === league ? "selected" : ""}`}>{league}{league === "فوتبال" && <span>۱۸</span>}</button>)}
           </div>
+          <div className="feed-status" role="status">{formatSportsFeedStatus({ loading: sportsQuery.isLoading, source: sportsQuery.data?.source, error: sportsQuery.data?.error })}</div>
 
-          <div className="live-center glass-panel"><div className="live-center-top"><span className="status-live"><i /> مرکز زنده</span><b>آرسنال — چلسی</b><small>دقیقهٔ ۶۷ · ۱ — ۱</small></div><div className="live-pulse-line"><span style={{ width: "67%" }} /></div><div className="live-center-bottom"><span>۲۷ بازار فعال</span><button onClick={() => setActiveFilter("فوتبال")}>مشاهدهٔ بازارهای زنده <ArrowLeft size={14} /></button></div></div>
+          <div className="live-center glass-panel"><div className="live-center-top"><span className="status-live"><i /> مرکز زنده</span><b>{liveMatch ? `${liveMatch.home} — ${liveMatch.away}` : "در حال بررسی مسابقات زنده"}</b><small>{liveMatch ? `${liveMatch.minute ?? "اکنون"} · ${liveMatch.score ?? "بدون نتیجه"}` : liveQuery.data?.error ?? "فعلاً مسابقهٔ زنده‌ای گزارش نشده است"}</small></div><div className="live-pulse-line"><span style={{ width: liveMatch ? "67%" : "8%" }} /></div><div className="live-center-bottom"><span>{liveMatch ? "دادهٔ زنده از API" : "مرکز زنده"}</span><button onClick={() => setActiveFilter("فوتبال")}>مشاهدهٔ بازارهای زنده <ArrowLeft size={14} /></button></div></div>
 
           <div className="feature-strip glass-panel">
             <div className="feature-icon"><Trophy size={20} /></div>
