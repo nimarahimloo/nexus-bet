@@ -8,7 +8,7 @@ import { z } from "zod";
 import { fallbackSmartPicks } from "../shared/ai";
 import { ENV } from "./_core/env";
 import { type MatchCardData } from "../shared/sports";
-import { fetchSportsFeed } from "./sportsFeed";
+import { fetchSportsDetails, fetchSportsFeed } from "./sportsFeed";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -25,6 +25,7 @@ export const appRouter = router({
   }),
 
   sports: router({
+    details: publicProcedure.input(z.object({ fixtureId: z.string().min(1) })).query(({ input }) => fetchSportsDetails(input.fixtureId, ENV.sportsApiKey)),
     live: publicProcedure.query(() => fetchSportsFeed("fixtures?live=all", ENV.sportsApiKey)),
     fixtures: publicProcedure
       .input(z.object({ next: z.number().int().min(1).max(20).default(10) }).optional())

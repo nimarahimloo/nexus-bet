@@ -1,6 +1,27 @@
-import { mapSportsFixtures, type MatchCardData, type SportsApiFixture } from "../shared/sports";
+import { mapSportsDetails, mapSportsFixtures, type MatchCardData, type MatchDetailData, type SportsApiDetailPayload, type SportsApiFixture } from "../shared/sports";
 
 export type SportsFeedResult = { matches: MatchCardData[]; source: "api" | "fallback"; error: string | null };
+
+export async function fetchSportsDetails(fixtureId: string, apiKey: string): Promise<MatchDetailData> {
+  const empty: MatchDetailData = { fixtureId, source: "fallback", error: "جزئیات واقعی در دسترس نیست.", statistics: [], lineups: [], events: [] };
+  if (!apiKey) return empty;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8_000);
+  const request = async (resource: string): Promise<unknown[]> => {
+    const response = await fetch(`https://v3.football.api-sports.io/${resource}?fixture=${encodeURIComponent(fixtureId)}`, { headers: { "x-apisports-key": apiKey }, signal: controller.signal });
+    if (!response.ok) throw new Error(`Sports API ${resource} ${response.status}`);
+    const payload = await response.json() as { response?: SportsApiDetailPayload[]; errors?: unknown };
+    if (Array.isArray(payload.errors) && payload.errors.length > 0) throw new Error(`Sports API ${resource} returned errors`);
+    return payload.response ?? [];
+  };
+  try {
+    const [statistics, lineups, events] = await Promise.all([request("fixtures/statistics"), request("fixtures/lineups"), request("fixtures/events")]);
+    return mapSportsDetails(fixtureId, { statistics: { statistics: statistics as NonNullable<SportsApiDetailPayload["statistics"]> }, lineups: { lineups: lineups as NonNullable<SportsApiDetailPayload["lineups"]> }, events: { events: events as NonNullable<SportsApiDetailPayload["events"]> } });
+  } catch (error) {
+    console.warn(`[Sports details] Falling back for fixture ${fixtureId}:`, error);
+    return empty;
+  } finally { clearTimeout(timeout); }
+}
 
 export async function fetchSportsFeed(path: string, apiKey: string): Promise<SportsFeedResult> {
   if (!apiKey) return { matches: [], source: "fallback", error: "SPORTS_API_KEY تنظیم نشده است." };

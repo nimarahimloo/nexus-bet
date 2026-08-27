@@ -129,3 +129,17 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست contract برای متن وضعیت fallback فید ورزشی Home.
 
 - [x] افزودن assertion مستقل برای مسیر fixtures?next=10 و پیام fallback مخصوص fixtures در sportsFeed.
+
+- [x] افزودن مودال جزئیات با بازشدن از روی هر کارت مسابقه و بستن با دکمه، کلیک بیرون و Escape.
+- [x] افزودن قرارداد جزئیات مسابقه شامل آمار، ترکیب تیم‌ها و رویدادهای مهم با fallback نمونه.
+- [x] اتصال دادهٔ واقعی جزئیات API-Football با loading/error و حفظ دادهٔ نمونهٔ شفاف.
+- [x] افزودن تست‌های واحد برای mapper جزئیات و stateهای مودال و بازبینی موبایل.
+
+- [x] افزودن source و error به قرارداد sports.details و fallback نمونهٔ صریح در مودال.
+- [x] استخراج stateهای مودال به helper قابل‌تست و پوشش بازشدن، بستن، تب‌ها و loading/error/empty.
+
+- [x] مصرف getMatchDetailsStatus در UI برای یکپارچه‌سازی stateهای loading/error/demo/empty.
+- [x] افزودن contract قابل‌تست برای بازشدن کارت و بستن با دکمه، بیرون مودال و Escape.
+
+- [x] انتقال empty state تب‌ها به helper تب‌محور و مصرف آن در مودال.
+- [x] افزودن assertion مستقیم open/close/backdrop برای contract مودال.
