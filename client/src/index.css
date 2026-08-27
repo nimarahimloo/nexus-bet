@@ -343,3 +343,16 @@ button:active, .solid-cta:active, .primary-cta:active, .outline-cta:active, .log
 .nav-link { font-weight: 600; }
 .brand b, .brand small, .score-center strong, .hero-market b, .balance-chip b, .team-orb, .match-time strong, .odds-button b, .tournament-score strong, .standing-row span { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
+/* Real material glass + mobile shell refinement */
+.nexus-shell { background: #07050c; }
+.nexus-shell::after { content: ""; position: fixed; z-index: -1; top: 8vh; right: -9vw; width: 320px; height: 320px; border-radius: 50%; background: #261044; filter: blur(88px); opacity: .42; pointer-events: none; }
+.glass-panel { background: rgba(29, 19, 46, .58); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 24px 70px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10), inset 0 -1px 0 rgba(0,0,0,.20); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); }
+.glass-panel::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: rgba(255,255,255,.12); opacity: .55; pointer-events: none; }
+.topbar { background: rgba(17, 11, 28, .68); border-color: rgba(255,255,255,.14); backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%); }
+.subpage-art, .hero-score { background: rgba(30, 18, 49, .55); }
+.mobile-bottom-nav { padding: 8px 11px calc(8px + env(safe-area-inset-bottom)); background: rgba(15, 10, 25, .72); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 18px 50px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(28px) saturate(150%); -webkit-backdrop-filter: blur(28px) saturate(150%); }
+.mobile-bottom-nav a { min-height: 42px; border-radius: 14px; transition: color .16s var(--ease-out), background-color .16s var(--ease-out), transform .16s var(--ease-out); }
+.mobile-bottom-nav a.is-active { background: rgba(99,232,213,.09); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+@media (max-width: 720px) { .nexus-shell { padding-bottom: calc(94px + env(safe-area-inset-bottom)); }.mobile-bottom-nav { left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }.mobile-bottom-nav a { flex: 1; }.main-nav { background: rgba(19, 12, 31, .82); border-color: rgba(255,255,255,.14); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); } }
+@media (prefers-reduced-motion: reduce) { .mobile-bottom-nav a { transition: none; } }

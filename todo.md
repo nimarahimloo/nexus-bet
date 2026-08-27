@@ -164,3 +164,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] تعریف سلسله‌مراتب typography، line-height، letter-spacing نرمال و tokenهای spacing/radius/shadow.
 - [x] بازطراحی glass surfaceها، border، blur، focus/hover/pressed state و کاهش ظاهر کارت‌های تکراری.
 - [x] اجرای ممیزی responsive، تست و ثبت checkpoint جدید.
+
+## Real data and mobile material pass
+- [x] ممیزی endpointها و حذف/برچسب‌گذاری داده‌های تزئینی در مسیرهای اصلی.
+- [x] اتصال وضعیت‌های feed، wallet، offers و tournaments به قراردادهای دادهٔ قابل‌ردیابی با source/error.
+- [x] بازطراحی mobile shell با bottom dock، drawer، safe-area و hierarchy قابل اسکن.
+- [x] بازطراحی glass material با لایه‌های translucent، hairline border، blur و stateهای لمسی.
+- [x] افزودن تست contract برای source/error و مسیرهای mobile و ثبت checkpoint جدید.
