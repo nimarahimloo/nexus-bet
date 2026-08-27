@@ -322,3 +322,24 @@ h1, h2, h3, h4, .brand, .section-kicker, .nav-link, button, input, select { font
 @keyframes detail-reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 720px) { .tournament-switcher { display: flex; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }.tournament-switcher button { flex: 0 0 175px; }.tournament-metrics { grid-template-columns: 1fr; }.rules-card { grid-template-columns: 1fr; }.offer-detail .solid-cta { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .offer-card:hover, .offer-card.is-open, .tournament-switcher button:hover, .tournament-switcher button.selected { transform: none; }.mini-progress span { animation: none; }.offer-detail { animation: none; } }
+
+/* Nexus material system v2 — Persian typography is the default for every control and text node. */
+:root { --font-body: "Peyda", "Kalameh", Tahoma, sans-serif; --font-display: "Kalameh", "Peyda", Tahoma, sans-serif; --nexus-bg: #07050c; --nexus-surface: rgba(28, 18, 45, .78); --nexus-surface-strong: rgba(36, 22, 57, .92); --nexus-hairline: rgba(255,255,255,.10); --nexus-hairline-strong: rgba(183,138,255,.26); --nexus-radius-sm: 12px; --nexus-radius-md: 17px; --nexus-radius-lg: 22px; --nexus-shadow: 0 18px 52px rgba(0,0,0,.28); }
+*, *::before, *::after { font-family: var(--font-body); letter-spacing: normal !important; }
+h1, h2, h3, h4, h5, h6, .brand, .section-kicker, .eyebrow, .nav-link, button, input, select, textarea { font-family: var(--font-display); }
+body { font-family: var(--font-body); font-synthesis: none; text-rendering: optimizeLegibility; }
+.glass-panel { background: var(--nexus-surface); border: 1px solid var(--nexus-hairline); box-shadow: var(--nexus-shadow), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter: blur(24px) saturate(135%); -webkit-backdrop-filter: blur(24px) saturate(135%); }
+.topbar { background: rgba(19, 12, 31, .88); border-color: rgba(255,255,255,.12); box-shadow: 0 12px 40px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.08); }
+.brand, .nav-link, .text-link, .text-cta, .outline-cta, .solid-cta, .primary-cta, .login-button, .icon-button, .balance-chip, .feature-filter-row button, .tournament-tabs button, .casino-filters button { transition: transform .16s var(--ease-out), color .16s var(--ease-out), background-color .16s var(--ease-out), border-color .16s var(--ease-out), box-shadow .16s var(--ease-out); }
+button:active, .solid-cta:active, .primary-cta:active, .outline-cta:active, .login-button:active, .feature-hub-card:active, .tournament-switcher button:active { transform: scale(.975); }
+.glass-panel:hover { border-color: rgba(255,255,255,.15); }
+.primary-cta, .login-button { background: #7d28ff !important; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 26px rgba(125,40,255,.24), inset 0 1px 0 rgba(255,255,255,.15); }
+.primary-cta:hover, .login-button:hover { background: #8d3bff !important; box-shadow: 0 13px 30px rgba(125,40,255,.32), inset 0 1px 0 rgba(255,255,255,.18); }
+.outline-cta, .solid-cta { border: 1px solid rgba(183,138,255,.24); background: rgba(255,255,255,.035); }
+.outline-cta:hover, .solid-cta:hover { color: #fff; border-color: rgba(99,232,213,.38); background: rgba(99,232,213,.08); }
+.feature-hub-card, .offer-card, .standings-card, .game-card, .reward-rules, .tournament-feature, .tournament-switcher button { background-color: rgba(32, 20, 53, .74); }
+.section-heading h2, .subpage-copy h1, .hero h1, .wheel-copy h2, .tournament-feature h2 { font-family: var(--font-display); font-weight: 800; letter-spacing: normal !important; }
+.subpage-copy p, .hero p, .feature-hub-card p, .offer-card p, .game-card p, .muted-copy, .rules-card p { font-family: var(--font-body); }
+.nav-link { font-weight: 600; }
+.brand b, .brand small, .score-center strong, .hero-market b, .balance-chip b, .team-orb, .match-time strong, .odds-button b, .tournament-score strong, .standing-row span { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

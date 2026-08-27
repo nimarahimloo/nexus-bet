@@ -158,3 +158,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تعامل نمایش جزئیات، انتخاب دسته و تغییر وضعیت کارت‌ها.
 - [x] افزودن motion کنترل‌شده برای progress، hover و بازشدن جزئیات با prefers-reduced-motion.
 - [x] اجرای تست، بازبینی موبایل و ثبت checkpoint جدید.
+
+## Typography and Apple-inspired design system pass
+- [x] ممیزی منبع و وزن‌های واقعی Peyda/Kalameh و اعمال font-family مشترک روی همهٔ عناصر متنی و کنترل‌ها.
+- [x] تعریف سلسله‌مراتب typography، line-height، letter-spacing نرمال و tokenهای spacing/radius/shadow.
+- [x] بازطراحی glass surfaceها، border، blur، focus/hover/pressed state و کاهش ظاهر کارت‌های تکراری.
+- [x] اجرای ممیزی responsive، تست و ثبت checkpoint جدید.
