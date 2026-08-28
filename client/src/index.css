@@ -481,3 +481,22 @@ html, body, button, input, select, textarea, option { font-family: "Nexus Kalame
 @keyframes auth-modal-arrive { from { opacity: 0; transform: translateY(18px) scale(.965); filter: saturate(.8) blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: saturate(1) blur(0); } } @keyframes auth-content-in { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } } @keyframes auth-ambient-drift { from { transform: translate3d(0,0,0) scale(.94); } to { transform: translate3d(30px,24px,0) scale(1.08); } } @keyframes auth-orb-float { from { transform: translate3d(0,0,0) scale(.92); } to { transform: translate3d(22px,26px,0) scale(1.1); } } @keyframes auth-mark-breathe { 0%,100% { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 10px 26px rgba(143,67,247,.22); } 50% { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.31), 0 14px 32px rgba(143,67,247,.34); } }
 @media (max-width: 720px) { .auth-backdrop::before, .auth-backdrop::after { width: 250px; height: 250px; filter: blur(52px); }.auth-modal { transform-origin: center bottom; }.auth-specular { width: 94%; height: 35%; }.auth-liquid-orb { width: 150px; height: 150px; } }
 @media (prefers-reduced-motion: reduce) { .auth-modal, .auth-modal h2, .auth-modal > p, .auth-form, .auth-providers, .auth-mark, .auth-backdrop::before, .auth-backdrop::after, .auth-liquid-orb { animation: none !important; }.auth-submit::after { display: none; }.auth-form label > div:focus-within, .auth-providers button:hover, .auth-providers button:active, .auth-submit:active { transform: none; } }
+
+/* Final navigation and spacing safeguards override legacy rules declared after ios26.css. */
+.topbar { overflow: visible !important; }
+.icon-button { min-width: 44px; min-height: 44px; padding: 8px !important; }
+.login-button { min-height: 44px; padding-inline: 16px !important; }
+.nav-link { min-height: 44px; padding-inline: 12px; }
+.ticket-button, .solid-cta, .outline-cta, .primary-cta { min-height: 44px; padding-inline: 16px; }
+.feature-hub-grid, .standalone-grid, .offer-grid, .game-grid, .match-list, .content-grid { gap: max(12px, var(--space-3, 14px)); }
+.feature-hub-card, .standalone-card, .offer-card, .game-card, .match-card { padding: max(14px, var(--space-3, 14px)); }
+@media (max-width: 720px) {
+  .topbar { z-index: 60 !important; }
+  .main-nav.is-open { display: grid !important; z-index: 62 !important; }
+  .mobile-nav-backdrop { z-index: 50 !important; }
+  .header-actions { gap: 7px; }
+  .icon-button { width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 8px !important; }
+  .login-button { min-height: 40px; height: 40px; min-width: 92px; padding-inline: 12px !important; }
+  .mobile-bottom-nav a { min-height: 50px; padding: 7px 6px; }
+  .subpage-content > *, .home-shell .container > * { margin-bottom: 16px; }
+}

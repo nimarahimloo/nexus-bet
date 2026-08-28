@@ -250,3 +250,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اتصال Auth modal به mutationهای واقعی و refresh وضعیت session.
 - [x] حفظ provider buttonهای نمایشی بدون redirect خارجی.
 - [x] افزودن تست‌های credential، session، validation و بازبینی responsive flow کامل.
+
+## Navigation and spacing reliability pass
+- [x] ممیزی trigger و state منوی همبرگری در mobile shell.
+- [x] رفع باز/بسته‌شدن drawer و افزودن backdrop، Escape و focusهای قابل‌دسترسی.
+- [x] تعریف حداقل padding لمسی دکمه‌ها و gapهای سراسری برای کنترل‌ها و گروه‌ها.
+- [x] رفع spacing فشرده در header، navigation، کارت‌ها، فرم‌ها و CTAهای routeهای اصلی.
+- [x] افزودن تست قرارداد hamburger/spacing و بازبینی موبایل و دسکتاپ.
