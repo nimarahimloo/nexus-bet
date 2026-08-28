@@ -45,4 +45,18 @@ describe("in-platform auth and support contracts", () => {
     expect(css).toContain("auth-ambient-drift");
     expect(css).toContain("prefers-reduced-motion: reduce");
   });
+
+  it("wires the Auth modal to local backend procedures while keeping providers non-navigating", () => {
+    const auth = read("../client/src/components/InPlatformAuth.tsx");
+    const router = read("./routers.ts");
+    expect(auth).toContain("trpc.auth.localLogin.useMutation");
+    expect(auth).toContain("trpc.auth.localSignup.useMutation");
+    expect(auth).toContain("trpc.auth.requestPasswordReset.useMutation");
+    expect(auth).toContain("trpc.auth.resetPassword.useMutation");
+    expect(auth).not.toContain("window.location");
+    expect(router).toContain("localSignup:");
+    expect(router).toContain("localLogin:");
+    expect(router).toContain("requestPasswordReset:");
+    expect(router).toContain("resetPassword:");
+  });
 });

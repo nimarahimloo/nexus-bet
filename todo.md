@@ -242,3 +242,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن ambient glass layers، refractive highlight و depth به backdrop و modal.
 - [x] افزودن transitionهای باز/بسته، تغییر mode و تعامل providerها با رعایت reduced-motion.
 - [x] افزودن تست قرارداد motion/material و بازبینی موبایل و دسکتاپ.
+
+## Local authentication backend
+- [x] طراحی مدل credential، session و بازیابی رمز برای Auth داخلی.
+- [x] افزودن schema و migration برای credentialهای رمزنگاری‌شده و reset token.
+- [x] پیاده‌سازی ثبت‌نام، ورود، logout و بازیابی/تغییر رمز با tRPC و cookie امن.
+- [x] اتصال Auth modal به mutationهای واقعی و refresh وضعیت session.
+- [x] حفظ provider buttonهای نمایشی بدون redirect خارجی.
+- [x] افزودن تست‌های credential، session، validation و بازبینی responsive flow کامل.
