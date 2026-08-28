@@ -612,3 +612,36 @@ html, body { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) { .notifications-popover, .notification-item, .spin { animation: none; transition: none; } }
 .notifications-login { min-height: 36px; padding: 0 14px; color: #1a1129; border: 0; border-radius: 10px; background: var(--nexus-mint); font: 800 10px var(--font-display); cursor: pointer; }
 .notifications-login:hover, .notifications-login:focus-visible { filter: brightness(1.08); }
+
+/* Final spacing reliability layer: keeps rhythm consistent across every route. */
+:root { --space-page: clamp(20px, 3vw, 40px); --space-section: clamp(26px, 4vw, 56px); --space-card: clamp(14px, 2vw, 22px); --space-control: 10px; }
+.nexus-shell > .container { padding-inline: 0; }
+.nexus-shell .section-heading { margin-bottom: 20px; }
+.nexus-shell .section-heading + *, .nexus-shell .section-heading + .filter-row { margin-top: 0; }
+.nexus-shell .content-grid, .nexus-shell .matches-layout, .nexus-shell .wallet-layout, .nexus-shell .crash-grid, .nexus-shell .feature-hub-grid, .nexus-shell .offer-grid, .nexus-shell .game-grid, .nexus-shell .standings-grid { gap: clamp(16px, 2.2vw, 28px); }
+.nexus-shell .match-list, .nexus-shell .standalone-grid, .nexus-shell .offer-grid, .nexus-shell .game-grid, .nexus-shell .standings-grid { row-gap: 14px; }
+.nexus-shell .glass-panel:not(.topbar):not(.subpage-art):not(.notifications-popover) { overflow: hidden; }
+.nexus-shell .match-card, .nexus-shell .offer-card, .nexus-shell .game-card, .nexus-shell .standings-card, .nexus-shell .feature-hub-card, .nexus-shell .balance-hero, .nexus-shell .account-summary, .nexus-shell .reward-wheel, .nexus-shell .crash-board, .nexus-shell .vip-level { padding: var(--space-card); }
+.nexus-shell .match-meta, .nexus-shell .data-state, .nexus-shell .inline-alert { margin-top: 8px; }
+.nexus-shell .market-row, .nexus-shell .wallet-request-actions, .nexus-shell .form-row, .nexus-shell .button-row, .nexus-shell .feature-actions { gap: var(--space-control); }
+.nexus-shell input, .nexus-shell select, .nexus-shell textarea { min-height: 44px; }
+.nexus-shell button:not(.icon-button):not(.mobile-menu):not(.notifications-head-actions button) { min-height: 40px; }
+.nexus-shell .hero-copy > *, .nexus-shell .subpage-copy > * { max-width: 100%; }
+@media (max-width: 720px) {
+  .nexus-shell { padding-top: 10px; }
+  .nexus-shell > .container { width: calc(100% - 28px); }
+  .nexus-shell .hero, .nexus-shell .subpage-hero { gap: 28px; padding-top: 38px; padding-bottom: 34px; }
+  .nexus-shell .hero-copy, .nexus-shell .subpage-copy { display: grid; gap: 12px; }
+  .nexus-shell .hero-copy h1, .nexus-shell .subpage-copy h1, .nexus-shell .hero-copy p, .nexus-shell .subpage-copy p { margin-block: 0; }
+  .nexus-shell .hero-cta { margin-top: 4px; gap: 12px; }
+  .nexus-shell .hero-trust { margin-top: 4px; gap: 12px; flex-wrap: wrap; }
+  .nexus-shell .section-heading { align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .nexus-shell .filter-row { margin-top: 4px; padding-bottom: 14px; gap: 9px; }
+  .nexus-shell .match-body { gap: 14px; margin-top: 15px; }
+  .nexus-shell .market-row { gap: 8px; }
+  .nexus-shell .content-grid, .nexus-shell .matches-layout, .nexus-shell .wallet-layout, .nexus-shell .crash-grid, .nexus-shell .feature-hub-grid { gap: 18px; }
+  .nexus-shell .feature-hub-grid { padding-top: 5px; padding-bottom: 16px; }
+  .nexus-shell .subpage-content, .nexus-shell .home-shell > .container { gap: 28px; padding-bottom: calc(148px + env(safe-area-inset-bottom)); }
+  .nexus-shell .mobile-slip-launch, .nexus-shell .mobile-slip-dock { margin-inline: 2px; }
+}
+.nexus-shell { overflow-x: hidden; }

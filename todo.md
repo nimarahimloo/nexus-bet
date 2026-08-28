@@ -287,3 +287,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن پنل اعلان glass در header و حالت موبایل با empty/loading/error states.
 - [x] اتصال رویدادهای واقعی محصول به اعلان‌ها بدون seed یا دادهٔ ساختگی.
 - [x] افزودن تست‌های backend/UI و بازبینی responsive پیش از checkpoint.
+
+## Spacing audit and mobile layout refinement
+- [x] ممیزی فاصله‌های padding، margin و gap در shell، routeها، کارت‌ها و فرم‌ها.
+- [x] افزایش و یکدست‌سازی spacingهای کم یا صفر با حفظ design tokens موجود.
+- [x] اصلاح overflow، safe-area و touch targetها در viewportهای موبایل.
+- [x] افزودن تست regression برای spacing و بازبینی responsive پیش از checkpoint.
