@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getLocalCredentialByUsername, getOrCreateWalletByUserId, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
@@ -158,6 +158,13 @@ export const appRouter = router({
     }),
     transactions: protectedProcedure.query(({ ctx }) => getWalletTransactions(ctx.user.id)),
     request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => requestWalletTransaction({ ...input, userId: ctx.user.id })),
+  }),
+
+  notifications: router({
+    list: protectedProcedure.query(({ ctx }) => getNotifications(ctx.user.id)),
+    unreadCount: protectedProcedure.query(({ ctx }) => getUnreadNotificationCount(ctx.user.id)),
+    markRead: protectedProcedure.input(z.object({ notificationId: z.number().int().positive() })).mutation(({ ctx, input }) => markNotificationRead(ctx.user.id, input.notificationId)),
+    markAllRead: protectedProcedure.mutation(({ ctx }) => markAllNotificationsRead(ctx.user.id)),
   }),
 
   account: router({

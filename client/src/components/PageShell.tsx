@@ -4,6 +4,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import { InPlatformAuth } from "@/components/InPlatformAuth";
 import { InPlatformSupport } from "@/components/InPlatformSupport";
+import { NotificationsPopover } from "@/components/NotificationsPopover";
+import { trpc } from "@/lib/trpc";
 import { type AuthMode } from "@/lib/platformOverlay";
 export { pageShellDisplayContract } from "@/lib/pageShellContract";
 
@@ -30,6 +32,8 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
   const [authOpen, setAuthOpen] = useState(() => previewAuthMode === "login" || previewAuthMode === "signup" || previewAuthMode === "forgot");
   const [authMode, setAuthMode] = useState<AuthMode>(() => previewAuthMode === "signup" || previewAuthMode === "forgot" ? previewAuthMode : "login");
   const [supportOpen, setSupportOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("support") === "preview");
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationsCount = trpc.notifications.unreadCount.useQuery(undefined, { staleTime: 15_000 }).data ?? 0;
   const [location] = useLocation();
   const reduceMotion = useReducedMotion();
   useEffect(() => {
@@ -54,7 +58,7 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
         <span className="nav-divider" aria-hidden="true" />
         <div className="more-nav-grid" aria-label="بخش‌های بیشتر">{moreNav.map(([href, label, Icon]) => <Link key={href} href={href} className={`nav-link nav-link-more ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}><Icon size={13} />{label}</Link>)}</div>
       </nav>
-      <div className="header-actions"><button className="icon-button" aria-label="اعلان‌ها"><Bell size={17} /></button><button className="login-button" onClick={() => { setOpen(false); setAuthMode("login"); setAuthOpen(true); }}><UserRound size={16} /> ورود امن</button><button className="icon-button mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="mobile-primary-navigation" aria-label={open ? "بستن منو" : "بازکردن منو"}>{open ? <X size={19} /> : <Menu size={19} />}</button></div>
+      <div className="header-actions"><button className={`icon-button notification-trigger ${notificationsOpen ? "is-active" : ""}`} aria-label="اعلان‌ها" aria-expanded={notificationsOpen} aria-controls="notifications-title" onClick={() => setNotificationsOpen((value) => !value)}><Bell size={17} />{notificationsCount > 0 && <span className="notification-badge">{notificationsCount > 99 ? "۹۹+" : notificationsCount}</span>}</button><button className="login-button" onClick={() => { setOpen(false); setAuthMode("login"); setAuthOpen(true); }}><UserRound size={16} /> ورود امن</button><button className="icon-button mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="mobile-primary-navigation" aria-label={open ? "بستن منو" : "بازکردن منو"}>{open ? <X size={19} /> : <Menu size={19} />}</button></div>
     </motion.header>
     {open && <button className="mobile-nav-backdrop" type="button" tabIndex={-1} aria-label="بستن منو" onClick={() => setOpen(false)} />}
     {!isHome && title && <motion.section className="subpage-hero container" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .5, delay: .05, ease: [0.16, 1, 0.3, 1] }}><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></motion.section>}
@@ -63,5 +67,6 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
     <button className="support-launcher" onClick={() => setSupportOpen(true)} aria-label="بازکردن پشتیبانی هوشمند"><Headphones size={20} /><span>پشتیبانی</span></button>
     <InPlatformAuth open={authOpen} mode={authMode} onClose={() => setAuthOpen(false)} onModeChange={setAuthMode} />
     <InPlatformSupport open={supportOpen} onClose={() => setSupportOpen(false)} />
+    <NotificationsPopover open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
   </motion.main>;
 }

@@ -48,6 +48,20 @@ export const passwordResetTokens = mysqlTable("passwordResetTokens", {
   tokenUnique: uniqueIndex("passwordResetTokens_hash_unique").on(table.tokenHash),
 }));
 
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  type: mysqlEnum("type", ["system", "bet", "wallet", "reward", "sports"]).default("system").notNull(),
+  title: varchar("title", { length: 160 }).notNull(),
+  message: text("message").notNull(),
+  href: varchar("href", { length: 320 }),
+  readAt: timestamp("readAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
 export const wallets = mysqlTable("wallets", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique().references(() => users.id),

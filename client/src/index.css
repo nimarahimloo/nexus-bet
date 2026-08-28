@@ -583,3 +583,32 @@ html, body { overflow-x: clip; }
 @keyframes nexus-drawer-arrive { from { opacity: 0; transform: translateY(-10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes nexus-nav-icon { 0% { transform: translateY(2px) scale(.78); opacity: .5; } 70% { transform: translateY(-1px) scale(1.14); opacity: 1; } 100% { transform: translateY(0) scale(1); } }
 @keyframes nexus-icon-wink { 0%,100% { transform: rotate(0) scale(1); } 35% { transform: rotate(-10deg) scale(1.13); } 70% { transform: rotate(7deg) scale(1.06); } }
+
+.notification-trigger { position: relative; }
+.notification-trigger.is-active { color: var(--nexus-mint); border-color: rgba(99,232,213,.34); background: rgba(99,232,213,.09); }
+.notification-badge { position: absolute; top: -5px; right: -5px; display: grid; min-width: 17px; height: 17px; padding: 0 4px; place-items: center; color: #1a1129; border: 2px solid #08060d; border-radius: 999px; background: var(--nexus-mint); font: 800 8px var(--font-display); line-height: 1; }
+.notifications-backdrop { position: fixed; z-index: 28; inset: 0; border: 0; background: transparent; cursor: default; }
+.notifications-popover { position: fixed; z-index: 29; top: 78px; right: 22px; width: min(390px, calc(100vw - 32px)); max-height: min(620px, calc(100dvh - 100px)); overflow: auto; padding: 15px; border-radius: 20px; background: rgba(24, 15, 38, .94); box-shadow: 0 22px 70px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.1); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); animation: sheet-up .24s var(--ease-out); }
+.notifications-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.notifications-head h2 { display: flex; align-items: center; gap: 7px; margin: 3px 0 0; color: #f7f2fb; font-size: 18px; }
+.notifications-head h2 em { display: inline-grid; min-width: 21px; height: 21px; padding: 0 5px; place-items: center; color: #1a1129; border-radius: 999px; background: var(--nexus-mint); font: 800 9px var(--font-display); font-style: normal; }
+.notifications-head-actions { display: flex; gap: 6px; }
+.notifications-head-actions button { display: grid; width: 31px; height: 31px; place-items: center; color: #a69bae; border: 1px solid rgba(255,255,255,.08); border-radius: 9px; background: rgba(255,255,255,.04); cursor: pointer; }
+.notifications-head-actions button:hover, .notifications-head-actions button:focus-visible { color: var(--nexus-mint); border-color: rgba(99,232,213,.3); }
+.notifications-list { display: grid; gap: 8px; padding-top: 10px; }
+.notification-item { position: relative; border: 1px solid rgba(255,255,255,.08); border-radius: 13px; background: rgba(255,255,255,.035); transition: border-color .16s var(--ease-out), background .16s var(--ease-out), transform .16s var(--ease-out); }
+.notification-item.is-unread { border-color: rgba(99,232,213,.22); background: rgba(99,232,213,.065); }
+.notification-item:hover { transform: translateY(-1px); border-color: rgba(99,232,213,.34); }
+.notification-item > a, .notification-item > div { display: block; padding: 11px 12px; color: inherit; text-decoration: none; }
+.notification-item > a > svg { position: absolute; top: 12px; left: 12px; color: var(--nexus-mint); }
+.notification-type { display: block; margin-bottom: 4px; color: var(--nexus-mint); font-size: 8px; }
+.notification-item strong { display: block; padding-left: 18px; color: #f5effb; font-size: 11px; }
+.notification-item p { margin: 5px 0; color: #b0a5b9; font-size: 10px; line-height: 1.8; }
+.notification-item small { color: #766b80; font: 9px var(--font-display); }
+.notifications-state { display: grid; min-height: 150px; place-items: center; align-content: center; gap: 9px; color: #978ca1; font-size: 10px; text-align: center; }
+.notifications-error { color: #f2b2bc; }
+.spin { animation: spin 1s linear infinite; }
+@media (max-width: 720px) { .notifications-popover { top: 76px; right: 10px; left: 10px; width: auto; max-height: calc(100dvh - 100px); padding: 13px; } }
+@media (prefers-reduced-motion: reduce) { .notifications-popover, .notification-item, .spin { animation: none; transition: none; } }
+.notifications-login { min-height: 36px; padding: 0 14px; color: #1a1129; border: 0; border-radius: 10px; background: var(--nexus-mint); font: 800 10px var(--font-display); cursor: pointer; }
+.notifications-login:hover, .notifications-login:focus-visible { filter: brightness(1.08); }

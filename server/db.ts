@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, bets, crashBets, crashRounds, gameCatalog, localCredentials, passwordResetTokens, promotionClaims, promotions, rewardLedger, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
+import { InsertUser, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomInt, randomUUID } from "node:crypto";
 import { isCrashed, multiplierAt } from "./crash";
@@ -186,8 +186,36 @@ export async function placeBet(input: PlaceBetInput) {
       status: "pending",
     });
     await tx.insert(walletTransactions).values({ userId: input.userId, type: "bet_lock", status: "confirmed", currency: "USDT", amount: input.stake.toFixed(6), referenceId: ticketCode });
+    await tx.insert(notifications).values({ userId: input.userId, type: "bet", title: "بلیتت ثبت شد", message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} USDT در وضعیت بررسی قرار گرفت.`, href: "/account" });
     return { id: Number(inserted[0].insertId), ticketCode, stake: input.stake, potentialReturn: input.potentialReturn, status: "pending" as const };
   });
+}
+
+export async function getNotifications(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({ id: notifications.id, type: notifications.type, title: notifications.title, message: notifications.message, href: notifications.href, readAt: notifications.readAt, createdAt: notifications.createdAt }).from(notifications).where(eq(notifications.userId, userId)).orderBy(desc(notifications.createdAt)).limit(30);
+}
+
+export async function getUnreadNotificationCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const rows = await db.select({ count: sql<number>`count(*)` }).from(notifications).where(and(eq(notifications.userId, userId), isNull(notifications.readAt)));
+  return Number(rows[0]?.count ?? 0);
+}
+
+export async function markNotificationRead(userId: number, notificationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  await db.update(notifications).set({ readAt: new Date() }).where(and(eq(notifications.id, notificationId), eq(notifications.userId, userId), isNull(notifications.readAt)));
+  return { success: true as const };
+}
+
+export async function markAllNotificationsRead(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  await db.update(notifications).set({ readAt: new Date() }).where(and(eq(notifications.userId, userId), isNull(notifications.readAt)));
+  return { success: true as const };
 }
 
 export async function getUserBets(userId: number) {

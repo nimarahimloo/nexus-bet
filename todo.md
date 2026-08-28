@@ -280,3 +280,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن motionهای تکمیلی Auth modal، Support panel، drawer و navigation.
 - [x] رعایت `prefers-reduced-motion` و جلوگیری از animationهای layout-shifting.
 - [x] افزودن تست قرارداد motion و بازبینی routeهای موبایل/دسکتاپ.
+
+## Custom in-app notifications
+- [x] تعریف مدل notification کاربرمحور شامل عنوان، متن، نوع، لینک، خوانده‌شدن و زمان ایجاد.
+- [x] افزودن migration و procedureهای امن برای فهرست اعلان‌ها، شمارندهٔ خوانده‌نشده و mark-as-read.
+- [x] افزودن پنل اعلان glass در header و حالت موبایل با empty/loading/error states.
+- [x] اتصال رویدادهای واقعی محصول به اعلان‌ها بدون seed یا دادهٔ ساختگی.
+- [x] افزودن تست‌های backend/UI و بازبینی responsive پیش از checkpoint.

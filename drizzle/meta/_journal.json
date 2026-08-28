@@ -50,6 +50,13 @@
       "when": 1787878785108,
       "tag": "0006_familiar_pyro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1787950395506,
+      "tag": "0007_cute_dreadnoughts",
+      "breakpoints": true
     }
   ]
 }
