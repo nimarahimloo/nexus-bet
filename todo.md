@@ -307,3 +307,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح قرارداد یا تراکنش Crash بدون افزودن mock/fake operational data.
 - [x] افزودن تست برای موجودی ناکافی، round نامعتبر، ثبت bet موفق و وضعیت‌های خطا.
 - [x] بازبینی UI error/loading states و ثبت checkpoint پس از اعتبارسنجی.
+
+## Betting history profile page
+- [x] ممیزی مدل bets، selections و query فعلی کاربر.
+- [x] افزودن query جزئیات‌دار و امن برای تاریخچهٔ شرط‌بندی کاربر.
+- [x] ساخت صفحهٔ تاریخچه با تب‌های pending، won و lost و empty states واقعی.
+- [x] نمایش جزئیات مبلغ، ضریب، بازگشت، انتخاب‌ها و زمان با RTL و USDT.
+- [x] اتصال صفحه به پروفایل، تست backend/UI و بازبینی responsive پیش از checkpoint.

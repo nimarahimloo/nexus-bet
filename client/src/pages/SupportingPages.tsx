@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useState } from "react";
-import { ArrowDownLeft, ArrowLeft, ArrowUpRight, BrainCircuit, Check, Crown, Gift, LockKeyhole, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
+import { ArrowDownLeft, ArrowLeft, ArrowUpRight, BrainCircuit, Check, CheckCircle2, Clock3, Crown, Gift, LockKeyhole, ShieldCheck, Sparkles, Ticket, WalletCards, XCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { formatFaDecimal } from "@shared/format";
 import type { AiPick } from "@shared/ai";
@@ -15,5 +15,39 @@ export function AiPage() { const sportsQuery = trpc.sports.fixtures.useQuery({ n
 
 export function VipPage() { const { isAuthenticated } = useAuth(); const summaryQuery = trpc.vip.summary.useQuery(undefined, { enabled: isAuthenticated }); const summary = summaryQuery.data; return <PageShell eyebrow="NEXUS VIP" title="فعال بمان، بیشتر دیده شو" description="سطح و progress از activity ledger واقعی محاسبه می‌شوند؛ هیچ امتیاز یا tier ساختگی در رابط نمایش داده نمی‌شود." heroImage="/manus-storage/nexus-bet-vip-hero-v2_6e37762c.png"><div className="vip-level glass-panel"><div><Crown size={24} /><span>وضعیت باشگاه</span><strong>{summaryQuery.isLoading ? "در حال دریافت…" : summary?.currentTier ?? "—"}</strong></div><div><b>{summary ? formatFaDecimal(summary.points, 0) : "—"}</b><span>امتیاز فعالیت</span></div><div className="vip-progress"><span style={{ width: `${summary?.progress ?? 0}%` }} /><small>{summary?.nextTier ? `${formatFaDecimal(summary.nextThreshold ?? 0, 0)} امتیاز تا ${summary.nextTier}` : isAuthenticated ? "بیشترین سطح فعال" : "برای مشاهده وارد شوید"}</small></div></div>{!isAuthenticated && <div className="data-state preview-notice"><ShieldCheck size={15} /><span>برای دیدن tier و امتیاز واقعی وارد حساب شوید.</span></div>}{summaryQuery.error && <div className="inline-alert">activity ledger فعلاً در دسترس نیست.</div>}<div className="standalone-grid two"><article className="standalone-card glass-panel"><Gift size={21} /><h3>مزایای فعال</h3><p>مزایا فقط بعد از ثبت در policy و activity ledger نمایش داده می‌شوند.</p></article><article className="standalone-card glass-panel"><WalletCards size={21} /><h3>اولویت خدمات کیف پول</h3><p>وضعیت سرویس بر اساس tier واقعی حساب تعیین خواهد شد.</p></article></div></PageShell>; }
 
-export function AccountPage() { const { user, isAuthenticated } = useAuth(); const overviewQuery = trpc.account.overview.useQuery(undefined, { enabled: isAuthenticated }); const overview = overviewQuery.data; const bets = overview?.bets ?? []; const openBets = bets.filter((bet) => bet.status === "pending"); return <PageShell eyebrow="حساب کاربری" title="همه‌چیز دربارهٔ حساب تو" description="شرط‌ها، spinها و تراکنش‌های کیف پول از یک overview backend خوانده می‌شوند؛ هیچ رکورد نمایشی جای فعالیت واقعی را نمی‌گیرد." heroImage="/manus-storage/nexus-bet-account-hero-v2_f471d0ea.png"><div className="account-summary glass-panel"><div className="avatar">N</div><div><b>{user?.name ?? "حساب Nexus"}</b><span>{isAuthenticated ? "فعالیت حساب از منبع واقعی" : "برای مشاهدهٔ فعالیت وارد حساب شوید."}</span></div><ShieldCheck size={21} /></div><div className="standalone-grid two"><article className="standalone-card glass-panel"><FileClockIcon /><h3>شرط‌های باز</h3><strong>{isAuthenticated ? `${openBets.length} بلیت فعال` : "—"}</strong>{openBets[0] ? <p>{openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"} · ضریب {formatFaDecimal(openBets[0].combinedOdds)}</p> : <p>{overviewQuery.isLoading ? "در حال دریافت…" : "هنوز بلیت ثبت‌شده‌ای وجود ندارد."}</p>}</article><article className="standalone-card glass-panel"><Gift /><h3>فعالیت پاداش</h3><strong>{isAuthenticated ? `${overview?.wheelSpins.length ?? 0} spin` : "—"}</strong><p>تاریخچهٔ reward از backend به‌روزرسانی می‌شود.</p></article></div>{overviewQuery.error && <div className="inline-alert">اطلاعات حساب فعلاً از backend دریافت نشد.</div>}</PageShell>; }
+type BetHistoryFilter = "all" | "pending" | "won" | "lost";
+
+const betStatusMeta: Record<Exclude<BetHistoryFilter, "all">, { label: string; icon: typeof Clock3; className: string }> = {
+  pending: { label: "در انتظار", icon: Clock3, className: "pending" },
+  won: { label: "برنده", icon: CheckCircle2, className: "won" },
+  lost: { label: "بازنده", icon: XCircle, className: "lost" },
+};
+
+export function AccountPage() {
+  const { user, isAuthenticated } = useAuth();
+  const [filter, setFilter] = useState<BetHistoryFilter>("all");
+  const overviewQuery = trpc.account.overview.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: 10_000 });
+  const overview = overviewQuery.data;
+  const bets = overview?.bets ?? [];
+  const visibleBets = filter === "all" ? bets : bets.filter((bet) => bet.status === filter);
+  const counts = {
+    all: bets.length,
+    pending: bets.filter((bet) => bet.status === "pending").length,
+    won: bets.filter((bet) => bet.status === "won").length,
+    lost: bets.filter((bet) => bet.status === "lost").length,
+  };
+  const openBets = bets.filter((bet) => bet.status === "pending");
+
+  return <PageShell eyebrow="حساب کاربری" title="همه‌چیز دربارهٔ حساب تو" description="شرط‌ها، spinها و تراکنش‌های کیف پول از overview واقعی backend خوانده می‌شوند؛ هیچ رکورد نمایشی جای فعالیت واقعی را نمی‌گیرد." heroImage="/manus-storage/nexus-bet-account-hero-v2_f471d0ea.png">
+    <div className="account-summary glass-panel"><div className="avatar">N</div><div><b>{user?.name ?? "حساب Nexus"}</b><span>{isAuthenticated ? "فعالیت حساب از منبع واقعی" : "برای مشاهدهٔ فعالیت وارد حساب شوید."}</span></div><ShieldCheck size={21} /></div>
+    <div className="standalone-grid two"><article className="standalone-card glass-panel"><FileClockIcon /><h3>شرط‌های باز</h3><strong>{isAuthenticated ? `${openBets.length} بلیت فعال` : "—"}</strong>{openBets[0] ? <p>{openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"} · ضریب {formatFaDecimal(openBets[0].combinedOdds)}</p> : <p>{overviewQuery.isLoading ? "در حال دریافت…" : "هنوز بلیت ثبت‌شده‌ای وجود ندارد."}</p>}</article><article className="standalone-card glass-panel"><Gift /><h3>فعالیت پاداش</h3><strong>{isAuthenticated ? `${overview?.wheelSpins.length ?? 0} spin` : "—"}</strong><p>تاریخچهٔ reward از backend به‌روزرسانی می‌شود.</p></article></div>
+    <section className="bet-history glass-panel" aria-labelledby="bet-history-title"><div className="section-heading"><div><span className="section-kicker"><Ticket size={15} /> تاریخچهٔ واقعی</span><h2 id="bet-history-title">تاریخچهٔ شرط‌بندی</h2></div><span className="sample-chip">{isAuthenticated ? `${counts.all} بلیت` : "نیازمند ورود"}</span></div>
+      {!isAuthenticated ? <div className="empty-state"><ShieldCheck size={20} /><p>برای مشاهدهٔ betهای خود وارد حساب شوید.</p></div> : overviewQuery.isLoading ? <div className="empty-state"><p>در حال دریافت تاریخچه از backend…</p></div> : overviewQuery.error ? <div className="inline-alert">تاریخچهٔ شرط‌بندی فعلاً از backend دریافت نشد.</div> : <>
+        <div className="bet-history-tabs" role="tablist" aria-label="فیلتر وضعیت شرط‌ها">{(["all", "pending", "won", "lost"] as const).map((key) => <button key={key} className={filter === key ? "is-active" : ""} role="tab" aria-selected={filter === key} onClick={() => setFilter(key)}>{key === "all" ? "همه" : betStatusMeta[key].label}<b>{counts[key]}</b></button>)}</div>
+        {visibleBets.length ? <div className="bet-history-list">{visibleBets.map((bet) => { const meta = bet.status === "pending" || bet.status === "won" || bet.status === "lost" ? betStatusMeta[bet.status] : betStatusMeta.pending; const StatusIcon = meta.icon; return <article className={`bet-history-card ${meta.className}`} key={bet.id}><div className="bet-history-card-head"><span className="bet-ticket"><Ticket size={15} /> {bet.ticketCode}</span><span className={`bet-status ${meta.className}`}><StatusIcon size={14} /> {meta.label}</span></div><div className="bet-history-metrics"><div><span>مبلغ شرط</span><b>{formatFaDecimal(bet.stake)} USDT</b></div><div><span>ضریب ترکیبی</span><b>{formatFaDecimal(bet.combinedOdds)}</b></div><div><span>{bet.status === "won" ? "بازگشت نهایی" : "بازگشت احتمالی"}</span><b className={bet.status === "won" ? "mint-text" : ""}>{formatFaDecimal(bet.potentialReturn)} USDT</b></div></div><div className="bet-selections">{bet.selections.map((selection) => <span key={`${bet.id}-${selection.id}`}>{selection.match} · {selection.market} · <b>{formatFaDecimal(selection.odds)}</b></span>)}</div><time dateTime={new Date(bet.createdAt).toISOString()}>{new Date(bet.createdAt).toLocaleString("fa-IR")}</time></article>; })}</div> : <div className="empty-state"><Check size={20} /><p>در این وضعیت هنوز bet واقعی ثبت نشده است.</p></div>}
+      </>}
+    </section>
+    {overviewQuery.error && <div className="inline-alert">اطلاعات حساب فعلاً از backend دریافت نشد.</div>}
+  </PageShell>;
+}
 function FileClockIcon() { return <LockKeyhole size={21} />; }
