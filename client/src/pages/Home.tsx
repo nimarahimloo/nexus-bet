@@ -1,5 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { openAuthModal, openSupportPanel } from "@/lib/platformOverlay";
+import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
 import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
@@ -174,7 +174,7 @@ export default function Home() {
     const confirmationState = getTicketConfirmationState({ selectionCount: selections.length, authenticated: isAuthenticated, loading: walletLoading, error: walletError, stake: numericStake, availableBalance });
     if (confirmationState === "guest") {
       toast.error("برای ثبت بلیت، ابتدا وارد حساب کاربری شوید.");
-      openAuthModal();
+      startLogin();
       return;
     }
     if (confirmationState === "loading") {
@@ -241,7 +241,7 @@ export default function Home() {
           <div className="filter-row" role="tablist" aria-label="فیلتر ورزش">
             {leagues.map((league) => <button key={league} onClick={() => setActiveFilter(league)} className={`filter-pill ${activeFilter === league ? "selected" : ""}`}>{league}{league === "فوتبال" && <span>۱۸</span>}</button>)}
           </div>
-          <div className="feed-status" role="status">{formatSportsFeedStatus({ loading: sportsQuery.isLoading, source: sportsQuery.data?.source, error: sportsQuery.data?.error })}</div>
+          <div className="feed-status" role="status">{formatSportsFeedStatus({ loading: sportsQuery.isLoading, source: sportsQuery.data?.source, error: sportsQuery.data?.error, matchesCount: sportsQuery.data?.matches.length ?? 0 })}</div>
 
           <div className="live-center glass-panel"><div className="live-center-top"><span className="status-live"><i /> مرکز زنده</span><b>{liveMatch ? `${liveMatch.home} — ${liveMatch.away}` : "در حال بررسی مسابقات زنده"}</b><small>{liveMatch ? `${liveMatch.minute ?? "اکنون"} · ${liveMatch.score ?? "بدون نتیجه"}` : liveQuery.data?.error ?? "فعلاً مسابقهٔ زنده‌ای گزارش نشده است"}</small></div><div className="live-pulse-line"><span style={{ width: liveMatch ? "67%" : "8%" }} /></div><div className="live-center-bottom"><span>{liveMatch ? "دادهٔ زنده از API" : "مرکز زنده"}</span><button onClick={() => setActiveFilter("فوتبال")}>مشاهدهٔ بازارهای زنده <ArrowLeft size={14} /></button></div></div>
 
@@ -353,7 +353,7 @@ export default function Home() {
 
 
       <section className="account-section container" id="account">
-        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={openSupportPanel}><Headphones size={16} /> پشتیبانی</button></div>
+        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
         <div className="account-grid">
           <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>{isAuthenticated ? `${formatFaNumber(openBets.length, { maximumFractionDigits: 0 })} بلیت فعال` : "ورود لازم است"}</b></div><Link href="/account" aria-label="مشاهدهٔ شرط‌های باز"><ArrowLeft size={16} /></Link></div>{openBets[0] ? <><div className="open-bet-line"><div><span>{openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"}</span><b>{openBets[0].selections[0]?.market ?? "بازار ثبت‌شده"}</b></div><strong>{numberFa(openBets[0].combinedOdds)}</strong></div><div className="open-bet-footer"><span>مبلغ: {numberFa(openBets[0].stake)} USDT</span><span>بازگشت: {numberFa(openBets[0].potentialReturn)} USDT</span></div></> : <p className="data-state">{betsQuery.isLoading ? "در حال دریافت…" : isAuthenticated ? "هنوز بلیت باز ندارید." : "برای مشاهدهٔ بلیت‌های واقعی وارد شوید."}</p>}</article>
           <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>وضعیت کیف پول</span><b>{isAuthenticated ? "backend واقعی" : "ورود لازم است"}</b></div><Link href="/wallet" aria-label="مشاهدهٔ کیف پول"><ArrowLeft size={16} /></Link></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>قابل‌استفاده</b><span>موجودی منبع wallet.me</span></div><strong className="income">{isAuthenticated && wallet ? `${numberFa(availableBalance)} USDT` : "—"}</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>قفل‌شده</b><span>در بلیت‌های باز</span></div><strong>{isAuthenticated && wallet ? `${numberFa(lockedBalance)} USDT` : "—"}</strong></div></article>
