@@ -21,4 +21,13 @@ describe("navigation and spacing safeguards", () => {
     expect(css).toContain(".login-button { min-height: 44px; padding-inline: 16px !important; }");
     expect(css).toContain("gap: max(12px, var(--space-3, 14px))");
   });
+
+  it("prevents mobile overlap and overflow with route-level spacing safeguards", () => {
+    const css = read("../client/src/index.css");
+    expect(css).toContain("html, body { overflow-x: clip; }");
+    expect(css).toContain(".content-grid > *, .standalone-grid > *");
+    expect(css).toContain(".subpage-content { display: grid; gap: var(--section-space);");
+    expect(css).toContain("padding-bottom: max(132px, calc(104px + env(safe-area-inset-bottom)))");
+    expect(css).toContain(".subpage-content, .home-shell > .container { gap: 22px;");
+  });
 });

@@ -509,3 +509,30 @@ html, body, button, input, select, textarea, option { font-family: "Nexus Kalame
 .feature-hub-art { position: absolute; z-index: -1; left: -8px; bottom: -10px; width: 132px; height: 112px; object-fit: cover; opacity: .52; filter: brightness(1.18) saturate(1.06); border-radius: 18px; pointer-events: none; }
 .feature-hub-copy, .feature-hub-icon, .feature-hub-arrow { position: relative; z-index: 1; }
 @media (max-width: 720px) { .feature-hub-art { width: 145px; height: 120px; opacity: .48; } }
+
+/* Responsive spacing contract: resilient defaults for every product route. */
+:root { --page-space: clamp(18px, 4vw, 40px); --section-space: clamp(20px, 4vw, 44px); --card-space: clamp(14px, 2.6vw, 22px); }
+html, body { overflow-x: clip; }
+.nexus-shell { overflow-x: clip; }
+.container, .subpage-content, .content-grid, .standalone-grid, .offer-grid, .game-grid, .standings-grid, .feature-hub-grid, .match-list, .wallet-request-actions, .crash-grid { min-width: 0; }
+.content-grid > *, .standalone-grid > *, .offer-grid > *, .game-grid > *, .standings-grid > *, .feature-hub-grid > *, .match-list > *, .crash-grid > * { min-width: 0; }
+.subpage-content { display: grid; gap: var(--section-space); padding-bottom: max(132px, calc(104px + env(safe-area-inset-bottom))); }
+.subpage-content > * { margin: 0 !important; }
+.home-shell > .container { display: grid; gap: var(--section-space); padding-bottom: max(132px, calc(104px + env(safe-area-inset-bottom))); }
+.home-shell > .container > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+.glass-panel, .standalone-card, .offer-card, .game-card, .match-card, .standings-card, .ai-pick-card, .balance-hero, .account-summary, .vip-level, .reward-wheel-card { min-width: 0; }
+.glass-panel :is(p, span, b, strong, small, h1, h2, h3) { overflow-wrap: anywhere; }
+.feature-filter-row, .tournament-tabs, .filter-row, .league-filter-pills { gap: var(--space-2, 10px); padding-block: 2px 12px; scroll-padding-inline: var(--page-space); }
+.feature-filter-row button, .tournament-tabs button, .filter-pill, .casino-filters button { min-height: 40px; padding-inline: 14px; }
+.wallet-request, .reward-history, .reward-rules, .ai-callout, .account-summary, .tournament-feature { padding: var(--card-space); }
+@media (max-width: 720px) {
+  .container { width: min(100% - 28px, 560px); }
+  .subpage-hero { margin-bottom: 0; }
+  .subpage-content, .home-shell > .container { gap: 22px; padding-bottom: calc(138px + env(safe-area-inset-bottom)); }
+  .standalone-grid, .standalone-grid.two, .offer-grid, .game-grid, .standings-grid, .crash-grid { gap: 14px; }
+  .balance-hero, .account-summary, .vip-level, .reward-wheel-card, .crash-board { padding: 18px; }
+  .support-launcher { left: 10px; bottom: calc(88px + env(safe-area-inset-bottom)); width: 42px; min-width: 42px; height: 42px; min-height: 42px; padding: 0; border-radius: 15px; }
+  .support-launcher svg { width: 19px; height: 19px; }
+  .support-launcher span { display: none; }
+  .mobile-bottom-nav { z-index: 43; }
+}

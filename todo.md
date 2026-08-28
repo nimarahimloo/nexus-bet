@@ -265,3 +265,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] روشن‌سازی لایهٔ overlay روی heroها با حفظ خوانایی متن.
 - [x] تثبیت font-face و font stack برای تمام عناصر، فرم‌ها و routeها.
 - [x] افزودن تست قرارداد asset/font و بازبینی موبایل و دسکتاپ.
+
+## Full spacing and mobile regression audit
+- [x] ممیزی grid/flexهای routeها برای gap، padding، margin و min-width صفر.
+- [x] تعریف guardrailهای CSS برای عدم overlap، overflow-x و safe-area موبایل.
+- [x] اصلاح تراکم کارت‌ها، toolbarها، فرم‌ها و CTAها در routeهای پرریسک.
+- [x] افزودن تست static spacing و responsive contract برای جلوگیری از regression.
+- [x] بازبینی همهٔ routeهای کلیدی در viewportهای موبایل و ثبت checkpoint.
