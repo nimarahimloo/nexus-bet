@@ -1,5 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
+import { openAuthModal, openSupportPanel } from "@/lib/platformOverlay";
 import { Button } from "@/components/ui/button";
 import { calculatePotentialReturn, combinedOdds, getTicketConfirmationState, toggleSelection, validateStakeAgainstWallet, type BettingSelection } from "@/lib/betting";
 import { trpc } from "@/lib/trpc";
@@ -174,7 +174,7 @@ export default function Home() {
     const confirmationState = getTicketConfirmationState({ selectionCount: selections.length, authenticated: isAuthenticated, loading: walletLoading, error: walletError, stake: numericStake, availableBalance });
     if (confirmationState === "guest") {
       toast.error("برای ثبت بلیت، ابتدا وارد حساب کاربری شوید.");
-      startLogin();
+      openAuthModal();
       return;
     }
     if (confirmationState === "loading") {
@@ -353,7 +353,7 @@ export default function Home() {
 
 
       <section className="account-section container" id="account">
-        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={() => toast.info("مرکز پشتیبانی در نسخهٔ بعدی در دسترس قرار می‌گیرد.")}><Headphones size={16} /> پشتیبانی</button></div>
+        <div className="section-heading"><div><span className="section-kicker">فضای شخصی شما</span><h2>حساب تو، همین‌جا</h2></div><button className="text-link" onClick={openSupportPanel}><Headphones size={16} /> پشتیبانی</button></div>
         <div className="account-grid">
           <article className="account-card glass-panel open-bets"><div className="card-header"><span className="icon-surface violet"><FileClock size={19} /></span><div><span>شرط‌های باز</span><b>{isAuthenticated ? `${formatFaNumber(openBets.length, { maximumFractionDigits: 0 })} بلیت فعال` : "ورود لازم است"}</b></div><Link href="/account" aria-label="مشاهدهٔ شرط‌های باز"><ArrowLeft size={16} /></Link></div>{openBets[0] ? <><div className="open-bet-line"><div><span>{openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"}</span><b>{openBets[0].selections[0]?.market ?? "بازار ثبت‌شده"}</b></div><strong>{numberFa(openBets[0].combinedOdds)}</strong></div><div className="open-bet-footer"><span>مبلغ: {numberFa(openBets[0].stake)} USDT</span><span>بازگشت: {numberFa(openBets[0].potentialReturn)} USDT</span></div></> : <p className="data-state">{betsQuery.isLoading ? "در حال دریافت…" : isAuthenticated ? "هنوز بلیت باز ندارید." : "برای مشاهدهٔ بلیت‌های واقعی وارد شوید."}</p>}</article>
           <article className="account-card glass-panel"><div className="card-header"><span className="icon-surface mint"><Landmark size={19} /></span><div><span>وضعیت کیف پول</span><b>{isAuthenticated ? "backend واقعی" : "ورود لازم است"}</b></div><Link href="/wallet" aria-label="مشاهدهٔ کیف پول"><ArrowLeft size={16} /></Link></div><div className="activity-line"><div className="activity-icon incoming"><ArrowDownLeft size={15} /></div><div><b>قابل‌استفاده</b><span>موجودی منبع wallet.me</span></div><strong className="income">{isAuthenticated && wallet ? `${numberFa(availableBalance)} USDT` : "—"}</strong></div><div className="activity-line"><div className="activity-icon outgoing"><ArrowUpRight size={15} /></div><div><b>قفل‌شده</b><span>در بلیت‌های باز</span></div><strong>{isAuthenticated && wallet ? `${numberFa(lockedBalance)} USDT` : "—"}</strong></div></article>

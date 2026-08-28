@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { formatFaDecimal, formatFaNumber, formatFaTime } from "../shared/format";
 import { appRoutePaths } from "../shared/routes";
 import { formatCrashAmount, formatCrashCashoutLabel, formatCrashStakeLabel, formatMatchKickoff, formatMatchOdds } from "../shared/sportsDisplay";
-import { pageShellDisplayContract } from "../client/src/components/PageShell";
+import { pageShellDisplayContract } from "../client/src/lib/pageShellContract";
 
 describe("Nexus Bet UI contracts", () => {
   it("formats decimals with Persian digits and normalized precision", () => {

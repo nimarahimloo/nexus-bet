@@ -111,6 +111,29 @@ export const appRouter = router({
     overview: protectedProcedure.query(async ({ ctx }) => ({ bets: await getUserBets(ctx.user.id), wheelSpins: await getWheelHistory(ctx.user.id), walletTransactions: await getWalletTransactions(ctx.user.id) })),
   }),
 
+  support: router({
+    chat: publicProcedure
+      .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(800) })).min(1).max(10) }))
+      .mutation(async ({ input }) => {
+        try {
+          const response = await invokeLLM({
+            model: "gpt-5-mini",
+            maxTokens: 360,
+            messages: [
+              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی. پاسخ‌ها کوتاه، گرم و کاربردی باشند. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، پاداش و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده، و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است بگو درخواست‌ها تا اتصال provider در حالت pending هستند." },
+              ...input.messages.map((message) => ({ role: message.role, content: message.content })),
+            ],
+          });
+          const rawContent = response.choices?.[0]?.message?.content;
+          const content = typeof rawContent === "string" ? rawContent.trim() : "";
+          return { content: content || "در حال حاضر پاسخ قابل‌نمایشی ندارم. چند لحظه دیگر دوباره تلاش کن.", source: "ai" as const };
+        } catch (error) {
+          console.warn("[Nexus Support] AI unavailable:", error);
+          return { content: "پشتیبانی هوشمند موقتاً در دسترس نیست. لطفاً کمی بعد دوباره پیام بده.", source: "unavailable" as const };
+        }
+      }),
+  }),
+
   ai: router({
     smartPicks: publicProcedure
       .input(z.object({

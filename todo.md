@@ -227,3 +227,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازطراحی PageShell، header و bottom navigation برای تراکم و لمس بهتر در موبایل.
 - [x] همسان‌سازی routeهای Wallet، Rewards، Crash، AI و featureها با design system جدید.
 - [x] افزودن/به‌روزرسانی تست‌های قرارداد UI و بازبینی screenshot موبایل/دسکتاپ.
+
+## In-platform auth and AI support
+- [x] ممیزی triggerهای ورود، خروج و پشتیبانی فعلی در تمام routeها.
+- [x] ساخت Auth modal شامل login، signup، forgot password و validation سمت رابط.
+- [x] افزودن دکمه‌های Google، Discord، Facebook و Apple بدون redirect در نسخهٔ preview.
+- [x] اتصال همهٔ CTAهای ورود به Auth modal داخلی و حذف وابستگی ورود از مسیرهای رابط.
+- [x] ساخت پنل پشتیبانی داخلی با گفت‌وگوی Nexus AI، loading/error و پاسخ فارسی.
+- [x] جایگزین‌کردن دکمهٔ شناور پشتیبانی با launcher و sheet داخلی سازگار با safe-area.
+- [x] افزودن تست flowهای Auth/Support و بازبینی responsive موبایل و دسکتاپ.
