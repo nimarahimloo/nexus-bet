@@ -500,3 +500,12 @@ html, body, button, input, select, textarea, option { font-family: "Nexus Kalame
   .mobile-bottom-nav a { min-height: 50px; padding: 7px 6px; }
   .subpage-content > *, .home-shell .container > * { margin-bottom: 16px; }
 }
+
+/* Asset recovery and typography safeguards: placed last to win against legacy shorthand rules. */
+.nexus-shell, .nexus-shell *, .nexus-shell button, .nexus-shell input, .nexus-shell select, .nexus-shell textarea { font-family: var(--font-body) !important; letter-spacing: normal !important; }
+.subpage-art img { opacity: .9 !important; filter: brightness(1.12) saturate(1.05); }
+.art-overlay { background: rgba(8, 6, 14, .06) !important; opacity: 1 !important; }
+.feature-hub-card { position: relative; isolation: isolate; overflow: hidden; }
+.feature-hub-art { position: absolute; z-index: -1; left: -8px; bottom: -10px; width: 132px; height: 112px; object-fit: cover; opacity: .52; filter: brightness(1.18) saturate(1.06); border-radius: 18px; pointer-events: none; }
+.feature-hub-copy, .feature-hub-icon, .feature-hub-arrow { position: relative; z-index: 1; }
+@media (max-width: 720px) { .feature-hub-art { width: 145px; height: 120px; opacity: .48; } }
