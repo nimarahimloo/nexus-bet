@@ -218,3 +218,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] حذف fallbackهای عملیاتی گمراه‌کننده و افزودن source/error/empty state صریح.
 - [x] افزودن تست‌های data-truth، procedure و route برای تمام مسیرهای مهاجرت‌یافته.
 - [x] بازبینی responsive و ثبت checkpoint مهاجرت دادهٔ واقعی.
+
+## iOS-inspired mobile UX redesign
+- [x] ممیزی بصری صفحات موبایل و ثبت تصمیم‌های طراحی برگرفته از نمونه‌های معتبر.
+- [x] بازتعریف tokenهای glass، surface، border، typography و safe-area مطابق زبان بصری iOS.
+- [x] اعمال تضمین‌شدهٔ Peyda و Kalameh روی همهٔ کنترل‌ها، فرم‌ها، اعداد و routeها.
+- [x] بازطراحی Home و Matches با hierarchy موبایلی، کارت‌های قابل‌اسکن و bet slip جذاب.
+- [x] بازطراحی PageShell، header و bottom navigation برای تراکم و لمس بهتر در موبایل.
+- [x] همسان‌سازی routeهای Wallet، Rewards، Crash، AI و featureها با design system جدید.
+- [x] افزودن/به‌روزرسانی تست‌های قرارداد UI و بازبینی screenshot موبایل/دسکتاپ.
