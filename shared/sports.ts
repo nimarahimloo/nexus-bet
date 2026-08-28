@@ -12,6 +12,17 @@ export type SportsApiFixture = {
   goals?: { home?: number | null; away?: number | null };
 };
 
+export const sportsFilterOptions = ["همه", "فوتبال", "تنیس", "بسکتبال"] as const;
+export type SportsFilter = typeof sportsFilterOptions[number];
+
+export function isLiveMatch(match: Pick<MatchCardData, "status">): boolean {
+  return match.status === "زنده";
+}
+
+export function filterSportsMatches(matches: MatchCardData[], filters: { sport?: SportsFilter; liveOnly?: boolean }): MatchCardData[] {
+  return matches.filter((match) => (filters.sport === undefined || filters.sport === "همه" || match.sport === filters.sport) && (!filters.liveOnly || isLiveMatch(match)));
+}
+
 export type MatchCardData = {
   id: string;
   league: string;

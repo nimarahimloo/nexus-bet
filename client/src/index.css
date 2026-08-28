@@ -441,3 +441,7 @@ button:active, .solid-cta:active, .primary-cta:active, .outline-cta:active, .log
 .address-box.is-unavailable > svg { flex: none; color: #a99ab6; }
 .data-state { margin: 10px 0 0; color: #9e93a8; font-size: 10px; line-height: 1.8; }
 .data-state.error, .inline-alert { color: #f0b1b7; }
+
+.live-filter-pill { flex: none; min-height: 34px; padding: 0 11px; color: #9d94aa; border: 1px solid rgba(255,255,255,.08); border-radius: 9px; background: rgba(255,255,255,.03); font: inherit; font-size: 9px; white-space: nowrap; cursor: pointer; }
+.live-filter-pill.selected, .live-filter-pill:hover, .live-filter-pill:focus-visible { color: #fff; border-color: rgba(243,122,145,.48); background: rgba(243,122,145,.13); box-shadow: 0 0 0 3px rgba(243,122,145,.08); }
+@media (max-width: 720px) { .matches-filter-bar .live-filter-pill { order: 2; } .matches-filter-bar .league-filter-pills { flex-basis: 100%; } }
