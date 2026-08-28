@@ -293,3 +293,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزایش و یکدست‌سازی spacingهای کم یا صفر با حفظ design tokens موجود.
 - [x] اصلاح overflow، safe-area و touch targetها در viewportهای موبایل.
 - [x] افزودن تست regression برای spacing و بازبینی responsive پیش از checkpoint.
+
+## Standard spacing token system
+- [x] ممیزی tokenهای spacing فعلی و الگوهای پراکندهٔ padding، margin و gap.
+- [x] تعریف مقیاس spacing استاندارد با tokenهای semantic و responsive.
+- [x] جایگزینی نقاط کلیدی پروژه با tokenهای مشترک بدون تغییر ناخواسته در layout.
+- [x] افزودن مستندات مصرف و guardrailهای CSS برای توسعه‌های آینده.
+- [x] افزودن تست regression، بازبینی responsive و ثبت checkpoint.

@@ -645,3 +645,53 @@ html, body { overflow-x: clip; }
   .nexus-shell .mobile-slip-launch, .nexus-shell .mobile-slip-dock { margin-inline: 2px; }
 }
 .nexus-shell { overflow-x: hidden; }
+
+/* Standard spacing scale — use these tokens instead of ad-hoc pixel values. */
+:root {
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 56px;
+  --space-13: 64px;
+  --space-14: 72px;
+  --space-15: 80px;
+  --space-page-inline: clamp(var(--space-4), 4vw, var(--space-10));
+  --space-page-block: clamp(var(--space-6), 5vw, var(--space-12));
+  --space-section: clamp(var(--space-6), 4vw, var(--space-12));
+  --space-section-compact: clamp(var(--space-5), 3vw, var(--space-8));
+  --space-card: clamp(var(--space-4), 2.6vw, var(--space-6));
+  --space-card-compact: clamp(var(--space-3), 2vw, var(--space-5));
+  --space-control: var(--space-2);
+  --space-control-lg: var(--space-3);
+  --space-inline: var(--space-2);
+  --space-stack: var(--space-4);
+}
+
+/* Opt-in primitives for new components. */
+.space-stack { display: grid; gap: var(--space-stack); }
+.space-stack-compact { display: grid; gap: var(--space-3); }
+.space-inline { display: flex; align-items: center; gap: var(--space-inline); }
+.space-section { margin-block: var(--space-section); }
+.space-page { padding-inline: var(--space-page-inline); padding-block: var(--space-page-block); }
+.space-card { padding: var(--space-card); }
+.space-card-compact { padding: var(--space-card-compact); }
+
+@media (max-width: 720px) {
+  :root {
+    --space-page-inline: var(--space-4);
+    --space-page-block: var(--space-6);
+    --space-section: var(--space-7);
+    --space-section-compact: var(--space-6);
+    --space-card: var(--space-4);
+    --space-card-compact: var(--space-3);
+  }
+}
