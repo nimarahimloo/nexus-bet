@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { ArrowRight, Bell, CircleDollarSign, Gamepad2, Headphones, Home, Menu, ReceiptText, Sparkles, Trophy, UserRound, WalletCards, X } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import { InPlatformAuth } from "@/components/InPlatformAuth";
 import { InPlatformSupport } from "@/components/InPlatformSupport";
@@ -30,6 +31,7 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
   const [authMode, setAuthMode] = useState<AuthMode>(() => previewAuthMode === "signup" || previewAuthMode === "forgot" ? previewAuthMode : "login");
   const [supportOpen, setSupportOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("support") === "preview");
   const [location] = useLocation();
+  const reduceMotion = useReducedMotion();
   useEffect(() => {
     const onAuthOpen = (event: Event) => { const mode = (event as CustomEvent<{ mode?: AuthMode }>).detail?.mode; setAuthMode(mode ?? "login"); setAuthOpen(true); };
     const onSupportOpen = () => setSupportOpen(true);
@@ -44,8 +46,8 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
   const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
-  return <main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"}`}>
-    <header className="topbar glass-panel">
+  return <motion.main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : .22 }}>
+    <motion.header className="topbar glass-panel" initial={reduceMotion ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .42, ease: [0.16, 1, 0.3, 1] }}>
       <Link href="/" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><img src="/manus-storage/nexus-bet-logo_92fe8c09.png" alt="" /></span><span><b>NEXUS</b><small>BET</small></span></Link>
       <nav id="mobile-primary-navigation" className={`main-nav ${open ? "is-open" : ""}`} aria-label="ناوبری اصلی">
         {primaryNav.map(([href, label]) => <Link key={href} href={href} className={`nav-link ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}>{label}{href === "/matches" && <i className="live-dot" />}</Link>)}
@@ -53,13 +55,13 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
         <div className="more-nav-grid" aria-label="بخش‌های بیشتر">{moreNav.map(([href, label, Icon]) => <Link key={href} href={href} className={`nav-link nav-link-more ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}><Icon size={13} />{label}</Link>)}</div>
       </nav>
       <div className="header-actions"><button className="icon-button" aria-label="اعلان‌ها"><Bell size={17} /></button><button className="login-button" onClick={() => { setOpen(false); setAuthMode("login"); setAuthOpen(true); }}><UserRound size={16} /> ورود امن</button><button className="icon-button mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="mobile-primary-navigation" aria-label={open ? "بستن منو" : "بازکردن منو"}>{open ? <X size={19} /> : <Menu size={19} />}</button></div>
-    </header>
+    </motion.header>
     {open && <button className="mobile-nav-backdrop" type="button" tabIndex={-1} aria-label="بستن منو" onClick={() => setOpen(false)} />}
-    {!isHome && title && <section className="subpage-hero container"><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></section>}
-    <section className={`${isHome ? "" : "subpage-content"} container`}>{children}</section>
+    {!isHome && title && <motion.section className="subpage-hero container" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .5, delay: .05, ease: [0.16, 1, 0.3, 1] }}><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></motion.section>}
+    <motion.section key={location} className={`${isHome ? "" : "subpage-content"} container`} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .46, delay: isHome ? .05 : .13, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.section>
     <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><Link href="/" className={isActive("/") ? "is-active" : ""}><Home size={17} /><span>خانه</span></Link><Link href="/matches" className={isActive("/matches") ? "is-active" : ""}><Trophy size={17} /><span>مسابقات</span></Link><Link href="/crash" className={isActive("/crash") ? "is-active" : ""}><ReceiptText size={17} /><span>انفجار</span></Link><Link href="/wallet" className={isActive("/wallet") ? "is-active" : ""}><WalletCards size={17} /><span>کیف پول</span></Link><Link href="/account" className={isActive("/account") ? "is-active" : ""}><UserRound size={17} /><span>حساب</span></Link></nav>
     <button className="support-launcher" onClick={() => setSupportOpen(true)} aria-label="بازکردن پشتیبانی هوشمند"><Headphones size={20} /><span>پشتیبانی</span></button>
     <InPlatformAuth open={authOpen} mode={authMode} onClose={() => setAuthOpen(false)} onModeChange={setAuthMode} />
     <InPlatformSupport open={supportOpen} onClose={() => setSupportOpen(false)} />
-  </main>;
+  </motion.main>;
 }

@@ -272,3 +272,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح تراکم کارت‌ها، toolbarها، فرم‌ها و CTAها در routeهای پرریسک.
 - [x] افزودن تست static spacing و responsive contract برای جلوگیری از regression.
 - [x] بازبینی همهٔ routeهای کلیدی در viewportهای موبایل و ثبت checkpoint.
+
+## Global live motion system
+- [x] ممیزی نقاط تعامل و تدوین الگوی motion سراسری با محدودیت زمان و performance.
+- [x] افزودن زیرساخت motion مشترک برای ورود، hover، press، skeleton و state transition.
+- [x] افزودن motionهای اختصاصی hero، کارت‌های odds، feature hub، گردونه و Crash.
+- [x] افزودن motionهای تکمیلی Auth modal، Support panel، drawer و navigation.
+- [x] رعایت `prefers-reduced-motion` و جلوگیری از animationهای layout-shifting.
+- [x] افزودن تست قرارداد motion و بازبینی routeهای موبایل/دسکتاپ.
