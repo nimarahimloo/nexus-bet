@@ -35,4 +35,14 @@ describe("in-platform auth and support contracts", () => {
     expect(router).toContain("پشتیبان فارسی Nexus Bet");
     expect(css).toContain("safe-area-inset-bottom");
   });
+
+  it("keeps the auth modal material-rich while honoring reduced-motion", () => {
+    const auth = read("../client/src/components/InPlatformAuth.tsx");
+    const css = read("../client/src/index.css");
+    expect(auth).toContain("auth-liquid-orb");
+    expect(auth).toContain("auth-specular");
+    expect(css).toContain("auth-modal-arrive");
+    expect(css).toContain("auth-ambient-drift");
+    expect(css).toContain("prefers-reduced-motion: reduce");
+  });
 });

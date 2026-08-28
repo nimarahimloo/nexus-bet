@@ -236,3 +236,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ساخت پنل پشتیبانی داخلی با گفت‌وگوی Nexus AI، loading/error و پاسخ فارسی.
 - [x] جایگزین‌کردن دکمهٔ شناور پشتیبانی با launcher و sheet داخلی سازگار با safe-area.
 - [x] افزودن تست flowهای Auth/Support و بازبینی responsive موبایل و دسکتاپ.
+
+## Auth modal glass and motion pass
+- [x] ممیزی حالت‌های ورود، ثبت‌نام و بازیابی رمز برای motion و glass material.
+- [x] افزودن ambient glass layers، refractive highlight و depth به backdrop و modal.
+- [x] افزودن transitionهای باز/بسته، تغییر mode و تعامل providerها با رعایت reduced-motion.
+- [x] افزودن تست قرارداد motion/material و بازبینی موبایل و دسکتاپ.
