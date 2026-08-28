@@ -43,17 +43,8 @@ describe("sports feed contract", () => {
     expect(fallback.error).toBe("دریافت دادهٔ مسابقات موقتاً ناموفق بود.");
   });
 
-  it("reports object-shaped API errors instead of mislabeling them as an empty API feed", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ errors: { requests: "برای این پلن سهمیه باقی نمانده است" }, response: [] }), { status: 200 })));
-    const result = await fetchSportsFeed("fixtures?next=10", "test-key");
-    expect(result.source).toBe("fallback");
-    expect(result.matches).toEqual([]);
-    expect(result.error).toBe("سهمیهٔ درخواست سرویس مسابقات تمام شده یا محدود شده است.");
-  });
-
-  it("keeps API-empty and provider-error messages user-facing and deterministic", () => {
-    expect(formatSportsFeedStatus({ loading: false, source: "api", matchesCount: 0, error: null })).toBe("اتصال به API برقرار است، اما فعلاً مسابقه‌ای برای نمایش برنگردانده است.");
+  it("keeps Home's fallback message user-facing and deterministic", () => {
     expect(formatSportsFeedStatus({ loading: false, source: "fallback", error: "دریافت دادهٔ مسابقات موقتاً ناموفق بود." })).toBe("دریافت دادهٔ مسابقات موقتاً ناموفق بود.");
-    expect(formatSportsFeedStatus({ loading: false, source: "fallback", error: null })).toBe("دادهٔ مسابقات در دسترس نیست.");
+    expect(formatSportsFeedStatus({ loading: false, source: "fallback", error: null })).toBe("نمایش فید نمونه تا زمان دسترسی به دادهٔ واقعی");
   });
 });

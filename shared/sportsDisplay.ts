@@ -20,10 +20,8 @@ export function formatCrashCashoutLabel(amount: number): string {
   return `${formatCrashAmount(amount)} USDT`;
 }
 
-export function formatSportsFeedStatus(input: { loading: boolean; source?: "api" | "fallback"; error?: string | null; matchesCount?: number }): string {
+export function formatSportsFeedStatus(input: { loading: boolean; source?: "api" | "fallback"; error?: string | null }): string {
   if (input.loading) return "در حال دریافت آخرین مسابقات…";
-  if (input.error) return input.error;
-  if (input.source === "api" && input.matchesCount === 0) return "اتصال به API برقرار است، اما فعلاً مسابقه‌ای برای نمایش برنگردانده است.";
   if (input.source === "api") return "آخرین مسابقات از API ورزشی";
-  return "دادهٔ مسابقات در دسترس نیست.";
+  return input.error ?? "نمایش فید نمونه تا زمان دسترسی به دادهٔ واقعی";
 }

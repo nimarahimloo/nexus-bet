@@ -3,7 +3,7 @@ import { ArrowLeft, History, Play, ShieldCheck, Zap } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
+import { openAuthModal } from "@/lib/platformOverlay";
 import { formatCrashAmount, formatCrashCashoutLabel, formatCrashStakeLabel } from "@shared/sportsDisplay";
 
 const fa = (value: number) => formatCrashAmount(value);
@@ -21,7 +21,7 @@ export default function Crash() {
   const multiplier = round?.currentMultiplier ?? 1;
   const currentStake = Number(stake) || 0;
   const payout = currentStake * multiplier;
-  const submitBet = () => { if (!isAuthenticated) return startLogin(); if (!round || currentStake < 1) return; placeMutation.mutate({ roundId: round.id, stake: currentStake }); };
+  const submitBet = () => { if (!isAuthenticated) return openAuthModal(); if (!round || currentStake < 1) return; placeMutation.mutate({ roundId: round.id, stake: currentStake }); };
   const submitCashout = () => { if (betId) cashoutMutation.mutate({ betId }); };
   const pending = placeMutation.isPending || cashoutMutation.isPending;
 

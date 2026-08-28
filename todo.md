@@ -219,22 +219,64 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست‌های data-truth، procedure و route برای تمام مسیرهای مهاجرت‌یافته.
 - [x] بازبینی responsive و ثبت checkpoint مهاجرت دادهٔ واقعی.
 
-## Sports feed incident
-- [x] بررسی پاسخ واقعی API-Football و تفکیک empty state از provider error.
-- [x] بررسی SPORTS_API_KEY، endpoint، query و mapping مسابقات در server و UI.
-- [x] اصلاح loading/error/empty copy و نمایش جزئیات قابل‌اقدام برای کاربر.
-- [x] افزودن تست قرارداد برای پاسخ provider و mapping fixture واقعی.
-- [x] بازبینی Home و Matches و انتشار اصلاح فید.
+## iOS-inspired mobile UX redesign
+- [x] ممیزی بصری صفحات موبایل و ثبت تصمیم‌های طراحی برگرفته از نمونه‌های معتبر.
+- [x] بازتعریف tokenهای glass، surface، border، typography و safe-area مطابق زبان بصری iOS.
+- [x] اعمال تضمین‌شدهٔ Peyda و Kalameh روی همهٔ کنترل‌ها، فرم‌ها، اعداد و routeها.
+- [x] بازطراحی Home و Matches با hierarchy موبایلی، کارت‌های قابل‌اسکن و bet slip جذاب.
+- [x] بازطراحی PageShell، header و bottom navigation برای تراکم و لمس بهتر در موبایل.
+- [x] همسان‌سازی routeهای Wallet، Rewards، Crash، AI و featureها با design system جدید.
+- [x] افزودن/به‌روزرسانی تست‌های قرارداد UI و بازبینی screenshot موبایل/دسکتاپ.
 
-## Sports feed filters
-- [x] افزودن قرارداد فیلتر فید بر اساس رشتهٔ ورزشی و وضعیت مسابقهٔ زنده.
-- [x] اتصال فیلترها به procedure فید واقعی بدون ایجاد دادهٔ ساختگی یا fallback گمراه‌کننده.
-- [x] افزودن کنترل‌های فیلتر موبایل‌فرست در Matches و وضعیت خلاصهٔ فیلتر در Home.
-- [x] افزودن تست‌های backend و UI contract برای همهٔ حالت‌های رشته، همه، زنده و فید خالی.
-- [x] بازبینی responsive و ثبت checkpoint قابلیت فیلتر فید.
+## In-platform auth and AI support
+- [x] ممیزی triggerهای ورود، خروج و پشتیبانی فعلی در تمام routeها.
+- [x] ساخت Auth modal شامل login، signup، forgot password و validation سمت رابط.
+- [x] افزودن دکمه‌های Google، Discord، Facebook و Apple بدون redirect در نسخهٔ preview.
+- [x] اتصال همهٔ CTAهای ورود به Auth modal داخلی و حذف وابستگی ورود از مسیرهای رابط.
+- [x] ساخت پنل پشتیبانی داخلی با گفت‌وگوی Nexus AI، loading/error و پاسخ فارسی.
+- [x] جایگزین‌کردن دکمهٔ شناور پشتیبانی با launcher و sheet داخلی سازگار با safe-area.
+- [x] افزودن تست flowهای Auth/Support و بازبینی responsive موبایل و دسکتاپ.
 
-## Rollback incident: sports feed filters
-- [x] مقایسهٔ workspace، نسخهٔ live و checkpoint 4278e627 برای شناسایی برگشت تغییرات.
-- [x] بررسی تاریخچهٔ checkpoint و وضعیت Git برای تشخیص divergence یا rollback ناخواسته.
-- [x] بررسی نیاز به بازیابی؛ اختلافی تأیید نشد و بازیابی لازم نبود.
-- [x] اجرای تست و ثبت نتیجهٔ incident بدون حذف تاریخچه.
+## Auth modal glass and motion pass
+- [x] ممیزی حالت‌های ورود، ثبت‌نام و بازیابی رمز برای motion و glass material.
+- [x] افزودن ambient glass layers، refractive highlight و depth به backdrop و modal.
+- [x] افزودن transitionهای باز/بسته، تغییر mode و تعامل providerها با رعایت reduced-motion.
+- [x] افزودن تست قرارداد motion/material و بازبینی موبایل و دسکتاپ.
+
+## Local authentication backend
+- [x] طراحی مدل credential، session و بازیابی رمز برای Auth داخلی.
+- [x] افزودن schema و migration برای credentialهای رمزنگاری‌شده و reset token.
+- [x] پیاده‌سازی ثبت‌نام، ورود، logout و بازیابی/تغییر رمز با tRPC و cookie امن.
+- [x] اتصال Auth modal به mutationهای واقعی و refresh وضعیت session.
+- [x] حفظ provider buttonهای نمایشی بدون redirect خارجی.
+- [x] افزودن تست‌های credential، session، validation و بازبینی responsive flow کامل.
+
+## Navigation and spacing reliability pass
+- [x] ممیزی trigger و state منوی همبرگری در mobile shell.
+- [x] رفع باز/بسته‌شدن drawer و افزودن backdrop، Escape و focusهای قابل‌دسترسی.
+- [x] تعریف حداقل padding لمسی دکمه‌ها و gapهای سراسری برای کنترل‌ها و گروه‌ها.
+- [x] رفع spacing فشرده در header، navigation، کارت‌ها، فرم‌ها و CTAهای routeهای اصلی.
+- [x] افزودن تست قرارداد hamburger/spacing و بازبینی موبایل و دسکتاپ.
+
+## Hero asset and font recovery pass
+- [x] ممیزی همهٔ ارجاع‌های تصویری، heroهای routeها و نشانی‌های asset شکسته.
+- [x] بازیابی یا جایگزینی hero یکتا برای هر route دارای صفحهٔ مستقل.
+- [x] تولید و اتصال تصاویر مکمل برای بخش‌های کلیدی بدون حذف دارایی‌های سالم.
+- [x] روشن‌سازی لایهٔ overlay روی heroها با حفظ خوانایی متن.
+- [x] تثبیت font-face و font stack برای تمام عناصر، فرم‌ها و routeها.
+- [x] افزودن تست قرارداد asset/font و بازبینی موبایل و دسکتاپ.
+
+## Full spacing and mobile regression audit
+- [x] ممیزی grid/flexهای routeها برای gap، padding، margin و min-width صفر.
+- [x] تعریف guardrailهای CSS برای عدم overlap، overflow-x و safe-area موبایل.
+- [x] اصلاح تراکم کارت‌ها، toolbarها، فرم‌ها و CTAها در routeهای پرریسک.
+- [x] افزودن تست static spacing و responsive contract برای جلوگیری از regression.
+- [x] بازبینی همهٔ routeهای کلیدی در viewportهای موبایل و ثبت checkpoint.
+
+## Global live motion system
+- [x] ممیزی نقاط تعامل و تدوین الگوی motion سراسری با محدودیت زمان و performance.
+- [x] افزودن زیرساخت motion مشترک برای ورود، hover، press، skeleton و state transition.
+- [x] افزودن motionهای اختصاصی hero، کارت‌های odds، feature hub، گردونه و Crash.
+- [x] افزودن motionهای تکمیلی Auth modal، Support panel، drawer و navigation.
+- [x] رعایت `prefers-reduced-motion` و جلوگیری از animationهای layout-shifting.
+- [x] افزودن تست قرارداد motion و بازبینی routeهای موبایل/دسکتاپ.
