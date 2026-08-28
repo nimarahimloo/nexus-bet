@@ -300,3 +300,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] جایگزینی نقاط کلیدی پروژه با tokenهای مشترک بدون تغییر ناخواسته در layout.
 - [x] افزودن مستندات مصرف و guardrailهای CSS برای توسعه‌های آینده.
 - [x] افزودن تست regression، بازبینی responsive و ثبت checkpoint.
+
+## Crash bet backend incident
+- [x] ردیابی خطای «عملیات انجام نشد» از Crash UI تا موجودی، round فعال و ثبت bet.
+- [x] ممیزی اینکه wallet، round lifecycle و bet status در مسیر عملیاتی از backend واقعی استفاده می‌کنند.
+- [x] اصلاح قرارداد یا تراکنش Crash بدون افزودن mock/fake operational data.
+- [x] افزودن تست برای موجودی ناکافی، round نامعتبر، ثبت bet موفق و وضعیت‌های خطا.
+- [x] بازبینی UI error/loading states و ثبت checkpoint پس از اعتبارسنجی.
