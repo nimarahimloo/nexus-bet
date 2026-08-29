@@ -173,23 +173,24 @@ export const appRouter = router({
 
   support: router({
     chat: publicProcedure
-      .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(800) })).min(1).max(10) }))
+      .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(2_000) })).min(1).max(12) }))
       .mutation(async ({ input }) => {
         try {
           const response = await invokeLLM({
             model: "gpt-5-mini",
-            maxTokens: 360,
+            maxCompletionTokens: 500,
             messages: [
-              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی. پاسخ‌ها کوتاه، گرم و کاربردی باشند. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، پاداش و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده، و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است بگو درخواست‌ها تا اتصال provider در حالت pending هستند." },
+              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی و پاسخ‌گویی واقعی انجام می‌دهی. به هر سؤال کاربر تا حد ممکن مستقیم، طبیعی و کاربردی پاسخ بده و اگر سؤال خارج از پلتفرم بود، صادقانه بگو چه کمکی از دستت برمی‌آید. پاسخ را به فارسی و با لحن گرم بنویس و از markdown ساده استفاده کن. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، بازی انفجار، پاداش، اعلان‌ها، تاریخچهٔ شرط‌ها و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است، وضعیت pending و نیاز به provider را شفاف توضیح بده. اگر اطلاعات کافی نداری، سؤال روشن‌کننده بپرس؛ هرگز پاسخ خالی برنگردان." },
               ...input.messages.map((message) => ({ role: message.role, content: message.content })),
             ],
           });
           const rawContent = response.choices?.[0]?.message?.content;
-          const content = typeof rawContent === "string" ? rawContent.trim() : "";
-          return { content: content || "در حال حاضر پاسخ قابل‌نمایشی ندارم. چند لحظه دیگر دوباره تلاش کن.", source: "ai" as const };
+          const content = typeof rawContent === "string" ? rawContent.trim() : Array.isArray(rawContent) ? rawContent.filter((part): part is { type: "text"; text: string } => typeof part === "object" && part !== null && part.type === "text").map((part) => part.text).join("\n").trim() : "";
+          if (!content) throw new Error("EMPTY_LLM_CONTENT");
+          return { content, source: "ai" as const };
         } catch (error) {
           console.warn("[Nexus Support] AI unavailable:", error);
-          return { content: "پشتیبانی هوشمند موقتاً در دسترس نیست. لطفاً کمی بعد دوباره پیام بده.", source: "unavailable" as const };
+          return { content: "پاسخ هوشمند در این لحظه از سرویس AI دریافت نشد. لطفاً دوباره ارسال کن؛ پیام قبلی حفظ شده است.", source: "unavailable" as const };
         }
       }),
   }),

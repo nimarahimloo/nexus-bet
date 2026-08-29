@@ -314,3 +314,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ساخت صفحهٔ تاریخچه با تب‌های pending، won و lost و empty states واقعی.
 - [x] نمایش جزئیات مبلغ، ضریب، بازگشت، انتخاب‌ها و زمان با RTL و USDT.
 - [x] اتصال صفحه به پروفایل، تست backend/UI و بازبینی responsive پیش از checkpoint.
+
+## Nexus AI support response incident
+- [x] ممیزی AIChatBox، support.chat و helper داخلی LLM.
+- [x] اصلاح mapping مدل‌های GPT-5 از max_tokens به max_completion_tokens.
+- [x] افزایش ظرفیت conversation، حفظ context آخرین پیام‌ها و مدیریت پاسخ content خالی.
+- [x] بهبود system prompt برای پاسخ‌گویی آزاد و مرتبط فارسی به سؤالات کاربران.
+- [x] افزودن تست contract، اجرای smoke request واقعی provider و اعتبارسنجی UI flow.
