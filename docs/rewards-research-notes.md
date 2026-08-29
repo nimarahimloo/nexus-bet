@@ -27,3 +27,11 @@ The research direction is relevant to a safer product strategy: gamification can
 ## Visual audit: mobile routes
 
 The 390px review shows a coherent dark violet/cyan material system and strong Persian hierarchy, but repeated hero/card rhythms make pages feel templated. Some surfaces are equally luminous, weakening action/status hierarchy. The strongest design direction is to reserve electric violet for primary action and brand moments, cyan for live/verified/status signals, and deep graphite-purple for inactive surfaces. Each major route should have a distinct signature module: a market board for Matches, a secure treasury view for Wallet, a risk console for Crash, a prize ritual for Rewards and a control/identity surface for Account. The recurring visual motif should be connected neon nodes/orbit lines/crystalline network rather than generic casino decoration.
+
+## Implementation review
+
+The Rewards route now exposes six server-weighted segments with visible probabilities of 30%, 35%, 20%, 10%, 4% and 1%, plus a bounded daily check-in reward that does not require a wager. Direct browser review confirmed the route renders the new activity and odds sections. The Matches route renders the contextual AI strip and its existing real-data states. Guest state correctly hides account-specific activity data and asks the user to sign in.
+
+## Contextual AI and visual follow-up review
+
+Home and Matches both render the contextual Nexus AI strip above their primary content. The prompt is route-specific: platform overview on Home and live matches/filter help on Matches. The shared shell keeps the same header and navigation while route classes provide distinct accent treatment for matches, wallet, crash, rewards and account. Mobile-safe bottom spacing is applied on key subpages to prevent fixed navigation overlap.

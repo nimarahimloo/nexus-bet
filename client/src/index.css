@@ -735,3 +735,22 @@ html, body { overflow-x: clip; }
 .activity-task-row strong { color: var(--nexus-mint); direction: ltr; white-space: nowrap; font: 800 12px "Manrope", "Vazirmatn", sans-serif; }
 .activity-task-row .outline-cta { min-height: 36px; padding: 0 var(--space-3); white-space: nowrap; }
 @media (max-width: 560px) { .activity-task-row { grid-template-columns: minmax(0, 1fr) auto; } .activity-task-row > strong { grid-column: 2; grid-row: 1; } .activity-task-row .outline-cta { grid-column: 1 / -1; width: 100%; } }
+
+/* Contextual AI and route identity layer */
+.context-ai-strip { width: min(1180px, calc(100% - 40px)); margin: 0 auto var(--space-5); min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid rgba(95,226,208,.18); border-radius: 16px; color: var(--foreground); background: rgba(95,226,208,.055); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); text-align: right; }
+.context-ai-strip span, .context-ai-strip b { display: inline-flex; align-items: center; gap: var(--space-2); }
+.context-ai-strip span { color: var(--nexus-mint); font-size: 11px; }
+.context-ai-strip b { color: #ded5f1; font-size: 10px; }
+.context-ai-strip:hover { border-color: rgba(95,226,208,.42); background: rgba(95,226,208,.09); }
+.route-rewards .context-ai-strip, .route-vip .context-ai-strip { border-color: rgba(156,99,255,.3); background: rgba(156,99,255,.08); }
+.route-crash .context-ai-strip { border-color: rgba(255,159,122,.24); background: rgba(255,114,96,.06); }
+.route-wallet .context-ai-strip { border-color: rgba(95,226,208,.3); }
+@media (max-width: 560px) { .context-ai-strip { width: calc(100% - 28px); margin-bottom: var(--space-4); min-height: 44px; padding: var(--space-3); } .context-ai-strip b { font-size: 9px; } .context-ai-strip span { font-size: 10px; } }
+
+/* Route signatures: one shared system, distinct product moments */
+.route-matches .subpage-art { box-shadow: 0 24px 70px rgba(126,75,237,.16), inset 0 1px 0 rgba(255,255,255,.08); }
+.route-wallet .subpage-art { box-shadow: 0 24px 70px rgba(65,218,196,.13), inset 0 1px 0 rgba(255,255,255,.08); }
+.route-crash .subpage-art { box-shadow: 0 24px 70px rgba(247,112,99,.15), inset 0 1px 0 rgba(255,255,255,.08); }
+.route-rewards .subpage-art { box-shadow: 0 24px 70px rgba(156,99,255,.2), inset 0 1px 0 rgba(255,255,255,.08); }
+.route-account .subpage-art { box-shadow: 0 24px 70px rgba(95,226,208,.12), inset 0 1px 0 rgba(255,255,255,.08); }
+.route-matches .subpage-content, .route-wallet .subpage-content, .route-crash .subpage-content, .route-rewards .subpage-content, .route-account .subpage-content { padding-bottom: max(var(--space-10), env(safe-area-inset-bottom)); }

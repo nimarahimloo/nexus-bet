@@ -50,7 +50,13 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
   const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
-  return <motion.main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : .22 }}>
+  const routeSlug = location === "/" ? "home" : location.slice(1).split("/")[0] || "home";
+  const contextualPrompt = routeSlug === "matches" ? "مسابقات زنده و فیلترهای این صفحه را توضیح بده" : routeSlug === "wallet" ? "موجودی و وضعیت تراکنش‌های کیف پولم را توضیح بده" : routeSlug === "rewards" ? "احتمال جوایز و پاداش فعالیت امروز را توضیح بده" : routeSlug === "crash" ? "قوانین round و وضعیت bet انفجار را توضیح بده" : routeSlug === "account" ? "وضعیت آخرین شرط‌های من را خلاصه کن" : "امکانات Nexus Bet را برایم توضیح بده";
+  const openContextSupport = () => {
+    window.dispatchEvent(new CustomEvent("nexus:ai-context", { detail: { prompt: contextualPrompt } }));
+    window.dispatchEvent(new Event("nexus:support-open"));
+  };
+  return <motion.main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"} route-${routeSlug}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : .22 }}>
     <motion.header className="topbar glass-panel" initial={reduceMotion ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .42, ease: [0.16, 1, 0.3, 1] }}>
       <Link href="/" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><img src="/manus-storage/nexus-bet-logo_92fe8c09.png" alt="" /></span><span><b>NEXUS</b><small>BET</small></span></Link>
       <nav id="mobile-primary-navigation" className={`main-nav ${open ? "is-open" : ""}`} aria-label="ناوبری اصلی">
@@ -62,6 +68,7 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
     </motion.header>
     {open && <button className="mobile-nav-backdrop" type="button" tabIndex={-1} aria-label="بستن منو" onClick={() => setOpen(false)} />}
     {!isHome && title && <motion.section className="subpage-hero container" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .5, delay: .05, ease: [0.16, 1, 0.3, 1] }}><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></motion.section>}
+    {routeSlug !== "ai" && <button className="context-ai-strip" type="button" onClick={openContextSupport}><span><Sparkles size={15} /> Nexus AI برای همین صفحه آماده است</span><b>پرسش سریع <ArrowRight size={14} /></b></button>}
     <motion.section key={location} className={`${isHome ? "" : "subpage-content"} container`} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .46, delay: isHome ? .05 : .13, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.section>
     <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><Link href="/" className={isActive("/") ? "is-active" : ""}><Home size={17} /><span>خانه</span></Link><Link href="/matches" className={isActive("/matches") ? "is-active" : ""}><Trophy size={17} /><span>مسابقات</span></Link><Link href="/crash" className={isActive("/crash") ? "is-active" : ""}><ReceiptText size={17} /><span>انفجار</span></Link><Link href="/wallet" className={isActive("/wallet") ? "is-active" : ""}><WalletCards size={17} /><span>کیف پول</span></Link><Link href="/account" className={isActive("/account") ? "is-active" : ""}><UserRound size={17} /><span>حساب</span></Link></nav>
     <button className="support-launcher" onClick={() => setSupportOpen(true)} aria-label="بازکردن پشتیبانی هوشمند"><Headphones size={20} /><span>پشتیبانی</span></button>

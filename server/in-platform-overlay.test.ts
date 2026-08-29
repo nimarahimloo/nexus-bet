@@ -33,6 +33,9 @@ describe("in-platform auth and support contracts", () => {
     expect(support).toContain("trpc.support.chat.useMutation");
     expect(router).toContain("support: router");
     expect(router).toContain("پشتیبان فارسی Nexus Bet");
+    expect(support).toContain("nexus:ai-context");
+    expect(shell).toContain("context-ai-strip");
+    expect(shell).toContain("contextualPrompt");
     expect(css).toContain("safe-area-inset-bottom");
   });
 
