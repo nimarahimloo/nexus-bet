@@ -4,6 +4,17 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("Nexus AI support chat contract", () => {
+  it("builds account context from the current user only and keeps it read-only", () => {
+    const db = read("./db.ts");
+    const routers = read("./routers.ts");
+    expect(db).toContain("export async function getSupportAccountContext(userId: number)");
+    expect(db).toContain("where(eq(wallets.userId, userId))");
+    expect(db).toContain("getUserBets(userId)");
+    expect(routers).toContain("ctx.user ? await getSupportAccountContext(ctx.user.id) : null");
+    expect(routers).toContain("کاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری");
+    expect(routers).toContain("اطلاعات حساب را فقط از context داده‌شده بخوان");
+  });
+
   it("uses the server-side GPT-5 model with the correct completion token parameter", () => {
     const routers = read("./routers.ts");
     const llm = read("./_core/llm.ts");
@@ -20,6 +31,8 @@ describe("Nexus AI support chat contract", () => {
     expect(routers).toContain(".max(12)");
     expect(support).toContain("slice(-10)");
     expect(support).toContain("content.trim().slice(0, 2_000)");
+    expect(support).toContain("متصل به اطلاعات read-only حساب");
+    expect(support).toContain("برای اطلاعات حساب، ابتدا وارد شوید");
   });
 
   it("does not silently present the old empty-response placeholder", () => {

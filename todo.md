@@ -321,3 +321,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزایش ظرفیت conversation، حفظ context آخرین پیام‌ها و مدیریت پاسخ content خالی.
 - [x] بهبود system prompt برای پاسخ‌گویی آزاد و مرتبط فارسی به سؤالات کاربران.
 - [x] افزودن تست contract، اجرای smoke request واقعی provider و اعتبارسنجی UI flow.
+
+## Account-aware Nexus AI
+- [x] ممیزی مسیر auth و queryهای wallet، bets و account overview.
+- [x] ساخت context read-only محدود به کاربر جاری بدون افشای credential یا اطلاعات کاربر دیگر.
+- [x] اتصال snapshot موجودی و وضعیت bet به support.chat و prompt مدل.
+- [x] نمایش شفاف منبع داده و حالت مهمان در پنل پشتیبانی.
+- [x] افزودن تست امنیت/قرارداد، smoke واقعی و ثبت checkpoint.

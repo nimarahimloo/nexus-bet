@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
@@ -174,13 +174,15 @@ export const appRouter = router({
   support: router({
     chat: publicProcedure
       .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(2_000) })).min(1).max(12) }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         try {
+          const accountContext = ctx.user ? await getSupportAccountContext(ctx.user.id) : null;
+          const accountPrompt = accountContext ? `\n\nاطلاعات read-only حساب کاربر جاری که فقط برای پاسخ به سؤال‌های حسابی معتبر است:\n${JSON.stringify(accountContext)}\nاین اطلاعات snapshot فعلی backend است؛ آن را به کاربر نسبت بده و اگر سؤال دربارهٔ تغییر یا عملیات بود، بگو از داخل چت امکان تغییر وجود ندارد.` : ctx.user ? "\n\nکاربر وارد حساب است، اما snapshot حساب فعلاً از backend در دسترس نیست؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و بگو صفحهٔ حساب را دوباره بررسی کند." : "\n\nکاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و او را به ورود به حساب راهنمایی کن.";
           const response = await invokeLLM({
             model: "gpt-5-mini",
             maxCompletionTokens: 500,
             messages: [
-              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی و پاسخ‌گویی واقعی انجام می‌دهی. به هر سؤال کاربر تا حد ممکن مستقیم، طبیعی و کاربردی پاسخ بده و اگر سؤال خارج از پلتفرم بود، صادقانه بگو چه کمکی از دستت برمی‌آید. پاسخ را به فارسی و با لحن گرم بنویس و از markdown ساده استفاده کن. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، بازی انفجار، پاداش، اعلان‌ها، تاریخچهٔ شرط‌ها و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است، وضعیت pending و نیاز به provider را شفاف توضیح بده. اگر اطلاعات کافی نداری، سؤال روشن‌کننده بپرس؛ هرگز پاسخ خالی برنگردان." },
+              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی و پاسخ‌گویی واقعی انجام می‌دهی. به هر سؤال کاربر تا حد ممکن مستقیم، طبیعی و کاربردی پاسخ بده و اگر سؤال خارج از پلتفرم بود، صادقانه بگو چه کمکی از دستت برمی‌آید. پاسخ را به فارسی و با لحن گرم بنویس و از markdown ساده استفاده کن. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، بازی انفجار، پاداش، اعلان‌ها، تاریخچهٔ شرط‌ها و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است، وضعیت pending و نیاز به provider را شفاف توضیح بده. اطلاعات حساب را فقط از context داده‌شده بخوان، آن را به‌عنوان موجودی/وضعیت قطعی همین لحظه توصیف نکن و برای عملیات حساس کاربر را به صفحهٔ مربوط هدایت کن. اگر اطلاعات کافی نداری، سؤال روشن‌کننده بپرس؛ هرگز پاسخ خالی برنگردان." + accountPrompt },
               ...input.messages.map((message) => ({ role: message.role, content: message.content })),
             ],
           });

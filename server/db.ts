@@ -403,6 +403,18 @@ export async function getActiveGameCatalog() {
   return db.select().from(gameCatalog).where(eq(gameCatalog.status, "active")).orderBy(gameCatalog.title);
 }
 
+export async function getSupportAccountContext(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const walletRows = await db.select({ currency: wallets.currency, availableBalance: wallets.availableBalance, lockedBalance: wallets.lockedBalance }).from(wallets).where(eq(wallets.userId, userId)).limit(1);
+  const wallet = walletRows[0];
+  const bets = await getUserBets(userId);
+  return {
+    wallet: wallet ? { currency: wallet.currency, availableBalance: Number(wallet.availableBalance), lockedBalance: Number(wallet.lockedBalance) } : null,
+    bets: bets.slice(0, 8).map((bet) => ({ ticketCode: bet.ticketCode, status: bet.status, stake: bet.stake, combinedOdds: bet.combinedOdds, potentialReturn: bet.potentialReturn, createdAt: bet.createdAt, selections: bet.selections.map((selection) => ({ match: selection.match, market: selection.market, odds: selection.odds })) })),
+  };
+}
+
 export async function getOrCreateWalletByUserId(userId: number) {
   const db = await getDb();
   if (!db) {
