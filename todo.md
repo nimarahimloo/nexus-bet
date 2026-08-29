@@ -328,3 +328,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اتصال snapshot موجودی و وضعیت bet به support.chat و prompt مدل.
 - [x] نمایش شفاف منبع داده و حالت مهمان در پنل پشتیبانی.
 - [x] افزودن تست امنیت/قرارداد، smoke واقعی و ثبت checkpoint.
+
+## Product trust, rewards and AI redesign
+- [x] جمع‌آوری نمونه‌های واقعی rewards/gamification و guardrailهای responsible gambling.
+- [x] ممیزی بصری و responsive همهٔ routeهای کلیدی و ثبت مشکلات اعتمادپذیری.
+- [x] طراحی گردونهٔ شفاف با جوایز random قابل‌مشاهده، odds، سقف روزانه و ledger.
+- [x] طراحی امتیاز فعالیت غیرشرطی با پاداش محدود و قابل‌ردگیری؛ بدون وعدهٔ درآمد تضمینی.
+- [ ] گسترش نقاط کاربردی AI در Home، Matches، Wallet، Rewards و Account.
+- [ ] بازطراحی responsive و هویت بصری مسیرهای کلیدی با حفظ دادهٔ واقعی.
+- [x] اجرای تست‌های کامل، بازبینی بصری و ثبت checkpoint مرحله‌ای.

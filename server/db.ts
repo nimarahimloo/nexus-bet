@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
+import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomInt, randomUUID } from "node:crypto";
 import { isCrashed, multiplierAt } from "./crash";
@@ -413,6 +413,32 @@ export async function getSupportAccountContext(userId: number) {
     wallet: wallet ? { currency: wallet.currency, availableBalance: Number(wallet.availableBalance), lockedBalance: Number(wallet.lockedBalance) } : null,
     bets: bets.slice(0, 8).map((bet) => ({ ticketCode: bet.ticketCode, status: bet.status, stake: bet.stake, combinedOdds: bet.combinedOdds, potentialReturn: bet.potentialReturn, createdAt: bet.createdAt, selections: bet.selections.map((selection) => ({ match: selection.match, market: selection.market, odds: selection.odds })) })),
   };
+}
+
+const ACTIVITY_REWARDS = [{ code: "daily_checkin", label: "حضور روزانه", amount: 0.05, description: "ورود و بررسی وضعیت حساب؛ بدون نیاز به ثبت شرط" }] as const;
+
+export async function getActivityRewardStatus(userId: number, now = new Date()) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const activityDate = getUtcDateKey(now);
+  const rows = await db.select().from(activityRewardLedger).where(and(eq(activityRewardLedger.userId, userId), eq(activityRewardLedger.activityDate, activityDate))).orderBy(desc(activityRewardLedger.createdAt));
+  return { activityDate, tasks: ACTIVITY_REWARDS.map((task) => ({ ...task, claimed: rows.some((row) => row.activityCode === task.code) })), history: rows.slice(0, 20).map((row) => ({ ...row, amount: Number(row.amount) })) };
+}
+
+export async function claimActivityReward(userId: number, activityCode: string, now = new Date()) {
+  const task = ACTIVITY_REWARDS.find((item) => item.code === activityCode);
+  if (!task) throw new Error("UNKNOWN_ACTIVITY");
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const activityDate = getUtcDateKey(now);
+  return db.transaction(async (tx) => {
+    const existing = await tx.select({ id: activityRewardLedger.id }).from(activityRewardLedger).where(and(eq(activityRewardLedger.userId, userId), eq(activityRewardLedger.activityCode, activityCode), eq(activityRewardLedger.activityDate, activityDate))).limit(1);
+    if (existing.length) throw new Error("ACTIVITY_ALREADY_CLAIMED");
+    const inserted = await tx.insert(activityRewardLedger).values({ userId, activityCode, activityDate, currency: "USDT", amount: task.amount.toFixed(6) });
+    await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${task.amount}`, updatedAt: now }).where(eq(wallets.userId, userId));
+    await tx.insert(walletTransactions).values({ userId, type: "activity_reward", status: "confirmed", currency: "USDT", amount: task.amount.toFixed(6), referenceId: `activity:${activityCode}:${activityDate}` });
+    return { id: Number(inserted[0].insertId), activityCode, activityDate, reward: { label: task.label, amount: task.amount, currency: "USDT" as const } };
+  });
 }
 
 export async function getOrCreateWalletByUserId(userId: number) {

@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
@@ -109,6 +109,16 @@ export const appRouter = router({
     segments: publicProcedure.query(() => ({ source: "backend" as const, segments: getWheelSegments() })),
     status: protectedProcedure.query(({ ctx }) => getWheelStatus(ctx.user.id)),
     history: protectedProcedure.query(({ ctx }) => getWheelHistory(ctx.user.id)),
+    activity: protectedProcedure.query(({ ctx }) => getActivityRewardStatus(ctx.user.id)),
+    claimActivity: protectedProcedure.input(z.object({ activityCode: z.string().trim().min(1).max(48) })).mutation(async ({ ctx, input }) => {
+      try {
+        return await claimActivityReward(ctx.user.id, input.activityCode);
+      } catch (error) {
+        if (String(error).includes("ACTIVITY_ALREADY_CLAIMED")) throw new TRPCError({ code: "BAD_REQUEST", message: "پاداش این فعالیت امروز قبلاً دریافت شده است." });
+        if (String(error).includes("UNKNOWN_ACTIVITY")) throw new TRPCError({ code: "BAD_REQUEST", message: "این فعالیت در حال حاضر فعال نیست." });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ثبت پاداش فعالیت ممکن نشد." });
+      }
+    }),
     spin: protectedProcedure.mutation(async ({ ctx }) => {
       try {
         const status = await getWheelStatus(ctx.user.id);

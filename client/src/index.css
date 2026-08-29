@@ -714,3 +714,24 @@ html, body { overflow-x: clip; }
 .bet-selections { display: grid; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid rgba(255,255,255,.08); }.bet-selections span { color: #aaa1b4; font-size: 9px; line-height: 1.8; }.bet-selections b { color: #e7ddf5; direction: ltr; }
 .bet-history-card time { color: #766d80; font-size: 8px; direction: rtl; }
 @media (max-width: 720px) { .bet-history { padding: var(--space-4); }.bet-history .section-heading { align-items: flex-start; }.bet-history-tabs { margin-inline: calc(var(--space-4) * -1); padding-inline: var(--space-4); }.bet-history-card { gap: var(--space-3); }.bet-history-metrics { gap: var(--space-2); }.bet-history-metrics b { font-size: 10px; } }
+
+/* Transparent reward odds module */
+.reward-odds { display: grid; gap: var(--space-4); }
+.reward-odds-list { display: grid; gap: var(--space-3); }
+.reward-odds-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2) var(--space-3); align-items: center; color: var(--foreground); }
+.reward-odds-row > span { min-width: 0; overflow-wrap: anywhere; }
+.reward-odds-row > strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+.reward-odds-row > i { grid-column: 1 / -1; display: block; height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--muted) 70%, transparent); }
+.reward-odds-row > i > b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); transform-origin: right center; }
+@media (min-width: 768px) { .reward-odds { grid-column: span 2; } }
+
+/* Bounded non-wager activity rewards */
+.activity-reward-card { display: grid; gap: var(--space-4); }
+.activity-task-list { display: grid; gap: var(--space-3); }
+.activity-task-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border: 1px solid var(--nexus-line); border-radius: 15px; background: rgba(255,255,255,.025); }
+.activity-task-row > div { min-width: 0; display: grid; gap: var(--space-1); }
+.activity-task-row b { font-size: 12px; }
+.activity-task-row span { color: var(--nexus-text-soft); font-size: 10px; line-height: 1.7; }
+.activity-task-row strong { color: var(--nexus-mint); direction: ltr; white-space: nowrap; font: 800 12px "Manrope", "Vazirmatn", sans-serif; }
+.activity-task-row .outline-cta { min-height: 36px; padding: 0 var(--space-3); white-space: nowrap; }
+@media (max-width: 560px) { .activity-task-row { grid-template-columns: minmax(0, 1fr) auto; } .activity-task-row > strong { grid-column: 2; grid-row: 1; } .activity-task-row .outline-cta { grid-column: 1 / -1; width: 100%; } }

@@ -118,6 +118,21 @@ export const rewardLedger = mysqlTable("rewardLedger", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const activityRewardLedger = mysqlTable("activityRewardLedger", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  activityCode: varchar("activityCode", { length: 48 }).notNull(),
+  activityDate: varchar("activityDate", { length: 10 }).notNull(),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
+  amount: decimal("amount", { precision: 20, scale: 6 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userActivityDayUnique: uniqueIndex("activityRewardLedger_user_activity_day_unique").on(table.userId, table.activityCode, table.activityDate),
+}));
+
+export type ActivityRewardLedgerEntry = typeof activityRewardLedger.$inferSelect;
+export type InsertActivityRewardLedgerEntry = typeof activityRewardLedger.$inferInsert;
+
 export type RewardLedgerEntry = typeof rewardLedger.$inferSelect;
 export type InsertRewardLedgerEntry = typeof rewardLedger.$inferInsert;
 
@@ -182,7 +197,7 @@ export const vipActivity = mysqlTable("vipActivity", {
 export const walletTransactions = mysqlTable("walletTransactions", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().references(() => users.id),
-  type: mysqlEnum("type", ["deposit", "withdrawal", "bet_lock", "bet_settlement", "wheel_reward", "crash_settlement"]).notNull(),
+  type: mysqlEnum("type", ["deposit", "withdrawal", "bet_lock", "bet_settlement", "wheel_reward", "activity_reward", "crash_settlement"]).notNull(),
   status: mysqlEnum("status", ["pending", "confirmed", "failed", "cancelled"]).default("pending").notNull(),
   currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
   amount: decimal("amount", { precision: 20, scale: 6 }).notNull(),

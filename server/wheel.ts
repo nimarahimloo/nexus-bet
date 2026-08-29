@@ -9,11 +9,12 @@ export type WheelReward = {
 };
 
 export const WHEEL_REWARDS: readonly WheelReward[] = [
-  { code: "none", label: "این بار نه", type: "none", amount: 0, weight: 55 },
-  { code: "usdt_025", label: "۰٫۲۵ USDT", type: "usdt", amount: 0.25, weight: 25 },
-  { code: "usdt_050", label: "۰٫۵۰ USDT", type: "usdt", amount: 0.5, weight: 12 },
-  { code: "usdt_100", label: "۱ USDT", type: "usdt", amount: 1, weight: 6 },
-  { code: "usdt_200", label: "۲ USDT", type: "usdt", amount: 2, weight: 2 },
+  { code: "none", label: "این بار نه", type: "none", amount: 0, weight: 30 },
+  { code: "usdt_010", label: "۰٫۱۰ USDT", type: "usdt", amount: 0.1, weight: 35 },
+  { code: "usdt_025", label: "۰٫۲۵ USDT", type: "usdt", amount: 0.25, weight: 20 },
+  { code: "usdt_050", label: "۰٫۵۰ USDT", type: "usdt", amount: 0.5, weight: 10 },
+  { code: "usdt_100", label: "۱ USDT", type: "usdt", amount: 1, weight: 4 },
+  { code: "usdt_200", label: "۲ USDT", type: "usdt", amount: 2, weight: 1 },
 ] as const;
 
 export function getUtcDateKey(now = new Date()): string {
@@ -34,5 +35,13 @@ export function totalWeight(): number {
 }
 
 export function getWheelSegments() {
-  return WHEEL_REWARDS.map(({ code, label, type, amount }) => ({ code, label, type, amount }));
+  const weightTotal = totalWeight();
+  return WHEEL_REWARDS.map(({ code, label, type, amount, weight }) => ({
+    code,
+    label,
+    type,
+    amount,
+    weight,
+    chancePercent: weight / weightTotal * 100,
+  }));
 }
