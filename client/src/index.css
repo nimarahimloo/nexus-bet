@@ -754,3 +754,16 @@ html, body { overflow-x: clip; }
 .route-rewards .subpage-art { box-shadow: 0 24px 70px rgba(156,99,255,.2), inset 0 1px 0 rgba(255,255,255,.08); }
 .route-account .subpage-art { box-shadow: 0 24px 70px rgba(95,226,208,.12), inset 0 1px 0 rgba(255,255,255,.08); }
 .route-matches .subpage-content, .route-wallet .subpage-content, .route-crash .subpage-content, .route-rewards .subpage-content, .route-account .subpage-content { padding-bottom: max(var(--space-10), env(safe-area-inset-bottom)); }
+
+/* Internal padding pass: readable controls and breathable glass surfaces */
+.nexus-shell .glass-panel:not(.topbar):not(.subpage-art):not(.notifications-popover) { padding: var(--space-card); }
+.nexus-shell button:not(.icon-button):not(.mobile-menu):not(.notifications-head-actions button) { padding: var(--space-2) var(--space-4); }
+.nexus-shell input, .nexus-shell select, .nexus-shell textarea { padding: var(--space-3) var(--space-4); }
+.nexus-shell .filter-pill, .nexus-shell .filter-control, .nexus-shell .bet-history-tabs button { padding: var(--space-3) var(--space-4); }
+.nexus-shell .nav-link, .nexus-shell .text-link, .nexus-shell .text-cta { padding: var(--space-2) var(--space-3); }
+.nexus-shell .match-meta, .nexus-shell .section-kicker, .nexus-shell .eyebrow, .nexus-shell .sample-chip { min-height: 28px; padding-inline: var(--space-2); }
+@media (max-width: 720px) {
+  .nexus-shell .glass-panel:not(.topbar):not(.subpage-art):not(.notifications-popover) { padding: var(--space-5); }
+  .nexus-shell button:not(.icon-button):not(.mobile-menu):not(.notifications-head-actions button) { padding-inline: var(--space-4); }
+  .nexus-shell .filter-pill, .nexus-shell .filter-control, .nexus-shell .bet-history-tabs button { padding-inline: var(--space-4); }
+}

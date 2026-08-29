@@ -337,3 +337,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] گسترش نقاط کاربردی AI در Home، Matches، Wallet، Rewards و Account.
 - [x] بازطراحی responsive و هویت بصری مسیرهای کلیدی با حفظ دادهٔ واقعی.
 - [x] اجرای تست‌های کامل، بازبینی بصری و ثبت checkpoint مرحله‌ای.
+
+## Internal padding refinement
+- [x] ممیزی padding داخلی دکمه‌ها، کارت‌ها، باکس‌ها، تب‌ها و فرم‌ها.
+- [x] افزایش padding عناصر فشرده با استفاده از spacing tokenهای استاندارد.
+- [x] اصلاح touch target و فاصلهٔ داخلی در breakpointهای موبایل.
+- [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.
