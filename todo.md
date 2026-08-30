@@ -356,3 +356,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح padding، safe-area و scroll در BetSheet موبایل.
 - [x] اصلاح عرض، padding و خوانایی پنل اعلان در موبایل و دسکتاپ.
 - [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.
+
+## Quick-choice and wheel clarity pass
+- [x] inventory کردن متن‌های تکراری، نوارهای توضیحی و بخش‌های کم‌ارزش در routeهای اصلی.
+- [x] کوتاه‌سازی copy و ساخت hierarchy برای انتخاب سریع در Home، Matches و Rewards.
+- [x] ادغام یا حذف بخش‌های تکراری بدون حذف اطلاعات ضروری اعتماد و ریسک.
+- [x] ارتقای استایل و animation گردونه با کتابخانه‌های موجود و حفظ احتمال‌های واقعی.
+- [x] افزودن تست copy/UI و بازبینی responsive پیش از checkpoint.

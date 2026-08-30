@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { getUtcDateKey, selectWheelReward, totalWeight, WHEEL_REWARDS } from "./wheel";
 
 describe("lucky wheel", () => {
@@ -10,6 +11,14 @@ describe("lucky wheel", () => {
     expect(selectWheelReward(99).code).toBe("usdt_200");
     expect(WHEEL_REWARDS.every((reward) => reward.weight > 0)).toBe(true);
     expect(WHEEL_REWARDS.reduce((sum, reward) => sum + reward.weight, 0)).toBe(100);
+  });
+
+  it("keeps the Rewards UI focused on the primary action", () => {
+    const page = readFileSync(new URL("../client/src/pages/FeaturePages.tsx", import.meta.url), "utf8");
+    expect(page).toContain("شانس روزانه");
+    expect(page).toContain("پاداش فعالیت");
+    expect(page).toContain("نتیجه در backend؛ پاداش مستقیماً به wallet.");
+    expect(page).not.toContain("شانس را به موجودی واقعی وصل کن");
   });
 
   it("uses a stable UTC date key for the daily limit", () => {

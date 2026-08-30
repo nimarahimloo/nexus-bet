@@ -815,3 +815,26 @@ html, body { overflow-x: clip; }
   .notifications-popover { top: 70px; right: 8px; left: 8px; width: auto; max-height: calc(100dvh - 88px); padding: var(--space-4) var(--space-3); border-radius: 22px; }
   .notification-item > a, .notification-item > div { padding: var(--space-4) var(--space-3); }
 }
+
+/* Wheel v2: richer visual feedback using the existing CSS motion system only. */
+.reward-wheel-card { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(220px, .9fr) minmax(0, 1.1fr); gap: var(--space-7); align-items: center; padding: var(--space-7); overflow: hidden; background: radial-gradient(circle at 22% 24%, rgba(137,59,255,.18), transparent 34%), rgba(18,12,30,.82); }
+.reward-wheel-card::after { content: ""; position: absolute; inset: 12px; z-index: -1; border: 1px solid rgba(255,255,255,.06); border-radius: 24px; pointer-events: none; }
+.wheel-visual { position: relative; display: grid; min-height: 300px; place-items: center; padding: var(--space-5); }
+.wheel-disc { position: relative; display: grid; width: min(260px, 72vw); aspect-ratio: 1; place-items: center; border: 10px solid rgba(255,255,255,.07); border-radius: 50%; background: conic-gradient(from -10deg, #893bff, #5fe2d0, #ab71ff, #f4c96c, #893bff); box-shadow: 0 22px 55px rgba(0,0,0,.42), inset 0 0 0 8px rgba(13,8,24,.72), inset 0 0 0 12px rgba(255,255,255,.09); }
+.wheel-disc::before { content: ""; position: absolute; inset: 13%; border: 1px dashed rgba(255,255,255,.28); border-radius: 50%; }
+.wheel-disc span { position: absolute; top: 12%; width: 34%; color: #fff; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,.65); font: 800 10px var(--font-display); transform-origin: 50% 112px; }
+.wheel-pointer { position: absolute; z-index: 2; top: 3px; width: 0; height: 0; border-inline: 12px solid transparent; border-top: 0; border-bottom: 26px solid var(--nexus-mint); filter: drop-shadow(0 5px 12px rgba(95,226,208,.4)); }
+.wheel-core { position: absolute; z-index: 3; display: grid; width: 88px; aspect-ratio: 1; place-items: center; align-content: center; gap: 4px; padding: var(--space-3); border: 5px solid rgba(13,8,24,.86); border-radius: 50%; color: #fff; background: linear-gradient(145deg, #a65bff, #5921bb); box-shadow: 0 10px 26px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.34); text-align: center; }
+.wheel-core span { max-width: 70px; font-size: 9px; line-height: 1.4; }
+.wheel-copy { display: grid; gap: var(--space-4); min-width: 0; }
+.wheel-copy h2, .wheel-copy p { margin: 0; }
+.wheel-actions { display: grid; gap: var(--space-3); }
+@media (max-width: 720px) {
+  .reward-wheel-card { grid-template-columns: 1fr; gap: var(--space-5); padding: var(--space-5); }
+  .wheel-visual { min-height: 270px; padding: var(--space-3); }
+  .wheel-disc { width: min(244px, 76vw); }
+  .wheel-disc span { transform-origin: 50% 104px; font-size: 9px; }
+  .wheel-pointer { top: 0; }
+  .wheel-copy { gap: var(--space-3); text-align: center; }
+  .wheel-copy .sample-chip { justify-self: center; }
+}
