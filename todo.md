@@ -343,3 +343,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزایش padding عناصر فشرده با استفاده از spacing tokenهای استاندارد.
 - [x] اصلاح touch target و فاصلهٔ داخلی در breakpointهای موبایل.
 - [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.
+
+## Synced preview padding and responsive pass
+- [x] ممیزی نسخهٔ همگام‌شده برای دکمه‌ها، کارت‌ها، باکس‌ها و layoutهای موبایل.
+- [x] افزایش padding داخلی عناصر فشرده با spacing tokenهای مشترک.
+- [x] اصلاح breakpointهای موبایل، safe-area، grid و جلوگیری از overflow.
+- [x] اجرای تست regression، بازبینی بصری و ثبت checkpoint.

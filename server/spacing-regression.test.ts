@@ -18,6 +18,9 @@ describe("spacing and mobile layout contract", () => {
     expect(css).toContain("min-height: 40px");
     expect(css).toContain("overflow-x: hidden");
     expect(css).toContain("env(safe-area-inset-bottom)");
+    expect(css).toContain("padding: var(--space-3) var(--space-5)");
+    expect(css).toContain("grid-template-columns: minmax(0, 1fr)");
+    expect(css).toContain("overflow: visible");
   });
 
   it("keeps the shared shell as the owner of page-level spacing", () => {

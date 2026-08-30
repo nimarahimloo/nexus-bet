@@ -767,3 +767,16 @@ html, body { overflow-x: clip; }
   .nexus-shell button:not(.icon-button):not(.mobile-menu):not(.notifications-head-actions button) { padding-inline: var(--space-4); }
   .nexus-shell .filter-pill, .nexus-shell .filter-control, .nexus-shell .bet-history-tabs button { padding-inline: var(--space-4); }
 }
+
+/* Synced mobile refinement: cards stay inside the viewport instead of becoming a clipped carousel. */
+.nexus-shell .primary-cta, .nexus-shell .solid-cta, .nexus-shell .outline-cta, .nexus-shell .ticket-button, .nexus-shell .login-button { min-height: 44px; padding: var(--space-3) var(--space-5); }
+.nexus-shell .match-card, .nexus-shell .offer-card, .nexus-shell .game-card, .nexus-shell .standings-card, .nexus-shell .feature-hub-card, .nexus-shell .balance-hero, .nexus-shell .account-summary, .nexus-shell .reward-wheel, .nexus-shell .crash-board, .nexus-shell .vip-level { min-width: 0; }
+@media (max-width: 720px) {
+  .nexus-shell .feature-hub-grid { display: grid !important; grid-template-columns: minmax(0, 1fr); width: 100%; margin-inline: 0; padding: 0; overflow: visible; }
+  .nexus-shell .feature-hub-card { width: 100%; min-width: 0; min-height: 146px; }
+  .nexus-shell .match-card, .nexus-shell .offer-card, .nexus-shell .game-card, .nexus-shell .standings-card, .nexus-shell .balance-hero, .nexus-shell .account-summary, .nexus-shell .reward-wheel, .nexus-shell .crash-board, .nexus-shell .vip-level { padding: var(--space-5); }
+  .nexus-shell .primary-cta, .nexus-shell .solid-cta, .nexus-shell .outline-cta, .nexus-shell .ticket-button, .nexus-shell .login-button { width: 100%; justify-content: center; }
+}
+@media (min-width: 521px) and (max-width: 720px) {
+  .nexus-shell .feature-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
