@@ -363,3 +363,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ادغام یا حذف بخش‌های تکراری بدون حذف اطلاعات ضروری اعتماد و ریسک.
 - [x] ارتقای استایل و animation گردونه با کتابخانه‌های موجود و حفظ احتمال‌های واقعی.
 - [x] افزودن تست copy/UI و بازبینی responsive پیش از checkpoint.
+
+## Alert-to-toast cleanup
+- [x] ممیزی همهٔ alert، notice، responsible-inline و پیام‌های باکس‌محور در routeها.
+- [x] انتقال پیام‌های success/error/action به toast استاندارد با متن کوتاه.
+- [x] حذف باکس‌های سبز پیام‌محور و حفظ فقط empty/loading ضروری.
+- [x] افزودن تست contract، بازبینی موبایل و ثبت checkpoint.

@@ -838,3 +838,6 @@ html, body { overflow-x: clip; }
   .wheel-copy { gap: var(--space-3); text-align: center; }
   .wheel-copy .sample-chip { justify-self: center; }
 }
+
+/* Message surfaces stay out of the content flow; actionable feedback belongs in toast. */
+.preview-notice, .responsible-inline, .feature-intro, .reward-rules, .inline-alert { display: none !important; }

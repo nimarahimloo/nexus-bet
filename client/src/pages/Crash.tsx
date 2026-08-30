@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ArrowLeft, History, Play, ShieldCheck, Zap } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { trpc } from "@/lib/trpc";
@@ -52,6 +53,9 @@ export default function Crash() {
   const submitCashout = () => { if (betId) cashoutMutation.mutate({ betId }); };
   const pending = placeMutation.isPending || cashoutMutation.isPending;
   const mutationError = placeMutation.error ?? cashoutMutation.error;
+  useEffect(() => { if (mutationError) toast.error(crashErrorMessage(mutationError)); }, [mutationError]);
+  useEffect(() => { if (roundQuery.error) toast.error("دریافت round از backend انجام نشد؛ دوباره تلاش کن."); }, [roundQuery.error]);
+  useEffect(() => { if (isAuthenticated && !walletQuery.isLoading && !hasEnoughBalance) toast.error("موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا کیف پول را شارژ کن."); }, [hasEnoughBalance, isAuthenticated, walletQuery.isLoading]);
 
   return <PageShell eyebrow="بازی انفجار" title="ریسک را قبل از توقف ببین" description="ضریب و round از backend خوانده می‌شوند. bet و cashout واقعی‌اند و تغییر موجودی فقط پس از settlement ثبت‌شده انجام می‌شود." heroImage="/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png">
     <div className="crash-board glass-panel">
@@ -64,9 +68,6 @@ export default function Crash() {
         {isAuthenticated && <span className="crash-balance">موجودی قابل‌استفاده: {fa(availableBalance)} USDT</span>}
         {betId && <button className="outline-cta" disabled={pending || round?.status !== "running"} onClick={submitCashout}>cashout {formatCrashCashoutLabel(payout)} <Zap size={15} /></button>}
       </div>
-      {isAuthenticated && !walletQuery.isLoading && !hasEnoughBalance && <p className="inline-alert">موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا ابتدا کیف پول را شارژ کن.</p>}
-      {mutationError && <p className="inline-alert">{crashErrorMessage(mutationError)}</p>}
-      {roundQuery.error && <p className="inline-alert">دریافت round از backend انجام نشد؛ دوباره تلاش کن.</p>}
     </div>
     <div className="crash-grid"><article className="standalone-card glass-panel"><History size={19} /><h3>دورهای اخیر</h3>{historyQuery.isLoading ? <p className="data-state">در حال دریافت…</p> : historyQuery.data?.length ? <div className="rounds">{historyQuery.data.map((item) => <span key={item.id}>{fa(item.multiplier)}×</span>)}</div> : <p className="data-state">هنوز round تسویه‌شده‌ای وجود ندارد.</p>}<p>نتایج از جدول crashRounds خوانده می‌شوند.</p></article><article className="standalone-card glass-panel"><ShieldCheck size={19} /><h3>بت‌اسلیپ انفجار</h3><div className="crash-slip-row"><span>مبلغ</span><b>{formatCrashStakeLabel(currentStake)}</b></div><div className="crash-slip-row"><span>برداشت در ضریب فعلی</span><b className="mint-text">{formatCrashCashoutLabel(payout)}</b></div><p className="data-state">پس از ثبت، وضعیت bet و payout در backend ذخیره می‌شود.</p><button className="outline-cta" disabled={!betId || pending} onClick={submitCashout}>ثبت برداشت <ArrowLeft size={15} /></button></article></div>
   </PageShell>;

@@ -1,5 +1,6 @@
 import { ArrowLeft, BadgePercent, CircleCheck, CircleHelp, Gift, Layers3, LockKeyhole, ShieldCheck, Trophy, WalletCards, Zap } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Link } from "wouter";
 import { openAuthModal } from "@/lib/platformOverlay";
 import { trpc } from "@/lib/trpc";
@@ -25,7 +26,7 @@ function OperationalEmpty({ title, detail, href = "/matches", cta = "بازگش�
 
 export function PromotionsPage() {
   const promotionsQuery = trpc.promotions.active.useQuery();
-  const claimMutation = trpc.promotions.claim.useMutation({ onSuccess: () => void promotionsQuery.refetch() });
+  const claimMutation = trpc.promotions.claim.useMutation({ onSuccess: () => { toast.success("پیشنهاد فعال شد."); void promotionsQuery.refetch(); }, onError: (error) => toast.error(error.message) });
   const promotions = promotionsQuery.data ?? [];
   return <PageShell eyebrow="پیشنهادها" title="پیشنهاد معتبر، نه کارت تزئینی" description="کمپین‌ها، شرایط و مهلت از دیتابیس backend خوانده می‌شوند و فعال‌سازی هر پیشنهاد قابل‌ردیابی است." heroImage="/manus-storage/nexus-bet-promotions-hero-v3_65559fc7.png">
     {promotionsQuery.error && <div className="inline-alert">کمپین‌ها فعلاً از backend دریافت نشدند.</div>}
@@ -55,7 +56,7 @@ export function RewardsPage() {
   const historyQuery = trpc.rewards.history.useQuery(undefined, { enabled: isAuthenticated });
   const activityQuery = trpc.rewards.activity.useQuery(undefined, { enabled: isAuthenticated });
   const activityMutation = trpc.rewards.claimActivity.useMutation({
-    onSuccess: () => { void activityQuery.refetch(); void utils.wallet.me.invalidate(); void utils.notifications.unreadCount.invalidate(); },
+    onSuccess: () => { toast.success("پاداش فعالیت ثبت شد."); void activityQuery.refetch(); void utils.wallet.me.invalidate(); void utils.notifications.unreadCount.invalidate(); }, onError: (error) => toast.error(error.message),
   });
   const spinMutation = trpc.rewards.spin.useMutation({
     onSuccess: (data) => {
@@ -64,7 +65,9 @@ export function RewardsPage() {
       void utils.rewards.status.invalidate();
       void utils.rewards.history.invalidate();
       void utils.wallet.me.invalidate();
+      toast.success("نتیجهٔ گردونه ثبت شد.");
     },
+    onError: (error) => toast.error(error.message),
   });
   const segments = segmentsQuery.data?.segments ?? [];
   const history = historyQuery.data ?? [];
