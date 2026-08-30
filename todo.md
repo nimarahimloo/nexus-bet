@@ -349,3 +349,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزایش padding داخلی عناصر فشرده با spacing tokenهای مشترک.
 - [x] اصلاح breakpointهای موبایل، safe-area، grid و جلوگیری از overflow.
 - [x] اجرای تست regression، بازبینی بصری و ثبت checkpoint.
+
+## Interactive surfaces spacing pass
+- [x] ممیزی ساختار Auth modal، BetSheet و NotificationsPopover.
+- [x] افزایش padding داخلی و فاصلهٔ field/button در مودال ورود.
+- [x] اصلاح padding، safe-area و scroll در BetSheet موبایل.
+- [x] اصلاح عرض، padding و خوانایی پنل اعلان در موبایل و دسکتاپ.
+- [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.

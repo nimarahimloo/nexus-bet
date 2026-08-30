@@ -780,3 +780,38 @@ html, body { overflow-x: clip; }
 @media (min-width: 521px) and (max-width: 720px) {
   .nexus-shell .feature-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Interactive surfaces: shared internal rhythm for authentication, betting and notifications. */
+.auth-modal { width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: var(--space-8); }
+.auth-form { display: grid; gap: var(--space-5); }
+.auth-form label { display: grid; gap: var(--space-2); }
+.auth-form label > div { min-height: 48px; padding: var(--space-3) var(--space-4); }
+.auth-submit { min-height: 48px; padding: var(--space-3) var(--space-5); }
+.auth-providers { gap: var(--space-3); }
+.auth-providers button { min-height: 44px; padding: var(--space-3) var(--space-3); }
+.auth-switch { gap: var(--space-3); padding-top: var(--space-2); }
+.bet-sheet { width: min(520px, calc(100vw - 32px)); max-height: min(760px, calc(100dvh - 32px)); overflow-y: auto; padding: var(--space-6); }
+.prediction-sheet-head { margin-bottom: var(--space-5); }
+.sheet-selections { display: grid; gap: var(--space-3); padding-block: var(--space-2) var(--space-4); }
+.sheet-selection { min-width: 0; padding: var(--space-3) var(--space-4); border-radius: 14px; }
+.sheet-summary { display: grid; gap: var(--space-3); padding: var(--space-4); }
+.sheet-summary > div { min-height: 44px; padding: var(--space-2) 0; }
+.sheet-summary input { min-width: 0; padding: var(--space-3); }
+.sheet-submit { min-height: 48px; padding: var(--space-3) var(--space-5); margin-top: var(--space-4); }
+.sheet-note { margin-top: var(--space-3); padding-inline: var(--space-2); line-height: 1.8; }
+.notifications-popover { padding: var(--space-5); }
+.notifications-head { gap: var(--space-4); padding-bottom: var(--space-4); }
+.notifications-head-actions { gap: var(--space-2); }
+.notifications-head-actions button { width: 40px; height: 40px; }
+.notifications-list { gap: var(--space-3); padding-top: var(--space-4); }
+.notification-item > a, .notification-item > div { min-width: 0; padding: var(--space-4); }
+.notifications-state { min-height: 180px; gap: var(--space-3); padding: var(--space-5); }
+.notifications-login { min-height: 44px; padding: var(--space-3) var(--space-4); }
+@media (max-width: 720px) {
+  .auth-modal { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); padding: var(--space-6) var(--space-4); border-radius: 24px; }
+  .auth-providers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bet-sheet { inset-inline: 0; bottom: 0; width: 100%; max-height: min(86dvh, 760px); padding: var(--space-5) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; }
+  .sheet-summary { padding: var(--space-4) var(--space-3); }
+  .notifications-popover { top: 70px; right: 8px; left: 8px; width: auto; max-height: calc(100dvh - 88px); padding: var(--space-4) var(--space-3); border-radius: 22px; }
+  .notification-item > a, .notification-item > div { padding: var(--space-4) var(--space-3); }
+}
