@@ -17,8 +17,14 @@ describe("lucky wheel", () => {
     const page = readFileSync(new URL("../client/src/pages/FeaturePages.tsx", import.meta.url), "utf8");
     expect(page).toContain("شانس روزانه");
     expect(page).toContain("پاداش فعالیت");
+    expect(page).toContain("segmentsQuery.isLoading");
+    expect(page).toContain("گردونه موقتاً در دسترس نیست.");
+    expect(page).toContain("تلاش دوباره");
     expect(page).toContain("نتیجه در backend؛ پاداش مستقیماً به wallet.");
     expect(page).not.toContain("شانس را به موجودی واقعی وصل کن");
+    expect(page).not.toContain("پیشنهاد معتبر، نه کارت تزئینی");
+    expect(page).not.toContain("کتابخانهٔ بازی از catalog واقعی");
+    expect(page).not.toContain("هر کمپین باید از backend، با شرایط و مهلت معتبر منتشر شود.");
   });
 
   it("uses a stable UTC date key for the daily limit", () => {

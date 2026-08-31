@@ -1045,3 +1045,25 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 .nexus-support-chat form button[type="submit"] { background: var(--brand-violet) !important; color: #fff !important; border-radius: 12px !important; }
 .nexus-support-chat .prose { color: #dcd2ea; font-family: var(--font-body); font-size: 11px; line-height: 1.9; }
 .nexus-support-chat .prose p { color: inherit; }
+
+
+/* Lucky wheel completion pass: compact geometry plus honest async states. */
+.wheel-loading { display: grid; place-items: center; align-content: center; gap: 10px; min-height: 260px; color: #aaa1b6; text-align: center; }
+.wheel-loading svg { color: #b17dff; }
+.wheel-loading .outline-cta { min-height: 36px; padding-inline: 14px; }
+@media (max-width: 720px) {
+  .wheel-loading { min-height: 220px; font-size: 11px; }
+  .wheel-visual { min-height: 232px; padding: 8px; }
+  .wheel-disc { width: min(210px, 66vw); border-width: 8px; }
+  .wheel-disc span { top: 11%; width: 38%; transform-origin: 50% 90px; font-size: 8px; }
+  .wheel-core { width: 72px; border-width: 4px; padding: 8px; }
+  .wheel-core svg { width: 22px; height: 22px; }
+  .wheel-core span { max-width: 58px; font-size: 8px; }
+  .wheel-pointer { border-inline-width: 10px; border-bottom-width: 22px; }
+}
+@media (max-width: 360px) {
+  .wheel-visual { min-height: 218px; }
+  .wheel-disc { width: min(194px, 64vw); }
+  .wheel-disc span { transform-origin: 50% 82px; font-size: 7.5px; }
+  .wheel-core { width: 66px; }
+}

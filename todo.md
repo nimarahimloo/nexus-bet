@@ -391,3 +391,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] طراحی پنل شیشه‌ای responsive با پیام خوش‌آمد، promptهای کوتاه، loading/error و ارسال امن.
 - [x] جلوگیری از تداخل ویجت با bottom navigation، bet slip و safe-area موبایل.
 - [x] افزودن regression test برای mount شدن ویجت و اجرای تست، TypeScript و screenshot audit.
+
+## Cleanup promotions, casino and wheel
+- [x] ممیزی و حذف trust copyهای غیرضروری از صفحهٔ پیشنهادها؛ فقط داده و اقدام معتبر باقی بماند.
+- [x] ممیزی صفحهٔ catalog بازی‌ها؛ اگر backend catalog خالی است، state کوتاه و صادقانه جایگزین صفحهٔ تزئینی شود.
+- [x] تکمیل render گردونهٔ شانس با segmentهای backend، نتیجه، انیمیشن، محدودیت روزانه و حالت‌های loading/error.
+- [x] افزودن regression test برای متن‌های پاک‌شده، catalog state و قرارداد کامل گردونه.
+- [x] اجرای تست، TypeScript، screenshot audit موبایل و ثبت checkpoint.
