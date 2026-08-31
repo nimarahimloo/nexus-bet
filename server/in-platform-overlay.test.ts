@@ -30,6 +30,9 @@ describe("in-platform auth and support contracts", () => {
     const router = read("../server/routers.ts");
     const css = read("../client/src/index.css");
     expect(shell).toContain("support-launcher");
+    expect(shell).toContain('aria-haspopup="dialog"');
+    expect(shell).toContain('aria-controls="nexus-support-dialog"');
+    expect(support).toContain("nexus-support-dialog");
     expect(support).toContain("trpc.support.chat.useMutation");
     expect(router).toContain("support: router");
     expect(router).toContain("پشتیبان فارسی Nexus Bet");
@@ -37,6 +40,8 @@ describe("in-platform auth and support contracts", () => {
     expect(shell).toContain("context-ai-strip");
     expect(shell).toContain("contextualPrompt");
     expect(css).toContain("safe-area-inset-bottom");
+    expect(css).toContain("support-status-dot");
+    expect(css).toContain("support-kicker");
   });
 
   it("keeps the auth modal material-rich while honoring reduced-motion", () => {

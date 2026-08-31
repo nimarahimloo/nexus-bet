@@ -384,3 +384,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازطراحی trust cues برای ورود، USDT، دادهٔ واقعی/preview و بازی مسئولانه بدون ادعای ساختگی.
 - [x] اجرای responsive audit و اصلاح صفحه‌های Home، Matches، Wallet، Rewards، Crash و Account در عرض‌های ۳۲۰ تا ۱۴۴۰.
 - [x] افزودن تست regression برای design contracts و اجرای تست، TypeScript، screenshot audit و checkpoint.
+
+## Online support widget
+- [x] افزودن ویجت شناور پشتیبانی/Nexus AI به shell مشترک در همهٔ routeها.
+- [x] اتصال پنل چت به support.chat موجود با حفظ context حساب authenticated و حالت مهمان.
+- [x] طراحی پنل شیشه‌ای responsive با پیام خوش‌آمد، promptهای کوتاه، loading/error و ارسال امن.
+- [x] جلوگیری از تداخل ویجت با bottom navigation، bet slip و safe-area موبایل.
+- [x] افزودن regression test برای mount شدن ویجت و اجرای تست، TypeScript و screenshot audit.

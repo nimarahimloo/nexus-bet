@@ -1020,3 +1020,28 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
   .nexus-shell .league-filter-pills button { min-width: 116px; }
   .nexus-shell .matches-filter-bar > .sample-chip { justify-self: start; }
 }
+
+
+/* Online support widget: visible, calm and never competing with the primary CTA. */
+.nexus-shell .support-launcher { border-color: rgba(139,69,245,.34); background: rgba(24,17,40,.88); }
+.nexus-shell .support-launcher:hover { border-color: rgba(177,125,255,.52); background: rgba(39,25,65,.94); }
+.support-status-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 999px; background: #65e0cd; box-shadow: 0 0 0 3px rgba(101,224,205,.11), 0 0 14px rgba(101,224,205,.55); }
+.support-kicker { display: inline-flex !important; align-items: center; gap: 5px; }
+.support-kicker i { width: 5px; height: 5px; border-radius: 999px; background: #65e0cd; box-shadow: 0 0 9px rgba(101,224,205,.75); }
+.support-foot { line-height: 1.8; }
+@media (max-width: 720px) {
+  .support-status-dot { display: none; }
+  .nexus-shell .support-launcher { bottom: calc(88px + env(safe-area-inset-bottom)); }
+  .support-panel { box-shadow: 0 -20px 80px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.09) !important; }
+  .support-foot { padding-bottom: 2px; font-size: 7.5px; }
+}
+
+
+.nexus-support-chat .ai-suggested-prompt { border: 1px solid rgba(177,125,255,.25) !important; border-radius: 13px !important; background: rgba(139,69,245,.10) !important; color: #e9ddfb !important; font-family: var(--font-body) !important; font-size: 11px !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+.nexus-support-chat .ai-suggested-prompt:hover { border-color: rgba(177,125,255,.54) !important; background: rgba(139,69,245,.20) !important; }
+.nexus-support-chat textarea { min-height: 42px !important; border: 1px solid rgba(177,125,255,.24) !important; border-radius: 13px !important; background: rgba(21,15,34,.82) !important; color: #f8f5fb !important; }
+.nexus-support-chat textarea::placeholder { color: #8c819b !important; }
+.nexus-support-chat form { border-color: rgba(255,255,255,.08) !important; background: rgba(12,9,19,.72) !important; }
+.nexus-support-chat form button[type="submit"] { background: var(--brand-violet) !important; color: #fff !important; border-radius: 12px !important; }
+.nexus-support-chat .prose { color: #dcd2ea; font-family: var(--font-body); font-size: 11px; line-height: 1.9; }
+.nexus-support-chat .prose p { color: inherit; }

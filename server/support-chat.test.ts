@@ -31,7 +31,7 @@ describe("Nexus AI support chat contract", () => {
     expect(routers).toContain(".max(12)");
     expect(support).toContain("slice(-10)");
     expect(support).toContain("content.trim().slice(0, 2_000)");
-    expect(support).toContain("متصل به اطلاعات read-only حساب");
+    expect(support).toContain("اتصال خواندنی به اطلاعات حساب فعال است");
     expect(support).toContain("برای اطلاعات حساب، ابتدا وارد شوید");
   });
 
