@@ -14,6 +14,18 @@ describe("iOS-inspired mobile redesign", () => {
     expect(css).toContain("letter-spacing: normal");
   });
 
+  it("keeps the reference-led shell minimal with one secondary drawer and explicit trust cues", () => {
+    const shell = read("../client/src/components/PageShell.tsx");
+    const featurePages = read("../client/src/pages/FeaturePages.tsx");
+    const css = read("../client/src/index.css");
+    expect(shell).toContain('className="more-nav-drawer glass-panel"');
+    expect(shell).toContain('className="trust-bar container"');
+    expect(featurePages).toContain('title: "مسابقات زنده"');
+    expect(featurePages).toContain('title: "کیف پول USDT"');
+    expect(css).toContain("grid-template-columns: repeat(6, minmax(0, 1fr))");
+    expect(css).toContain(".more-nav-drawer");
+  });
+
   it("keeps a touch-first shell with glass material, safe area and focused mobile route hierarchy", () => {
     const css = read("../client/src/ios26.css");
     expect(css).toContain("backdrop-filter: blur(30px)");

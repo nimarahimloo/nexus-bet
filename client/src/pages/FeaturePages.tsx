@@ -14,10 +14,12 @@ function PreviewNotice({ label }: { label: string }) {
 }
 
 const featureCards = [
-  { title: "بونوس‌ها", detail: "شرایط معتبر و قابل‌پیگیری.", icon: BadgePercent, href: "/promotions", image: "/manus-storage/nexus-bet-promotions-hero-v3_65559fc7.png" },
-  { title: "تورنمنت‌ها", detail: "رقابت با جدول امتیاز واقعی.", icon: Trophy, href: "/tournaments", image: "/manus-storage/nexus-bet-tournaments-hero-v3_d13dd980.png" },
-  { title: "گردونهٔ روزانه", detail: "یک spin؛ نتیجه در ledger.", icon: Gift, href: "/rewards", image: "/manus-storage/nexus-bet-rewards-hero-v3_92731f27.png" },
-  { title: "بازی‌ها", detail: "فقط از catalog واقعی.", icon: Layers3, href: "/casino", image: "/manus-storage/nexus-bet-casino-hero-v3_e26e607d.png" },
+  { title: "مسابقات زنده", detail: "فید رسمی و لحظه‌ای.", icon: Trophy, href: "/matches", image: "/manus-storage/nexus-bet-live-match_f1d157ef.jpg" },
+  { title: "فوتبال", detail: "بازارهای خوانا و سریع.", icon: Trophy, href: "/matches", image: "/manus-storage/nexus-bet-matches-hero-v2_fbfab850.png" },
+  { title: "انفجار", detail: "ضریب زنده، کنترل با تو.", icon: Zap, href: "/crash", image: "/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png" },
+  { title: "پاداش‌ها", detail: "گردونه و فعالیت روزانه.", icon: Gift, href: "/rewards", image: "/manus-storage/nexus-bet-rewards-hero-v3_92731f27.png" },
+  { title: "باشگاه VIP", detail: "سطح و مزایای روشن.", icon: BadgePercent, href: "/vip", image: "/manus-storage/nexus-bet-vip-hero-v2_6e37762c.png" },
+  { title: "کیف پول USDT", detail: "موجودی و تراکنش یکجا.", icon: WalletCards, href: "/wallet", image: "/manus-storage/nexus-bet-wallet-hero-v2_884a12f2.png" },
 ];
 
 function OperationalEmpty({ title, detail, href = "/matches", cta = "بازگشت به مسابقات" }: { title: string; detail: string; href?: string; cta?: string }) {
@@ -96,5 +98,5 @@ export function CasinoPage() {
 }
 
 export function FeatureHub() {
-  return <section className="feature-hub container" aria-labelledby="feature-hub-title"><div className="section-heading"><div><span className="section-kicker">بیشتر از یک لیست مسابقه</span><h2 id="feature-hub-title">مرکز تجربهٔ Nexus Bet</h2></div><Link href="/promotions" className="text-link">دیدن همه <Zap size={15} /></Link></div><div className="feature-hub-grid">{featureCards.map(({ title, detail, icon: Icon, href, image }) => <Link className="feature-hub-card glass-panel" href={href} key={title}><img className="feature-hub-art" src={image} alt="" /><span className="feature-hub-icon"><Icon size={19} /></span><div className="feature-hub-copy"><h3>{title}</h3><p>{detail}</p></div><Zap className="feature-hub-arrow" size={17} /></Link>)}</div></section>;
+  return <section className="feature-hub container" aria-labelledby="feature-hub-title"><div className="section-heading"><div><h2 id="feature-hub-title">انتخاب سریع</h2></div><Link href="/matches" className="text-link">همه بخش‌ها <Zap size={15} /></Link></div><div className="feature-hub-grid">{featureCards.map(({ title, detail, icon: Icon, href, image }) => <Link className="feature-hub-card glass-panel" href={href} key={title}><img className="feature-hub-art" src={image} alt="" /><span className="feature-hub-icon"><Icon size={19} /></span><div className="feature-hub-copy"><h3>{title}</h3><p>{detail}</p></div><Zap className="feature-hub-arrow" size={17} /></Link>)}</div></section>;
 }

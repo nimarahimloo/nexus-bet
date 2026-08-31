@@ -376,3 +376,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن چند fixture تستی صریح و موقت برای preview هنگام rate limit API.
 - [x] بازطراحی hierarchy و responsive با حفظ مشکی، بنفش و تصاویر اختصاصی Nexus Bet.
 - [x] افزودن تست truth/preview، بازبینی موبایل و ثبت checkpoint.
+
+## Deep reference-led redesign
+- [x] بازطراحی shell مشترک، navigation و hierarchy صفحهٔ خانه بر اساس الگوی ساده و مرتب reference.
+- [x] یکدست‌سازی typography، font loading، رنگ‌های برند، radius، border و glass surfaces بدون حذف تصاویر اختصاصی.
+- [x] تبدیل دسته‌بندی‌ها و feature cards به سطوح تصویری منظم و قابل اسکن با متن کوتاه.
+- [x] بازطراحی trust cues برای ورود، USDT، دادهٔ واقعی/preview و بازی مسئولانه بدون ادعای ساختگی.
+- [x] اجرای responsive audit و اصلاح صفحه‌های Home، Matches، Wallet، Rewards، Crash و Account در عرض‌های ۳۲۰ تا ۱۴۴۰.
+- [x] افزودن تست regression برای design contracts و اجرای تست، TypeScript، screenshot audit و checkpoint.
