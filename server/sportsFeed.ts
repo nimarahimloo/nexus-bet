@@ -1,6 +1,12 @@
 import { mapSportsDetails, mapSportsFixtures, mapSportsOdds, type MatchCardData, type MatchDetailData, type SportsApiDetailPayload, type SportsApiFixture, type SportsApiOddsPayload } from "../shared/sports";
 
-export type SportsFeedResult = { matches: MatchCardData[]; source: "api" | "fallback"; error: string | null };
+export type SportsFeedResult = { matches: MatchCardData[]; source: "api" | "fallback" | "preview"; error: string | null };
+
+const previewMatches: MatchCardData[] = [
+  { id: "preview-1", league: "لیگ پیش‌نمایش فوتبال", sport: "فوتبال", status: "نمونه", time: "۲۰:۳۰", home: "نکسوس یونایتد", homeLogo: "", away: "ویولت سیتی", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },
+  { id: "preview-2", league: "جام پیش‌نمایش اروپا", sport: "فوتبال", status: "نمونه", time: "۲۲:۰۰", home: "پرسپولیس", homeLogo: "", away: "استقلال", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },
+  { id: "preview-3", league: "تور پیش‌نمایش تنیس", sport: "تنیس", status: "نمونه", time: "فردا ۱۸:۰۰", home: "آریا کریمی", homeLogo: "", away: "سام نادری", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },
+];
 
 export async function fetchSportsDetails(fixtureId: string, apiKey: string): Promise<MatchDetailData> {
   const empty: MatchDetailData = { fixtureId, source: "fallback", error: "جزئیات واقعی در دسترس نیست.", statistics: [], lineups: [], events: [] };
@@ -47,9 +53,11 @@ export async function fetchSportsFeed(path: string, apiKey: string): Promise<Spo
       }));
       return { matches: enriched, source: "api", error: null };
     }
+    if (!matches.length && !path.includes("live")) return { matches: previewMatches, source: "preview", error: "پاسخ API خالی است؛ مسابقه‌ها فقط برای پیش‌نمایش هستند و بازار شرط فعال نیست." };
     return { matches, source: "api", error: null };
   } catch (error) {
     console.warn(`[Sports] Falling back for ${path}:`, error);
-    return { matches: [], source: "fallback", error: path.includes("live") ? "دادهٔ زندهٔ مسابقات در دسترس نیست." : "دریافت دادهٔ مسابقات موقتاً ناموفق بود." };
+    if (!path.includes("live")) return { matches: previewMatches, source: "preview", error: "محدودیت API؛ مسابقه‌ها فقط برای پیش‌نمایش هستند و بازار شرط فعال نیست." };
+    return { matches: [], source: "fallback", error: "دادهٔ زندهٔ مسابقات در دسترس نیست." };
   } finally { clearTimeout(timeout); }
 }

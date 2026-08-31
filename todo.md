@@ -369,3 +369,10 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] انتقال پیام‌های success/error/action به toast استاندارد با متن کوتاه.
 - [x] حذف باکس‌های سبز پیام‌محور و حفظ فقط empty/loading ضروری.
 - [x] افزودن تست contract، بازبینی موبایل و ثبت checkpoint.
+
+## Reference-inspired responsive refresh
+- [x] بررسی سایت مرجع bettime90vip.com/fa و ثبت الگوهای layout و responsive.
+- [x] حذف همهٔ label، eyebrow و متن‌های سبز بالای title در صفحات بدون حذف assetهای تصویری.
+- [x] افزودن چند fixture تستی صریح و موقت برای preview هنگام rate limit API.
+- [x] بازطراحی hierarchy و responsive با حفظ مشکی، بنفش و تصاویر اختصاصی Nexus Bet.
+- [x] افزودن تست truth/preview، بازبینی موبایل و ثبت checkpoint.

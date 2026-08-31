@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "./ios26.css";
 
+/* Section titles stay clean: redundant green kickers and helper strips are intentionally removed. */
+.section-kicker, .eyebrow, .context-ai-strip { display: none !important; }
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -841,3 +844,71 @@ html, body { overflow-x: clip; }
 
 /* Message surfaces stay out of the content flow; actionable feedback belongs in toast. */
 .preview-notice, .responsible-inline, .feature-intro, .reward-rules, .inline-alert { display: none !important; }
+
+
+/* Reference-inspired refresh: compact sportsbook hierarchy with image-led surfaces and mobile-safe rhythm. */
+.preview-chip, .status-demo, .demo-tag { color: #d9c7ff !important; border-color: rgba(156,99,255,.38) !important; background: rgba(112,63,204,.16) !important; }
+.match-card.is-demo { position: relative; border-color: rgba(156,99,255,.28); background: rgba(28,18,48,.78); }
+.match-card.is-demo .match-art { opacity: .3; filter: saturate(1.15) brightness(1.15); }
+.market-preview small { color: #a99bbd; }
+
+@media (max-width: 720px) {
+  .topbar { position: sticky; top: 10px; width: calc(100% - 20px); min-height: 58px; padding: 8px 9px; border-radius: 19px; }
+  .brand { gap: 7px; }
+  .brand-mark { width: 31px; height: 31px; border-radius: 10px 10px 3px 10px; }
+  .brand b { font-size: 15px; }
+  .brand small { font-size: 7px; letter-spacing: 2.6px; }
+  .header-actions { gap: 5px; }
+  .header-actions .notification-trigger { display: grid; }
+  .login-button { min-width: 84px; font-size: 11px; }
+  .nexus-shell .hero { gap: 20px; padding-top: 28px; padding-bottom: 22px; }
+  .nexus-shell .hero-copy { text-align: center; justify-items: center; }
+  .nexus-shell .hero-copy h1 { max-width: 350px; font-size: clamp(32px, 9.4vw, 43px); line-height: 1.28; }
+  .nexus-shell .hero-copy p { max-width: 330px; font-size: 12px; line-height: 1.9; }
+  .nexus-shell .hero-cta { width: 100%; display: grid; justify-items: stretch; gap: 8px; }
+  .nexus-shell .hero-trust { justify-content: center; font-size: 9px; }
+  .nexus-shell .hero-score { width: 100%; min-height: 278px; padding: 16px; transform: none; border-radius: 23px; }
+  .nexus-shell .scoreboard { margin: 35px 0 24px; gap: 5px; }
+  .nexus-shell .scoreboard > div { font-size: 11px; gap: 8px; }
+  .nexus-shell .team-orb { width: 43px; height: 43px; border-radius: 14px; font-size: 16px; }
+  .nexus-shell .score-center strong { font-size: 22px; }
+  .nexus-shell .feature-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px; }
+  .nexus-shell .feature-hub-card { min-height: 126px; padding: 14px; border-radius: 17px; }
+  .nexus-shell .feature-hub-card:first-child { grid-column: 1 / -1; min-height: 142px; }
+  .nexus-shell .feature-hub-art { width: 132px; height: 108px; opacity: .56; }
+  .nexus-shell .section-heading h2 { font-size: 20px; }
+  .nexus-shell .match-card { padding: 16px; border-radius: 19px; }
+  .nexus-shell .match-meta { flex-wrap: wrap; line-height: 1.6; }
+  .nexus-shell .match-body { grid-template-columns: 1fr; }
+  .nexus-shell .teams { grid-template-columns: 1fr 62px 1fr; gap: 6px; }
+  .nexus-shell .teams > div:not(.match-time) { gap: 5px; font-size: 10px; }
+  .nexus-shell .market-row { min-height: 42px; }
+  .nexus-shell .subpage-hero { display: flex; flex-direction: column; gap: 18px; padding-top: 28px; padding-bottom: 22px; }
+  .nexus-shell .subpage-art { order: -1; width: 100%; min-height: 150px; max-height: 190px; border-radius: 22px; }
+  .nexus-shell .subpage-copy { text-align: right; }
+  .nexus-shell .subpage-copy h1 { font-size: clamp(30px, 8.8vw, 42px); line-height: 1.3; }
+  .nexus-shell .matches-filter-wrap { position: sticky; top: 76px; z-index: 4; margin-inline: -2px; padding: 8px 0; background: rgba(9,7,16,.86); backdrop-filter: blur(16px); }
+  .nexus-shell .matches-filter-bar { border-radius: 18px; padding: 12px; }
+}
+
+@media (max-width: 360px) {
+  .topbar { width: calc(100% - 14px); }
+  .login-button { min-width: 76px; padding-inline: 8px !important; }
+  .brand b { font-size: 14px; }
+  .nexus-shell .hero-copy h1 { font-size: 31px; }
+  .nexus-shell .feature-hub-grid { grid-template-columns: 1fr !important; }
+  .nexus-shell .feature-hub-card:first-child { grid-column: auto; }
+  .nexus-shell .feature-hub-card { min-height: 118px; }
+  .nexus-shell .teams { grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nexus-shell .match-card, .nexus-shell .feature-hub-card { transition: none !important; transform: none !important; }
+}
+
+
+@media (max-width: 720px) {
+  .nexus-shell .matches-layout .standalone-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 12px; }
+  .nexus-shell .matches-layout .standalone-card { width: 100%; min-height: 0; }
+  .nexus-shell .matches-layout .standalone-teams { gap: 10px; }
+}

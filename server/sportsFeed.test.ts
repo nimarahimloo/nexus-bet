@@ -29,22 +29,24 @@ describe("sports feed contract", () => {
     expect(result).toEqual({ matches: [], source: "fallback", error: "دادهٔ زندهٔ مسابقات در دسترس نیست." });
   });
 
-  it("maps the scheduled fixtures path independently and preserves its fallback error", async () => {
+  it("maps the scheduled fixtures path independently and serves explicit preview fixtures on upstream failure", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ errors: [], response: [] }), { status: 200, headers: { "content-type": "application/json" } })));
     const success = await fetchSportsFeed("fixtures?next=10", "test-key");
-    expect(success.source).toBe("api");
-    expect(success.matches).toEqual([]);
-    expect(success.error).toBeNull();
+    expect(success.source).toBe("preview");
+    expect(success.matches).toHaveLength(3);
+    expect(success.error).toContain("پاسخ API خالی");
 
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("upstream failure", { status: 503 })));
     const fallback = await fetchSportsFeed("fixtures?next=10", "test-key");
-    expect(fallback.source).toBe("fallback");
-    expect(fallback.matches).toEqual([]);
-    expect(fallback.error).toBe("دریافت دادهٔ مسابقات موقتاً ناموفق بود.");
+    expect(fallback.source).toBe("preview");
+    expect(fallback.matches).toHaveLength(3);
+    expect(fallback.matches.every((match) => match.status === "نمونه" && match.markets.length === 0)).toBe(true);
+    expect(fallback.error).toContain("فقط برای پیش‌نمایش");
   });
 
   it("keeps Home's fallback message user-facing and deterministic", () => {
     expect(formatSportsFeedStatus({ loading: false, source: "fallback", error: "دریافت دادهٔ مسابقات موقتاً ناموفق بود." })).toBe("دریافت دادهٔ مسابقات موقتاً ناموفق بود.");
     expect(formatSportsFeedStatus({ loading: false, source: "fallback", error: null })).toBe("نمایش فید نمونه تا زمان دسترسی به دادهٔ واقعی");
+    expect(formatSportsFeedStatus({ loading: false, source: "preview", error: "محدودیت API؛ مسابقه‌ها فقط برای پیش‌نمایش هستند و بازار شرط فعال نیست." })).toContain("فقط برای پیش‌نمایش");
   });
 });
