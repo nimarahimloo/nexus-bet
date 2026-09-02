@@ -8,4 +8,7 @@ export const ENV = {
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   sportsApiKey: process.env.SPORTS_API_KEY ?? "",
+  nowPaymentsApiKey: process.env.NOWPAYMENTS_API_KEY ?? "",
+  nowPaymentsIpnSecret: process.env.NOWPAYMENTS_IPN_SECRET ?? "",
+  nowPaymentsPayoutWallet: process.env.NOWPAYMENTS_PAYOUT_WALLET_BEP20 ?? "",
 };

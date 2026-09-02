@@ -11,6 +11,7 @@ import { ENV } from "./_core/env";
 import { type MatchCardData } from "../shared/sports";
 import { createAdminNotification, getAdminOverview, reviewAdminWalletTransaction, updateAdminAssetStatus, updateAdminGameStatus, updateAdminPromotionStatus, upsertAdminAsset } from "./adminDb";
 import { fetchSportsDetails } from "./sportsFeed";
+import { nowPaymentsReadiness } from "./nowpayments";
 import { fetchSportsUniverse, SPORTS_DIRECTORY } from "./multiSportsFeed";
 import { sdk } from "./_core/sdk";
 import { createResetCode, hashPassword, hashResetCode, normalizeUsername, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
@@ -166,6 +167,7 @@ export const appRouter = router({
       currency: "USDT" as const,
       requiresLogin: !ctx.user,
     })),
+    providerStatus: publicProcedure.query(() => nowPaymentsReadiness({ apiKey: ENV.nowPaymentsApiKey, ipnSecret: ENV.nowPaymentsIpnSecret, payoutWallet: ENV.nowPaymentsPayoutWallet })),
     me: protectedProcedure.input(z.object({ currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT") }).optional()).query(async ({ ctx, input }) => {
       const wallet = await getOrCreateWalletByUserId(ctx.user.id, input?.currency ?? "USDT");
       return wallet ? {
@@ -176,7 +178,7 @@ export const appRouter = router({
     }),
     portfolio: protectedProcedure.query(({ ctx }) => getWalletPortfolio(ctx.user.id)),
     transactions: protectedProcedure.query(({ ctx }) => getWalletTransactions(ctx.user.id)),
-    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => requestWalletTransaction({ ...input, userId: ctx.user.id })),
+    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => { if (!nowPaymentsReadiness({ apiKey: ENV.nowPaymentsApiKey, ipnSecret: ENV.nowPaymentsIpnSecret, payoutWallet: ENV.nowPaymentsPayoutWallet }).enabled) throw new TRPCError({ code: "SERVICE_UNAVAILABLE", message: "provider پرداخت هنوز تنظیم نشده است." }); return requestWalletTransaction({ ...input, userId: ctx.user.id }); }),
   }),
 
   notifications: router({

@@ -15,6 +15,8 @@ describe("multi-asset and admin contracts", () => {
     expect(wallet).toContain("trpc.wallet.portfolio.useQuery");
     expect(wallet).toContain("trpc.assets.active.useQuery");
     expect(wallet).toContain("currency: selectedAsset.code");
+    expect(wallet).toContain("trpc.wallet.providerStatus.useQuery");
+    expect(wallet).toContain("!providerReady");
   });
 
   it("exposes protected administration controls without static catalog mutation", () => {
@@ -32,5 +34,12 @@ describe("multi-asset and admin contracts", () => {
     expect(page).toContain("trpc.admin.overview.useQuery");
     expect(page).toContain("trpc.admin.notify.useMutation");
     expect(page).toContain("trpc.admin.assetStatus.useMutation");
+    const provider = read("./nowpayments.ts");
+    const entry = read("./_core/index.ts");
+    const webhook = read("./nowpaymentsWebhook.ts");
+    expect(provider).toContain("USDTBSC");
+    expect(provider).toContain("timingSafeEqual");
+    expect(entry).toContain("registerNowPaymentsWebhook");
+    expect(webhook).toContain("/api/payments/nowpayments/ipn");
   });
 });

@@ -223,9 +223,15 @@ export const walletTransactions = mysqlTable("walletTransactions", {
   address: varchar("address", { length: 160 }),
   txHash: varchar("txHash", { length: 160 }),
   referenceId: varchar("referenceId", { length: 96 }),
+  provider: varchar("provider", { length: 32 }),
+  providerEventId: varchar("providerEventId", { length: 160 }),
+  providerStatus: varchar("providerStatus", { length: 32 }),
+  providerPayloadJson: text("providerPayloadJson"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  providerEventUnique: uniqueIndex("walletTransactions_provider_event_unique").on(table.provider, table.providerEventId),
+}));
 
 export const gameCatalog = mysqlTable("gameCatalog", {
   id: int("id").autoincrement().primaryKey(),

@@ -71,6 +71,13 @@
       "when": 1788260331266,
       "tag": "0009_orange_dragon_man",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1788387547794,
+      "tag": "0010_sudden_mikhail_rasputin",
+      "breakpoints": true
     }
   ]
 }
