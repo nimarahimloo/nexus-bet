@@ -18,6 +18,7 @@ function AdminPageContent() {
   const isAdmin = user?.role === "admin";
   const overviewQuery = trpc.admin.overview.useQuery(undefined, { enabled: isAdmin, refetchInterval: 15_000 });
   const sportsQuery = trpc.sports.fixtures.useQuery({ next: 10 }, { enabled: isAdmin, staleTime: 30_000 });
+  const providerQuery = trpc.wallet.providerStatus.useQuery(undefined, { staleTime: 30_000 });
   const utils = trpc.useUtils();
   const [notification, setNotification] = useState({ target: "all" as "all" | "user", userId: "", type: "system" as "system" | "bet" | "wallet" | "reward" | "sports", title: "", message: "", href: "" });
   const [asset, setAsset] = useState({ code: "", name: "", symbol: "", decimals: "6", status: "maintenance" as "active" | "maintenance" | "disabled", networks: "", isBase: false });
@@ -42,7 +43,7 @@ function AdminPageContent() {
   const submitAsset = () => assetMutation.mutate({ code: asset.code, name: asset.name, symbol: asset.symbol || asset.code, decimals: Number(asset.decimals), status: asset.status, networks: asset.networks.split(",").map((network) => network.trim()).filter(Boolean), isBase: asset.isBase });
 
   return <div className="admin-page" dir="rtl">
-    <header className="admin-page-head"><div><span className="admin-overline">NEXUS CONTROL</span><h1>مرکز مدیریت</h1><p>کنترل داده‌های واقعی، اعلان‌ها و وضعیت عملیات.</p></div><span className="admin-role"><CheckCircle2 size={15} /> admin</span></header>
+    <header className="admin-page-head"><div><span className="admin-overline">NEXUS CONTROL</span><h1>مرکز مدیریت</h1><p>کنترل داده‌های واقعی، اعلان‌ها و وضعیت عملیات.</p></div><span className="admin-role"><CheckCircle2 size={15} /> admin</span><span className={`admin-role ${providerQuery.data?.enabled ? "ready" : "pending"}`}><WalletCards size={15} /> provider: {providerQuery.isLoading ? "در حال بررسی" : providerQuery.data?.enabled ? "آماده" : "در انتظار secrets"}</span></header>
     <section className="admin-stat-grid" aria-label="خلاصهٔ مدیریت">
       <AdminStat icon={Users} label="کاربران" value={overview.counts.users} /><AdminStat icon={Coins} label="ارزهای فعال" value={overview.counts.activeAssets} /><AdminStat icon={Gamepad2} label="بازی‌های فعال" value={overview.counts.activeGames} /><AdminStat icon={Bell} label="تراکنش‌های در انتظار" value={overview.counts.pendingTransactions} />
     </section>

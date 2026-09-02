@@ -371,6 +371,40 @@ export async function requestWalletTransaction(input: { userId: number; type: "d
   });
 }
 
+export async function attachWalletProviderTransaction(input: { transactionId: number; provider: string; providerEventId: string; providerStatus: string; payloadJson?: string; txHash?: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const result = await db.update(walletTransactions).set({ provider: input.provider, providerEventId: input.providerEventId, providerStatus: input.providerStatus, providerPayloadJson: input.payloadJson, txHash: input.txHash, updatedAt: new Date() }).where(and(eq(walletTransactions.id, input.transactionId), eq(walletTransactions.status, "pending")));
+  return Number(result[0]?.affectedRows) > 0;
+}
+
+export async function settleWalletProviderTransaction(input: { transactionId: number; status: "confirmed" | "failed"; provider: string; providerEventId: string; providerStatus: string; providerCurrency?: string; providerNetwork?: string; providerAmount?: number; payloadJson?: string; txHash?: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  return db.transaction(async (tx) => {
+    const rows = await tx.select().from(walletTransactions).where(eq(walletTransactions.id, input.transactionId)).limit(1);
+    const transaction = rows[0];
+    if (!transaction) throw new Error("WALLET_TRANSACTION_NOT_FOUND");
+    if (transaction.providerEventId && transaction.providerEventId !== input.providerEventId) throw new Error("PROVIDER_EVENT_MISMATCH");
+    if (transaction.status !== "pending") return { applied: false, status: transaction.status };
+    const amount = Number(transaction.amount);
+    const normalizedProviderCurrency = input.providerCurrency?.toUpperCase().replace(/BSC$/, "");
+    if (normalizedProviderCurrency && normalizedProviderCurrency !== transaction.currency) throw new Error("PROVIDER_CURRENCY_MISMATCH");
+    if (input.providerNetwork && input.providerNetwork.toUpperCase() !== "BEP20") throw new Error("PROVIDER_NETWORK_MISMATCH");
+    if (input.providerAmount !== undefined && Math.abs(input.providerAmount - amount) > 0.000001) throw new Error("PROVIDER_AMOUNT_MISMATCH");
+    if (input.status === "confirmed" && transaction.type === "deposit") {
+      await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${amount}`, updatedAt: new Date() }).where(and(eq(wallets.userId, transaction.userId), eq(wallets.currency, transaction.currency)));
+    } else if (transaction.type === "withdrawal") {
+      const set = input.status === "confirmed" ? { lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() } : { availableBalance: sql`${wallets.availableBalance} + ${amount}`, lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() };
+      const updated = await tx.update(wallets).set(set).where(and(eq(wallets.userId, transaction.userId), eq(wallets.currency, transaction.currency), sql`${wallets.lockedBalance} >= ${amount.toFixed(6)}`));
+      if (!Number(updated[0]?.affectedRows)) throw new Error("LOCKED_BALANCE_MISMATCH");
+    }
+    await tx.update(walletTransactions).set({ status: input.status, provider: input.provider, providerEventId: input.providerEventId, providerStatus: input.providerStatus, providerPayloadJson: input.payloadJson, txHash: input.txHash, updatedAt: new Date() }).where(and(eq(walletTransactions.id, transaction.id), eq(walletTransactions.status, "pending")));
+    await tx.insert(notifications).values({ userId: transaction.userId, type: "wallet", title: "وضعیت کیف پول به‌روزرسانی شد", message: `درخواست ${transaction.type === "deposit" ? "واریز" : "برداشت"} ${amount.toFixed(6)} ${transaction.currency} اکنون ${input.status} است.`, href: "/wallet" });
+    return { applied: true, status: input.status };
+  });
+}
+
 export async function getActiveCrashRound(now = new Date()) {
   const db = await getDb();
   if (!db) return null;

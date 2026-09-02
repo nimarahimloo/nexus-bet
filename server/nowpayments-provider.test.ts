@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { nowPaymentsReadiness, normalizeNowPaymentsIpn, verifyNowPaymentsIpn } from "./nowpayments";
 
@@ -13,6 +14,14 @@ describe("NOWPayments disabled-safe adapter", () => {
     const signature = createHmac("sha512", "secret").update(body).digest("hex");
     expect(verifyNowPaymentsIpn(body, signature, "secret")).toBe(true);
     expect(verifyNowPaymentsIpn(`${body} `, signature, "secret")).toBe(false);
+  });
+
+  it("keeps settlement guarded by provider mismatch checks", () => {
+    const db = readFileSync(new URL("./db.ts", import.meta.url), "utf8");
+    expect(db).toContain("PROVIDER_CURRENCY_MISMATCH");
+    expect(db).toContain("PROVIDER_NETWORK_MISMATCH");
+    expect(db).toContain("PROVIDER_AMOUNT_MISMATCH");
+    expect(db).toContain("providerEventId");
   });
 
   it("normalizes provider events without inventing missing amounts", () => {

@@ -409,11 +409,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح count واقعی کاربران در overview ادمین و enforce کردن rollback امن برداشت‌های ردشده.
 
 ## Real BEP20 payment provider
-- [ ] تحقیق و ثبت قرارداد NOWPayments برای USDT روی BNB Smart Chain/BEP20 و محدودیت‌های production.
+- [x] تحقیق و ثبت قرارداد NOWPayments برای USDT روی BNB Smart Chain/BEP20 و محدودیت‌های production.
 - [ ] افزودن secrets لازم برای provider و webhook با مقداردهی امن، بدون commit کردن credential.
-- [ ] افزودن schema و ledger idempotent برای provider invoice/payment/withdrawal و وضعیت‌های on-chain.
+- [x] افزودن schema و ledger idempotent برای provider invoice/payment/withdrawal و وضعیت‌های on-chain.
 - [ ] پیاده‌سازی deposit address/invoice، withdrawal request، webhook signature و settlement اتمیک BEP20.
-- [ ] اتصال UI کیف پول و پنل admin به وضعیت واقعی تراکنش و توقف امن در خطا یا mismatch.
+- [x] اتصال UI کیف پول و پنل admin به وضعیت واقعی تراکنش و توقف امن در خطا یا mismatch.
 - [ ] افزودن تست‌های امنیتی و integration contract، sandbox smoke، TypeScript، screenshot و checkpoint.
 
 ## Provider scaffold without credentials
