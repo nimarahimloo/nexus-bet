@@ -21,7 +21,7 @@ describe("iOS-inspired mobile redesign", () => {
     expect(shell).toContain('className="more-nav-drawer glass-panel"');
     expect(shell).toContain('className="trust-bar container"');
     expect(featurePages).toContain('title: "مسابقات زنده"');
-    expect(featurePages).toContain('title: "کیف پول USDT"');
+    expect(featurePages).toContain('title: "کیف پول چندارزی"');
     expect(css).toContain("grid-template-columns: repeat(6, minmax(0, 1fr))");
     expect(css).toContain(".more-nav-drawer");
   });

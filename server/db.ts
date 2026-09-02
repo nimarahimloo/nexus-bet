@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
+import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomInt, randomUUID } from "node:crypto";
 import { isCrashed, multiplierAt } from "./crash";
@@ -149,6 +149,7 @@ export async function resetLocalPassword(input: { tokenHash: string; passwordHas
 
 export type PlaceBetInput = {
   userId: number;
+  currency?: string;
   stake: number;
   combinedOdds: number;
   potentialReturn: number;
@@ -163,7 +164,10 @@ export async function placeBet(input: PlaceBetInput) {
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
   return db.transaction(async (tx) => {
-    const walletRows = await tx.select().from(wallets).where(eq(wallets.userId, input.userId)).limit(1);
+    const currency = input.currency?.trim().toUpperCase() || "USDT";
+    const assetRows = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, currency), eq(supportedAssets.status, "active"))).limit(1);
+    if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
+    const walletRows = await tx.select().from(wallets).where(and(eq(wallets.userId, input.userId), eq(wallets.currency, currency))).limit(1);
     const wallet = walletRows[0];
     if (!wallet || Number(wallet.availableBalance) < input.stake) throw new Error("INSUFFICIENT_BALANCE");
 
@@ -178,16 +182,43 @@ export async function placeBet(input: PlaceBetInput) {
     const inserted = await tx.insert(bets).values({
       userId: input.userId,
       ticketCode,
-      currency: "USDT",
+      currency,
       stake: input.stake.toFixed(6),
       combinedOdds: input.combinedOdds.toFixed(4),
       potentialReturn: input.potentialReturn.toFixed(6),
       selectionsJson: JSON.stringify(input.selections),
       status: "pending",
     });
-    await tx.insert(walletTransactions).values({ userId: input.userId, type: "bet_lock", status: "confirmed", currency: "USDT", amount: input.stake.toFixed(6), referenceId: ticketCode });
-    await tx.insert(notifications).values({ userId: input.userId, type: "bet", title: "بلیتت ثبت شد", message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} USDT در وضعیت بررسی قرار گرفت.`, href: "/account" });
+    await tx.insert(walletTransactions).values({ userId: input.userId, type: "bet_lock", status: "confirmed", currency, amount: input.stake.toFixed(6), referenceId: ticketCode });
+    await tx.insert(notifications).values({ userId: input.userId, type: "bet", title: "بلیتت ثبت شد", message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} ${currency} در وضعیت بررسی قرار گرفت.`, href: "/account" });
     return { id: Number(inserted[0].insertId), ticketCode, stake: input.stake, potentialReturn: input.potentialReturn, status: "pending" as const };
+  });
+}
+
+function parseNetworks(networksJson: string): string[] {
+  try {
+    const parsed = JSON.parse(networksJson);
+    return Array.isArray(parsed) ? parsed.filter((network): network is string => typeof network === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getActiveAssets() {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(supportedAssets).where(eq(supportedAssets.status, "active")).orderBy(desc(supportedAssets.isBase), supportedAssets.name);
+  return rows.map(({ networksJson, ...asset }) => ({ ...asset, networks: parseNetworks(networksJson) }));
+}
+
+export async function getWalletPortfolio(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const assets = await getActiveAssets();
+  const rows = await db.select().from(wallets).where(eq(wallets.userId, userId));
+  return assets.map((asset) => {
+    const wallet = rows.find((item) => item.currency === asset.code);
+    return { ...asset, availableBalance: Number(wallet?.availableBalance ?? 0), lockedBalance: Number(wallet?.lockedBalance ?? 0), walletId: wallet?.id ?? null };
   });
 }
 
@@ -323,12 +354,21 @@ export async function getWalletTransactions(userId: number) {
   return rows.map((row) => ({ ...row, amount: Number(row.amount) }));
 }
 
-export async function requestWalletTransaction(input: { userId: number; type: "deposit" | "withdrawal"; amount: number; network?: string; address?: string }) {
+export async function requestWalletTransaction(input: { userId: number; type: "deposit" | "withdrawal"; amount: number; currency?: string; network?: string; address?: string }) {
   if (!Number.isFinite(input.amount) || input.amount <= 0) throw new Error("INVALID_AMOUNT");
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
-  const inserted = await db.insert(walletTransactions).values({ userId: input.userId, type: input.type, status: "pending", amount: input.amount.toFixed(6), network: input.network, address: input.address });
-  return { id: Number(inserted[0].insertId), type: input.type, status: "pending" as const, amount: input.amount };
+  const currency = input.currency?.trim().toUpperCase() || "USDT";
+  return db.transaction(async (tx) => {
+    const assets = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, currency), eq(supportedAssets.status, "active"))).limit(1);
+    if (!assets[0]) throw new Error("UNSUPPORTED_CURRENCY");
+    if (input.type === "withdrawal") {
+      const updated = await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} - ${input.amount}`, lockedBalance: sql`${wallets.lockedBalance} + ${input.amount}`, updatedAt: new Date() }).where(and(eq(wallets.userId, input.userId), eq(wallets.currency, currency), gte(wallets.availableBalance, input.amount.toFixed(6))));
+      if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
+    }
+    const inserted = await tx.insert(walletTransactions).values({ userId: input.userId, type: input.type, status: "pending", currency, amount: input.amount.toFixed(6), network: input.network, address: input.address });
+    return { id: Number(inserted[0].insertId), type: input.type, status: "pending" as const, currency, amount: input.amount };
+  });
 }
 
 export async function getActiveCrashRound(now = new Date()) {
@@ -365,17 +405,20 @@ export async function getCrashHistory() {
   return rows.map((round) => ({ id: round.id, roundCode: round.roundCode, multiplier: Number(round.crashMultiplier), crashedAt: round.crashedAt }));
 }
 
-export async function placeCrashBet(userId: number, roundId: number, stake: number) {
+export async function placeCrashBet(userId: number, roundId: number, stake: number, currency = "USDT") {
   if (!Number.isFinite(stake) || stake < 1) throw new Error("INVALID_STAKE");
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const normalizedCurrency = currency.trim().toUpperCase();
   return db.transaction(async (tx) => {
+    const assetRows = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, normalizedCurrency), eq(supportedAssets.status, "active"))).limit(1);
+    if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
     const rounds = await tx.select().from(crashRounds).where(eq(crashRounds.id, roundId)).limit(1);
     const round = rounds[0];
     if (!round || round.status !== "running" || isCrashed(Number(round.crashMultiplier), round.startedAt)) throw new Error("ROUND_CLOSED");
-    const updated = await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} - ${stake}`, lockedBalance: sql`${wallets.lockedBalance} + ${stake}`, updatedAt: new Date() }).where(and(eq(wallets.userId, userId), gte(wallets.availableBalance, stake.toFixed(6))));
+    const updated = await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} - ${stake}`, lockedBalance: sql`${wallets.lockedBalance} + ${stake}`, updatedAt: new Date() }).where(and(eq(wallets.userId, userId), eq(wallets.currency, normalizedCurrency), gte(wallets.availableBalance, stake.toFixed(6))));
     if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
-    const inserted = await tx.insert(crashBets).values({ userId, roundId, stake: stake.toFixed(6), status: "pending" });
+    const inserted = await tx.insert(crashBets).values({ userId, roundId, currency: normalizedCurrency, stake: stake.toFixed(6), status: "pending" });
     return { id: Number(inserted[0].insertId), roundId, stake, status: "pending" as const };
   });
 }
@@ -391,8 +434,8 @@ export async function cashoutCrashBet(userId: number, crashBetId: number) {
     if (row.round.status !== "running" || current >= Number(row.round.crashMultiplier)) throw new Error("ROUND_CRASHED");
     const payout = Number((Number(row.bet.stake) * current).toFixed(6));
     await tx.update(crashBets).set({ status: "won", cashoutMultiplier: current.toFixed(4), payout: payout.toFixed(6), updatedAt: new Date() }).where(eq(crashBets.id, crashBetId));
-    await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${payout}`, lockedBalance: sql`${wallets.lockedBalance} - ${row.bet.stake}`, updatedAt: new Date() }).where(eq(wallets.userId, userId));
-    await tx.insert(walletTransactions).values({ userId, type: "crash_settlement", status: "confirmed", amount: payout.toFixed(6), referenceId: `crashBet:${crashBetId}` });
+    await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${payout}`, lockedBalance: sql`${wallets.lockedBalance} - ${row.bet.stake}`, updatedAt: new Date() }).where(and(eq(wallets.userId, userId), eq(wallets.currency, row.bet.currency)));
+    await tx.insert(walletTransactions).values({ userId, type: "crash_settlement", status: "confirmed", currency: row.bet.currency, amount: payout.toFixed(6), referenceId: `crashBet:${crashBetId}` });
     return { id: crashBetId, payout, multiplier: current, status: "won" as const };
   });
 }
@@ -406,12 +449,11 @@ export async function getActiveGameCatalog() {
 export async function getSupportAccountContext(userId: number) {
   const db = await getDb();
   if (!db) return null;
-  const walletRows = await db.select({ currency: wallets.currency, availableBalance: wallets.availableBalance, lockedBalance: wallets.lockedBalance }).from(wallets).where(eq(wallets.userId, userId)).limit(1);
-  const wallet = walletRows[0];
+  const portfolio = await getWalletPortfolio(userId);
   const bets = await getUserBets(userId);
   return {
-    wallet: wallet ? { currency: wallet.currency, availableBalance: Number(wallet.availableBalance), lockedBalance: Number(wallet.lockedBalance) } : null,
-    bets: bets.slice(0, 8).map((bet) => ({ ticketCode: bet.ticketCode, status: bet.status, stake: bet.stake, combinedOdds: bet.combinedOdds, potentialReturn: bet.potentialReturn, createdAt: bet.createdAt, selections: bet.selections.map((selection) => ({ match: selection.match, market: selection.market, odds: selection.odds })) })),
+    wallet: portfolio.map((asset) => ({ currency: asset.code, availableBalance: asset.availableBalance, lockedBalance: asset.lockedBalance })),
+    bets: bets.slice(0, 8).map((bet) => ({ ticketCode: bet.ticketCode, currency: bet.currency, status: bet.status, stake: bet.stake, combinedOdds: bet.combinedOdds, potentialReturn: bet.potentialReturn, createdAt: bet.createdAt, selections: bet.selections.map((selection) => ({ match: selection.match, market: selection.market, odds: selection.odds })) })),
   };
 }
 
@@ -441,17 +483,20 @@ export async function claimActivityReward(userId: number, activityCode: string, 
   });
 }
 
-export async function getOrCreateWalletByUserId(userId: number) {
+export async function getOrCreateWalletByUserId(userId: number, currency = "USDT") {
   const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot get wallet: database not available");
     return undefined;
   }
 
-  await db.insert(wallets).values({ userId }).onDuplicateKeyUpdate({
+  const normalizedCurrency = currency.trim().toUpperCase();
+  const assetRows = await db.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, normalizedCurrency), eq(supportedAssets.status, "active"))).limit(1);
+  if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
+  await db.insert(wallets).values({ userId, currency: normalizedCurrency }).onDuplicateKeyUpdate({
     set: { updatedAt: new Date() },
   });
 
-  const result = await db.select().from(wallets).where(eq(wallets.userId, userId)).limit(1);
+  const result = await db.select().from(wallets).where(and(eq(wallets.userId, userId), eq(wallets.currency, normalizedCurrency))).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }

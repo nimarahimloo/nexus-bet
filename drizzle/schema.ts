@@ -64,13 +64,31 @@ export type InsertNotification = typeof notifications.$inferInsert;
 
 export const wallets = mysqlTable("wallets", {
   id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull().unique().references(() => users.id),
+  userId: int("userId").notNull().references(() => users.id),
   currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
   availableBalance: decimal("availableBalance", { precision: 20, scale: 6 }).default("0").notNull(),
   lockedBalance: decimal("lockedBalance", { precision: 20, scale: 6 }).default("0").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userCurrencyUnique: uniqueIndex("wallets_user_currency_unique").on(table.userId, table.currency),
+}));
+
+export const supportedAssets = mysqlTable("supportedAssets", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 12 }).notNull().unique(),
+  name: varchar("name", { length: 64 }).notNull(),
+  symbol: varchar("symbol", { length: 12 }).notNull(),
+  decimals: int("decimals").default(6).notNull(),
+  isBase: int("isBase").default(0).notNull(),
+  status: mysqlEnum("status", ["active", "maintenance", "disabled"]).default("maintenance").notNull(),
+  networksJson: text("networksJson").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
+
+export type SupportedAsset = typeof supportedAssets.$inferSelect;
+export type InsertSupportedAsset = typeof supportedAssets.$inferInsert;
 
 export type Wallet = typeof wallets.$inferSelect;
 export type InsertWallet = typeof wallets.$inferInsert;
@@ -240,6 +258,7 @@ export const crashBets = mysqlTable("crashBets", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().references(() => users.id),
   roundId: int("roundId").notNull().references(() => crashRounds.id),
+  currency: varchar("currency", { length: 12 }).default("USDT").notNull(),
   stake: decimal("stake", { precision: 20, scale: 6 }).notNull(),
   cashoutMultiplier: decimal("cashoutMultiplier", { precision: 12, scale: 4 }),
   payout: decimal("payout", { precision: 20, scale: 6 }).default("0").notNull(),

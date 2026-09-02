@@ -15,7 +15,7 @@ const featureCards = [
   { title: "انفجار", detail: "ضریب زنده، کنترل با تو.", icon: Zap, href: "/crash", image: "/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png" },
   { title: "پاداش‌ها", detail: "گردونه و فعالیت روزانه.", icon: Gift, href: "/rewards", image: "/manus-storage/nexus-bet-rewards-hero-v3_92731f27.png" },
   { title: "باشگاه VIP", detail: "سطح و مزایای روشن.", icon: BadgePercent, href: "/vip", image: "/manus-storage/nexus-bet-vip-hero-v2_6e37762c.png" },
-  { title: "کیف پول USDT", detail: "موجودی و تراکنش یکجا.", icon: WalletCards, href: "/wallet", image: "/manus-storage/nexus-bet-wallet-hero-v2_884a12f2.png" },
+  { title: "کیف پول چندارزی", detail: "USDT پایه؛ دارایی‌های رایج در یکجا.", icon: WalletCards, href: "/wallet", image: "/manus-storage/nexus-bet-wallet-hero-v2_884a12f2.png" },
 ];
 
 function OperationalEmpty({ title, detail, href = "/matches", cta = "بازگشت به مسابقات" }: { title: string; detail: string; href?: string; cta?: string }) {

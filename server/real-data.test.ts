@@ -15,12 +15,15 @@ describe("real data migration audit", () => {
   it("keeps secondary pages on backend procedures rather than static catalogs", () => {
     const features = read("../client/src/pages/FeaturePages.tsx");
     const supporting = read("../client/src/pages/SupportingPages.tsx");
+    const wallet = read("../client/src/components/MultiAssetWallet.tsx");
     const routers = read("./routers.ts");
     expect(features).toContain("trpc.promotions.active.useQuery");
     expect(features).toContain("trpc.tournaments.active.useQuery");
     expect(features).toContain("trpc.games.catalog.useQuery");
     expect(supporting).toContain("trpc.vip.summary.useQuery");
-    expect(supporting).toContain("trpc.wallet.transactions.useQuery");
+    expect(wallet).toContain("trpc.wallet.transactions.useQuery");
+    expect(wallet).toContain("trpc.wallet.portfolio.useQuery");
+    expect(wallet).toContain("trpc.assets.active.useQuery");
     expect(supporting).toContain("trpc.account.overview.useQuery");
     expect(features).not.toMatch(/const (offers|tournaments|games)\s*=\s*\[/);
     expect(routers).not.toContain("fallbackSmartPicks");

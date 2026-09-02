@@ -2,14 +2,16 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import { ENV } from "./_core/env";
 import { type MatchCardData } from "../shared/sports";
-import { fetchSportsDetails, fetchSportsFeed } from "./sportsFeed";
+import { createAdminNotification, getAdminOverview, reviewAdminWalletTransaction, updateAdminAssetStatus, updateAdminGameStatus, updateAdminPromotionStatus, upsertAdminAsset } from "./adminDb";
+import { fetchSportsDetails } from "./sportsFeed";
+import { fetchSportsUniverse, SPORTS_DIRECTORY } from "./multiSportsFeed";
 import { sdk } from "./_core/sdk";
 import { createResetCode, hashPassword, hashResetCode, normalizeUsername, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
 
@@ -80,28 +82,30 @@ export const appRouter = router({
 
   sports: router({
     details: publicProcedure.input(z.object({ fixtureId: z.string().min(1) })).query(({ input }) => fetchSportsDetails(input.fixtureId, ENV.sportsApiKey)),
-    live: publicProcedure.query(() => fetchSportsFeed("fixtures?live=all", ENV.sportsApiKey)),
+    directory: publicProcedure.query(() => SPORTS_DIRECTORY),
+    live: publicProcedure.query(() => fetchSportsUniverse(ENV.sportsApiKey, 30, true)),
     fixtures: publicProcedure
-      .input(z.object({ next: z.number().int().min(1).max(20).default(10) }).optional())
-      .query(({ input }) => fetchSportsFeed(`fixtures?next=${input?.next ?? 10}`, ENV.sportsApiKey)),
+      .input(z.object({ next: z.number().int().min(1).max(30).default(10) }).optional())
+      .query(({ input }) => fetchSportsUniverse(ENV.sportsApiKey, input?.next ?? 10, false)),
   }),
 
   bet: router({
     mine: protectedProcedure.query(({ ctx }) => getUserBets(ctx.user.id)),
     place: protectedProcedure.input(z.object({
+      currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"),
       stake: z.number().finite().min(1).max(1_000_000),
       selections: z.array(z.object({ id: z.string().min(1), match: z.string().min(1), market: z.string().min(1), odds: z.number().finite().positive().max(1_000) })).min(1).max(20),
     })).mutation(async ({ ctx, input }) => {
       const combinedOdds = Number(input.selections.reduce((total, selection) => total * selection.odds, 1).toFixed(2));
       const potentialReturn = Number((input.stake * combinedOdds).toFixed(2));
-      return placeBet({ userId: ctx.user.id, stake: input.stake, combinedOdds, potentialReturn, selections: input.selections });
+      return placeBet({ userId: ctx.user.id, currency: input.currency, stake: input.stake, combinedOdds, potentialReturn, selections: input.selections });
     }),
   }),
 
   crash: router({
     current: publicProcedure.query(async () => (await getActiveCrashRound()) ?? createCrashRound()),
     history: publicProcedure.query(() => getCrashHistory()),
-    place: protectedProcedure.input(z.object({ roundId: z.number().int().positive(), stake: z.number().finite().min(1).max(1_000_000) })).mutation(({ ctx, input }) => placeCrashBet(ctx.user.id, input.roundId, input.stake)),
+    place: protectedProcedure.input(z.object({ roundId: z.number().int().positive(), currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), stake: z.number().finite().min(1).max(1_000_000) })).mutation(({ ctx, input }) => placeCrashBet(ctx.user.id, input.roundId, input.stake, input.currency)),
     cashout: protectedProcedure.input(z.object({ betId: z.number().int().positive() })).mutation(({ ctx, input }) => cashoutCrashBet(ctx.user.id, input.betId)),
   }),
 
@@ -152,22 +156,27 @@ export const appRouter = router({
     catalog: publicProcedure.query(() => getActiveGameCatalog()),
   }),
 
+  assets: router({
+    active: publicProcedure.query(() => getActiveAssets()),
+  }),
+
   wallet: router({
     status: publicProcedure.query(({ ctx }) => ({
       authenticated: Boolean(ctx.user),
       currency: "USDT" as const,
       requiresLogin: !ctx.user,
     })),
-    me: protectedProcedure.query(async ({ ctx }) => {
-      const wallet = await getOrCreateWalletByUserId(ctx.user.id);
+    me: protectedProcedure.input(z.object({ currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT") }).optional()).query(async ({ ctx, input }) => {
+      const wallet = await getOrCreateWalletByUserId(ctx.user.id, input?.currency ?? "USDT");
       return wallet ? {
         currency: wallet.currency,
         availableBalance: Number(wallet.availableBalance),
         lockedBalance: Number(wallet.lockedBalance),
       } : null;
     }),
+    portfolio: protectedProcedure.query(({ ctx }) => getWalletPortfolio(ctx.user.id)),
     transactions: protectedProcedure.query(({ ctx }) => getWalletTransactions(ctx.user.id)),
-    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => requestWalletTransaction({ ...input, userId: ctx.user.id })),
+    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => requestWalletTransaction({ ...input, userId: ctx.user.id })),
   }),
 
   notifications: router({
@@ -175,6 +184,16 @@ export const appRouter = router({
     unreadCount: protectedProcedure.query(({ ctx }) => getUnreadNotificationCount(ctx.user.id)),
     markRead: protectedProcedure.input(z.object({ notificationId: z.number().int().positive() })).mutation(({ ctx, input }) => markNotificationRead(ctx.user.id, input.notificationId)),
     markAllRead: protectedProcedure.mutation(({ ctx }) => markAllNotificationsRead(ctx.user.id)),
+  }),
+
+  admin: router({
+    overview: adminProcedure.query(() => getAdminOverview()),
+    notify: adminProcedure.input(z.object({ target: z.enum(["user", "all"]), userId: z.number().int().positive().optional(), type: z.enum(["system", "bet", "wallet", "reward", "sports"]), title: z.string().trim().min(1).max(160), message: z.string().trim().min(1).max(4_000), href: z.string().trim().max(320).optional() })).mutation(({ input }) => createAdminNotification(input)),
+    assetUpsert: adminProcedure.input(z.object({ code: z.string().trim().toUpperCase().min(2).max(12), name: z.string().trim().min(2).max(64), symbol: z.string().trim().toUpperCase().min(2).max(12), decimals: z.number().int().min(0).max(18), status: z.enum(["active", "maintenance", "disabled"]), networks: z.array(z.string().trim().min(1).max(24)).min(1).max(8), isBase: z.boolean().optional() })).mutation(({ input }) => upsertAdminAsset(input)),
+    assetStatus: adminProcedure.input(z.object({ assetId: z.number().int().positive(), status: z.enum(["active", "maintenance", "disabled"]) })).mutation(({ input }) => updateAdminAssetStatus(input.assetId, input.status)),
+    gameStatus: adminProcedure.input(z.object({ gameId: z.number().int().positive(), status: z.enum(["active", "maintenance", "disabled"]) })).mutation(({ input }) => updateAdminGameStatus(input.gameId, input.status)),
+    promotionStatus: adminProcedure.input(z.object({ promotionId: z.number().int().positive(), status: z.enum(["draft", "active", "expired"]) })).mutation(({ input }) => updateAdminPromotionStatus(input.promotionId, input.status)),
+    reviewTransaction: adminProcedure.input(z.object({ transactionId: z.number().int().positive(), status: z.enum(["confirmed", "failed", "cancelled"]) })).mutation(({ input }) => reviewAdminWalletTransaction(input)),
   }),
 
   account: router({

@@ -21,41 +21,46 @@ function crashErrorMessage(error: { message?: string } | null | undefined) {
 export default function Crash() {
   const { isAuthenticated } = useAuth();
   const [stake, setStake] = useState("10");
+  const [currency, setCurrency] = useState("USDT");
   const [betId, setBetId] = useState<number | null>(null);
   const roundQuery = trpc.crash.current.useQuery(undefined, { refetchInterval: 1000 });
   const historyQuery = trpc.crash.history.useQuery(undefined, { refetchInterval: 5000 });
-  const walletQuery = trpc.wallet.me.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: 3000 });
+  const portfolioQuery = trpc.wallet.portfolio.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: 3000 });
   const utils = trpc.useUtils();
   const placeMutation = trpc.crash.place.useMutation({
     onSuccess: (data) => {
       setBetId(data.id);
       void utils.wallet.me.invalidate();
+      void utils.wallet.portfolio.invalidate();
     },
   });
   const cashoutMutation = trpc.crash.cashout.useMutation({
     onSuccess: () => {
       setBetId(null);
       void utils.wallet.me.invalidate();
+      void utils.wallet.portfolio.invalidate();
       void historyQuery.refetch();
     },
   });
   const round = roundQuery.data;
   const multiplier = round?.currentMultiplier ?? 1;
   const currentStake = Number(stake) || 0;
-  const availableBalance = walletQuery.data?.availableBalance ?? 0;
+  const selectedAsset = portfolioQuery.data?.find((asset) => asset.code === currency) ?? portfolioQuery.data?.[0];
+  const activeCurrency = selectedAsset?.code ?? currency;
+  const availableBalance = selectedAsset?.availableBalance ?? 0;
   const hasEnoughBalance = !isAuthenticated || currentStake <= availableBalance;
   const payout = currentStake * multiplier;
   const submitBet = () => {
     if (!isAuthenticated) return openAuthModal();
     if (!round || currentStake < 1 || !hasEnoughBalance) return;
-    placeMutation.mutate({ roundId: round.id, stake: currentStake });
+    placeMutation.mutate({ roundId: round.id, currency: activeCurrency, stake: currentStake });
   };
   const submitCashout = () => { if (betId) cashoutMutation.mutate({ betId }); };
   const pending = placeMutation.isPending || cashoutMutation.isPending;
   const mutationError = placeMutation.error ?? cashoutMutation.error;
   useEffect(() => { if (mutationError) toast.error(crashErrorMessage(mutationError)); }, [mutationError]);
   useEffect(() => { if (roundQuery.error) toast.error("دریافت round از backend انجام نشد؛ دوباره تلاش کن."); }, [roundQuery.error]);
-  useEffect(() => { if (isAuthenticated && !walletQuery.isLoading && !hasEnoughBalance) toast.error("موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا کیف پول را شارژ کن."); }, [hasEnoughBalance, isAuthenticated, walletQuery.isLoading]);
+  useEffect(() => { if (isAuthenticated && !portfolioQuery.isLoading && !hasEnoughBalance) toast.error("موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا کیف پول را شارژ کن."); }, [hasEnoughBalance, isAuthenticated, portfolioQuery.isLoading]);
 
   return <PageShell eyebrow="بازی انفجار" title="ریسک را قبل از توقف ببین" description="ضریب و round از backend خوانده می‌شوند. bet و cashout واقعی‌اند و تغییر موجودی فقط پس از settlement ثبت‌شده انجام می‌شود." heroImage="/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png">
     <div className="crash-board glass-panel">
@@ -64,11 +69,11 @@ export default function Crash() {
       <div className="crash-rail"><span style={{ width: `${Math.min(92, Math.max(0, (multiplier - 1) * 38))}%` }} /></div>
       <div className="crash-actions">
         <button className="solid-cta" disabled={pending || !round || round.status !== "running" || Boolean(betId) || !hasEnoughBalance} onClick={submitBet}>{!isAuthenticated ? "ورود برای بازی" : betId ? "bet ثبت شد" : "ثبت bet"} {betId ? <ShieldCheck size={16} /> : <Play size={16} />}</button>
-        <label><span>مبلغ USDT</span><input value={stake} onChange={(event) => setStake(event.target.value)} inputMode="decimal" /></label>
-        {isAuthenticated && <span className="crash-balance">موجودی قابل‌استفاده: {fa(availableBalance)} USDT</span>}
+        <label><span>دارایی و مبلغ</span><div className="crash-currency-control"><select value={activeCurrency} onChange={(event) => setCurrency(event.target.value)} aria-label="دارایی بازی انفجار">{(portfolioQuery.data ?? []).map((asset) => <option value={asset.code} key={asset.code}>{asset.symbol}</option>)}</select><input value={stake} onChange={(event) => setStake(event.target.value)} inputMode="decimal" /></div></label>
+        {isAuthenticated && <span className="crash-balance">موجودی قابل‌استفاده: {fa(availableBalance)} {activeCurrency}</span>}
         {betId && <button className="outline-cta" disabled={pending || round?.status !== "running"} onClick={submitCashout}>cashout {formatCrashCashoutLabel(payout)} <Zap size={15} /></button>}
       </div>
     </div>
-    <div className="crash-grid"><article className="standalone-card glass-panel"><History size={19} /><h3>دورهای اخیر</h3>{historyQuery.isLoading ? <p className="data-state">در حال دریافت…</p> : historyQuery.data?.length ? <div className="rounds">{historyQuery.data.map((item) => <span key={item.id}>{fa(item.multiplier)}×</span>)}</div> : <p className="data-state">هنوز round تسویه‌شده‌ای وجود ندارد.</p>}<p>نتایج از جدول crashRounds خوانده می‌شوند.</p></article><article className="standalone-card glass-panel"><ShieldCheck size={19} /><h3>بت‌اسلیپ انفجار</h3><div className="crash-slip-row"><span>مبلغ</span><b>{formatCrashStakeLabel(currentStake)}</b></div><div className="crash-slip-row"><span>برداشت در ضریب فعلی</span><b className="mint-text">{formatCrashCashoutLabel(payout)}</b></div><p className="data-state">پس از ثبت، وضعیت bet و payout در backend ذخیره می‌شود.</p><button className="outline-cta" disabled={!betId || pending} onClick={submitCashout}>ثبت برداشت <ArrowLeft size={15} /></button></article></div>
+    <div className="crash-grid"><article className="standalone-card glass-panel"><History size={19} /><h3>دورهای اخیر</h3>{historyQuery.isLoading ? <p className="data-state">در حال دریافت…</p> : historyQuery.data?.length ? <div className="rounds">{historyQuery.data.map((item) => <span key={item.id}>{fa(item.multiplier)}×</span>)}</div> : <p className="data-state">هنوز round تسویه‌شده‌ای وجود ندارد.</p>}<p>نتایج از جدول crashRounds خوانده می‌شوند.</p></article><article className="standalone-card glass-panel"><ShieldCheck size={19} /><h3>بت‌اسلیپ انفجار</h3><div className="crash-slip-row"><span>مبلغ · {activeCurrency}</span><b>{formatCrashStakeLabel(currentStake)} {activeCurrency}</b></div><div className="crash-slip-row"><span>برداشت در ضریب فعلی</span><b className="mint-text">{formatCrashCashoutLabel(payout)}</b></div><p className="data-state">پس از ثبت، وضعیت bet و payout در backend ذخیره می‌شود.</p><button className="outline-cta" disabled={!betId || pending} onClick={submitCashout}>ثبت برداشت <ArrowLeft size={15} /></button></article></div>
   </PageShell>;
 }

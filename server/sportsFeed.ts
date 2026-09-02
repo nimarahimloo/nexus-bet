@@ -2,7 +2,7 @@ import { mapSportsDetails, mapSportsFixtures, mapSportsOdds, type MatchCardData,
 
 export type SportsFeedResult = { matches: MatchCardData[]; source: "api" | "fallback" | "preview"; error: string | null };
 
-const previewMatches: MatchCardData[] = [
+export const previewMatches: MatchCardData[] = [
   { id: "preview-1", league: "لیگ پیش‌نمایش فوتبال", sport: "فوتبال", status: "نمونه", time: "۲۰:۳۰", home: "نکسوس یونایتد", homeLogo: "", away: "ویولت سیتی", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },
   { id: "preview-2", league: "جام پیش‌نمایش اروپا", sport: "فوتبال", status: "نمونه", time: "۲۲:۰۰", home: "پرسپولیس", homeLogo: "", away: "استقلال", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },
   { id: "preview-3", league: "تور پیش‌نمایش تنیس", sport: "تنیس", status: "نمونه", time: "فردا ۱۸:۰۰", home: "آریا کریمی", homeLogo: "", away: "سام نادری", awayLogo: "", markets: [], insight: "دادهٔ تستی؛ بازار شرط فعال نیست" },

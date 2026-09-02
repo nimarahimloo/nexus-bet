@@ -398,3 +398,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] تکمیل render گردونهٔ شانس با segmentهای backend، نتیجه، انیمیشن، محدودیت روزانه و حالت‌های loading/error.
 - [x] افزودن regression test برای متن‌های پاک‌شده، catalog state و قرارداد کامل گردونه.
 - [x] اجرای تست، TypeScript، screenshot audit موبایل و ثبت checkpoint.
+
+## Multi-asset wallet, data coverage and admin controls
+- [x] ممیزی notificationهای فعلی و افزودن مسیر ایجاد اعلان سفارشی با scope کاربر/سیستم و ثبت backend.
+- [x] طراحی مدل asset/currency قابل‌گسترش با USDT به‌عنوان ارز پایه و موجودی جداگانه برای هر دارایی.
+- [x] افزودن endpointها و UI کیف پول چندارزی با انتخاب دارایی، وضعیت اتصال شبکه و عدم نمایش موجودی ساختگی.
+- [x] تکمیل sports feed برای همهٔ رشته‌ها و لیگ‌های قابل‌دریافت و fallback صادقانه، همراه لوگوی تیم‌های موجود در response.
+- [x] افزودن داشبورد مدیریت محافظت‌شده برای کنترل اعلان‌ها، دارایی‌ها، catalog، کمپین‌ها و وضعیت فید ورزشی.
+- [x] افزودن تست‌های schema/router/UI و اجرای تست، TypeScript، audit responsive و checkpoint.
+- [x] اصلاح count واقعی کاربران در overview ادمین و enforce کردن rollback امن برداشت‌های ردشده.

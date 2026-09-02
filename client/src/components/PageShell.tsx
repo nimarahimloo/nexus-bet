@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Activity, ArrowRight, Bell, CircleDollarSign, Gamepad2, Headphones, Home, Menu, ReceiptText, ShieldCheck, Sparkles, Trophy, UserRound, WalletCards, X } from "lucide-react";
+import { Activity, ArrowRight, Bell, CircleDollarSign, Gamepad2, Headphones, Home, LayoutDashboard, Menu, ReceiptText, ShieldCheck, Sparkles, Trophy, UserRound, WalletCards, X } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import { InPlatformAuth } from "@/components/InPlatformAuth";
@@ -7,6 +7,7 @@ import { InPlatformSupport } from "@/components/InPlatformSupport";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { trpc } from "@/lib/trpc";
 import { type AuthMode } from "@/lib/platformOverlay";
+import { useAuth } from "@/_core/hooks/useAuth";
 export { pageShellDisplayContract } from "@/lib/pageShellContract";
 
 const primaryNav = [
@@ -35,6 +36,7 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsCount = trpc.notifications.unreadCount.useQuery(undefined, { staleTime: 15_000 }).data ?? 0;
   const [location] = useLocation();
+  const { user } = useAuth();
   const reduceMotion = useReducedMotion();
   useEffect(() => {
     const onAuthOpen = (event: Event) => { const mode = (event as CustomEvent<{ mode?: AuthMode }>).detail?.mode; setAuthMode(mode ?? "login"); setAuthOpen(true); };
@@ -62,12 +64,12 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
       <nav id="mobile-primary-navigation" className="main-nav" aria-label="ناوبری اصلی">
         {primaryNav.map(([href, label]) => <Link key={href} href={href} className={`nav-link ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}>{label}{href === "/matches" && <i className="live-dot" />}</Link>)}
       </nav>
-      {open && <div id="more-navigation-drawer" className="more-nav-drawer glass-panel" role="dialog" aria-label="بخش‌های بیشتر"><div className="more-nav-drawer-head"><b>بخش‌های بیشتر</b><button type="button" onClick={() => setOpen(false)} aria-label="بستن بخش‌های بیشتر"><X size={17} /></button></div><div className="more-nav-grid">{moreNav.map(([href, label, Icon]) => <Link key={href} href={href} className={`nav-link nav-link-more ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}><Icon size={14} />{label}</Link>)}</div></div>}
+      {open && <div id="more-navigation-drawer" className="more-nav-drawer glass-panel" role="dialog" aria-label="بخش‌های بیشتر"><div className="more-nav-drawer-head"><b>بخش‌های بیشتر</b><button type="button" onClick={() => setOpen(false)} aria-label="بستن بخش‌های بیشتر"><X size={17} /></button></div><div className="more-nav-grid">{[...moreNav, ...(user?.role === "admin" ? [["/admin", "مدیریت", LayoutDashboard] as const] : [])].map(([href, label, Icon]) => <Link key={href} href={href} className={`nav-link nav-link-more ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}><Icon size={14} />{label}</Link>)}</div></div>}
       <div className="header-actions"><button className={`icon-button notification-trigger ${notificationsOpen ? "is-active" : ""}`} aria-label="اعلان‌ها" aria-expanded={notificationsOpen} aria-controls="notifications-title" onClick={() => setNotificationsOpen((value) => !value)}><Bell size={17} />{notificationsCount > 0 && <span className="notification-badge">{notificationsCount > 99 ? "۹۹+" : notificationsCount}</span>}</button><button className="login-button" onClick={() => { setOpen(false); setAuthMode("login"); setAuthOpen(true); }}><UserRound size={16} /> ورود امن</button><button className="icon-button mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="more-navigation-drawer" aria-label={open ? "بستن منو" : "بازکردن منو"}>{open ? <X size={19} /> : <Menu size={19} />}</button></div>
     </motion.header>
     {open && <button className="mobile-nav-backdrop" type="button" tabIndex={-1} aria-label="بستن منو" onClick={() => setOpen(false)} />}
     {!isHome && title && <motion.section className="subpage-hero container" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .5, delay: .05, ease: [0.16, 1, 0.3, 1] }}><div className="subpage-copy"><Link href="/" className="back-link"><ArrowRight size={15} /> برگشت به خانه</Link><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><div className="subpage-art glass-panel"><img src={heroImage} alt="" /><div className="art-overlay" /></div></motion.section>}
-    {!isHome && <section className="trust-bar container" aria-label="شفافیت و اعتماد"><span><ShieldCheck size={15} /> بازی مسئولانه</span><span><CircleDollarSign size={15} /> کیف پول USDT</span><span><Activity size={15} /> منبع داده مشخص</span></section>}
+    {!isHome && <section className="trust-bar container" aria-label="شفافیت و اعتماد"><span><ShieldCheck size={15} /> بازی مسئولانه</span><span><CircleDollarSign size={15} /> کیف پول چندارزی · USDT پایه</span><span><Activity size={15} /> منبع داده مشخص</span></section>}
     {routeSlug !== "ai" && <button className="context-ai-strip" type="button" onClick={openContextSupport}><span><Sparkles size={15} /> AI سریع</span><b>پرسش از AI <ArrowRight size={14} /></b></button>}
     <motion.section key={location} className={`${isHome ? "" : "subpage-content"} container`} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .46, delay: isHome ? .05 : .13, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.section>
     <nav className="mobile-bottom-nav" aria-label="ناوبری موبایل"><Link href="/" className={isActive("/") ? "is-active" : ""}><Home size={17} /><span>خانه</span></Link><Link href="/matches" className={isActive("/matches") ? "is-active" : ""}><Trophy size={17} /><span>مسابقات</span></Link><Link href="/crash" className={isActive("/crash") ? "is-active" : ""}><ReceiptText size={17} /><span>انفجار</span></Link><Link href="/wallet" className={isActive("/wallet") ? "is-active" : ""}><WalletCards size={17} /><span>کیف پول</span></Link><Link href="/account" className={isActive("/account") ? "is-active" : ""}><UserRound size={17} /><span>حساب</span></Link></nav>

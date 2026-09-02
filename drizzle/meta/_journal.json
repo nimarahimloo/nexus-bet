@@ -64,6 +64,13 @@
       "when": 1788015236035,
       "tag": "0008_chubby_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1788260331266,
+      "tag": "0009_orange_dragon_man",
+      "breakpoints": true
     }
   ]
 }

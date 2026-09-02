@@ -24,11 +24,12 @@ describe("Crash backend integration contract", () => {
 
   it("shows real wallet balance and maps backend failure states in the Crash UI", () => {
     const crash = read("../client/src/pages/Crash.tsx");
-    expect(crash).toContain("trpc.wallet.me.useQuery");
+    expect(crash).toContain("trpc.wallet.portfolio.useQuery");
     expect(crash).toContain("availableBalance");
+    expect(crash).toContain("currency: activeCurrency");
     expect(crash).toContain("INSUFFICIENT_BALANCE");
     expect(crash).toContain("ROUND_CLOSED");
     expect(crash).toContain("BET_CLOSED");
-    expect(crash).toContain("wallet.me.invalidate");
+    expect(crash).toContain("wallet.portfolio.invalidate");
   });
 });
