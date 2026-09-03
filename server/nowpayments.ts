@@ -44,9 +44,21 @@ export function createNowPaymentsPayment(config: ProviderConfig, input: CreatePa
   return providerRequest<CreatePaymentResult>(config, "/v1/payment", { price_amount: input.priceAmount, price_currency: input.priceCurrency, pay_currency: input.payCurrency ?? NOWPAYMENTS_CURRENCY, order_id: input.orderId, order_description: input.orderDescription, ipn_callback_url: input.ipnCallbackUrl });
 }
 
+function sortIpnPayload(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortIpnPayload);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value as Record<string, unknown>).sort(([left], [right]) => left.localeCompare(right)).map(([key, item]) => [key, sortIpnPayload(item)]));
+  return value;
+}
+
 export function verifyNowPaymentsIpn(rawBody: string, signature: string | undefined, secret: string | undefined) {
   if (!signature || !secret) return false;
-  const expected = createHmac("sha512", secret).update(rawBody).digest("hex");
+  let canonicalBody: string;
+  try {
+    canonicalBody = JSON.stringify(sortIpnPayload(JSON.parse(rawBody)));
+  } catch {
+    return false;
+  }
+  const expected = createHmac("sha512", secret).update(canonicalBody).digest("hex");
   const actual = Buffer.from(signature, "utf8");
   const expectedBuffer = Buffer.from(expected, "utf8");
   return actual.length === expectedBuffer.length && timingSafeEqual(actual, expectedBuffer);

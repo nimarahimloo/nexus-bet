@@ -11,9 +11,11 @@ describe("NOWPayments disabled-safe adapter", () => {
 
   it("verifies the signed IPN body and rejects tampering", () => {
     const body = JSON.stringify({ payment_id: 42, payment_status: "finished" });
-    const signature = createHmac("sha512", "secret").update(body).digest("hex");
+    const canonicalBody = JSON.stringify({ payment_id: 42, payment_status: "finished" });
+    const signature = createHmac("sha512", "secret").update(canonicalBody).digest("hex");
     expect(verifyNowPaymentsIpn(body, signature, "secret")).toBe(true);
-    expect(verifyNowPaymentsIpn(`${body} `, signature, "secret")).toBe(false);
+    expect(verifyNowPaymentsIpn(JSON.stringify({ payment_status: "finished", payment_id: 42 }), signature, "secret")).toBe(true);
+    expect(verifyNowPaymentsIpn(JSON.stringify({ payment_id: 42, payment_status: "failed" }), signature, "secret")).toBe(false);
   });
 
   it("keeps settlement guarded by provider mismatch checks", () => {
