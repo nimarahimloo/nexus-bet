@@ -1,4 +1,15 @@
+import { createHash, randomBytes } from "node:crypto";
+
 export const CRASH_RATE_PER_SECOND = 0.12;
+
+export function createCrashSeed() {
+  const serverSeed = randomBytes(32).toString("hex");
+  return { serverSeed, serverSeedHash: createHash("sha256").update(serverSeed).digest("hex") };
+}
+
+export function verifyCrashSeed(serverSeed: string, serverSeedHash: string) {
+  return createHash("sha256").update(serverSeed).digest("hex") === serverSeedHash;
+}
 
 export function multiplierAt(startedAt: Date, now = new Date()): number {
   const elapsedSeconds = Math.max(0, (now.getTime() - startedAt.getTime()) / 1000);

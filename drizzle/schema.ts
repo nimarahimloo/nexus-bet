@@ -255,6 +255,8 @@ export const crashRounds = mysqlTable("crashRounds", {
   roundCode: varchar("roundCode", { length: 40 }).notNull().unique(),
   status: mysqlEnum("status", ["running", "crashed"]).default("running").notNull(),
   crashMultiplier: decimal("crashMultiplier", { precision: 12, scale: 4 }).notNull(),
+  serverSeedHash: varchar("serverSeedHash", { length: 128 }),
+  serverSeed: varchar("serverSeed", { length: 128 }),
   startedAt: timestamp("startedAt").defaultNow().notNull(),
   crashedAt: timestamp("crashedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

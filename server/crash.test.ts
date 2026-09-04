@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { createCrashSeed, verifyCrashSeed } from "./crash";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -11,6 +12,17 @@ describe("Crash backend integration contract", () => {
     expect(db).toContain("gte(wallets.availableBalance, stake.toFixed(6))");
     expect(db).toContain('throw new Error("INSUFFICIENT_BALANCE")');
     expect(db).toContain('status: "pending"');
+  });
+
+  it("creates a verifiable commit/reveal seed for new rounds and rejects tampering", () => {
+    const seed = createCrashSeed();
+    expect(seed.serverSeed).toHaveLength(64);
+    expect(seed.serverSeedHash).toHaveLength(64);
+    expect(verifyCrashSeed(seed.serverSeed, seed.serverSeedHash)).toBe(true);
+    expect(verifyCrashSeed(`${seed.serverSeed}tampered`, seed.serverSeedHash)).toBe(false);
+    const db = read("./db.ts");
+    expect(db).toContain("serverSeedHash");
+    expect(db).toContain("serverSeed");
   });
 
   it("wires current, history, place and cashout through protected/public tRPC procedures", () => {
@@ -31,5 +43,7 @@ describe("Crash backend integration contract", () => {
     expect(crash).toContain("ROUND_CLOSED");
     expect(crash).toContain("BET_CLOSED");
     expect(crash).toContain("wallet.portfolio.invalidate");
+    expect(crash).toContain("round-proof");
+    expect(crash).toContain("public seed");
   });
 });

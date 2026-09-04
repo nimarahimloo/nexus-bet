@@ -11,4 +11,5 @@ export const ENV = {
   nowPaymentsApiKey: process.env.NOWPAYMENTS_API_KEY ?? "",
   nowPaymentsIpnSecret: process.env.NOWPAYMENTS_IPN_SECRET ?? "",
   nowPaymentsPayoutWallet: process.env.NOWPAYMENTS_PAYOUT_WALLET_BEP20 ?? "",
+  nowPaymentsPayoutAuthToken: process.env.NOWPAYMENTS_PAYOUT_AUTH_TOKEN ?? "",
 };

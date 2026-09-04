@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomInt, randomUUID } from "node:crypto";
-import { isCrashed, multiplierAt } from "./crash";
+import { createCrashSeed, isCrashed, multiplierAt } from "./crash";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -426,7 +426,8 @@ export async function createCrashRound() {
   const existing = await getActiveCrashRound();
   if (existing?.status === "running") return existing;
   const crashMultiplier = (1.05 + randomInt(0, 1195) / 100).toFixed(2);
-  const inserted = await db.insert(crashRounds).values({ roundCode: `CR-${randomUUID().replace(/-/g, "").slice(0, 16).toUpperCase()}`, crashMultiplier, status: "running" });
+  const { serverSeed, serverSeedHash } = createCrashSeed();
+  const inserted = await db.insert(crashRounds).values({ roundCode: `CR-${randomUUID().replace(/-/g, "").slice(0, 16).toUpperCase()}`, crashMultiplier, serverSeed, serverSeedHash, status: "running" });
   const id = Number(inserted[0].insertId);
   const rows = await db.select().from(crashRounds).where(eq(crashRounds.id, id)).limit(1);
   return rows[0] ? { ...rows[0], currentMultiplier: 1 } : null;
@@ -436,7 +437,7 @@ export async function getCrashHistory() {
   const db = await getDb();
   if (!db) return [];
   const rows = await db.select().from(crashRounds).where(eq(crashRounds.status, "crashed")).orderBy(desc(crashRounds.crashedAt)).limit(20);
-  return rows.map((round) => ({ id: round.id, roundCode: round.roundCode, multiplier: Number(round.crashMultiplier), crashedAt: round.crashedAt }));
+  return rows.map((round) => ({ id: round.id, roundCode: round.roundCode, multiplier: Number(round.crashMultiplier), crashedAt: round.crashedAt, proof: round.serverSeed && round.serverSeedHash ? { serverSeed: round.serverSeed, serverSeedHash: round.serverSeedHash } : null }));
 }
 
 export async function placeCrashBet(userId: number, roundId: number, stake: number, currency = "USDT") {

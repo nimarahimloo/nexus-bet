@@ -421,3 +421,15 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن قرارداد idempotency، status transition و webhook بدون اعتباردهی ساختگی.
 - [x] نمایش provider readiness در wallet/admin و نگه‌داشتن deposit/withdrawal در حالت unavailable تا تنظیم secrets.
 - [x] افزودن تست قرارداد disabled mode و فعال‌سازی بعدی با sandbox credentials.
+
+
+## Nexus Bet Ultimate Differentiation Blueprint
+- [x] استخراج کامل قابلیت‌ها، جریان‌ها و اولویت‌های اجرایی از PDF Blueprint.
+- [x] تطبیق Blueprint با routeها، schema، routerها و providerهای فعلی و حذف هم‌پوشانی‌های معماری.
+- [ ] پیاده‌سازی قابلیت‌های اولویت‌دار Blueprint با دادهٔ backend واقعی و بدون mock عملیاتی.
+- [ ] افزودن تست‌های contract/security و بازبینی responsive قابلیت‌های جدید Blueprint.
+- [ ] ثبت checkpoint نهایی و مستندسازی قابلیت‌های تکمیل‌شده، وابستگی‌ها و موارد نیازمند credential یا تصمیم محصول.
+
+## NOWPayments activation follow-up
+- [ ] تکمیل invoice/payout واقعی پس از پذیرش و ورود secrets امن NOWPayments.
+- [ ] اجرای sandbox smoke و فعال‌سازی settlement فقط پس از تأیید پاسخ provider.
