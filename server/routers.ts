@@ -290,6 +290,28 @@ export const appRouter = router({
           return { picks: [], source: "empty" as const };
         }
       }),
+    matchInsight: publicProcedure
+      .input(z.object({
+        match: z.object({ id: z.string(), sport: z.string(), league: z.string(), home: z.string(), away: z.string(), status: z.string(), score: z.string().optional(), markets: z.array(z.object({ name: z.string(), label: z.string(), odds: z.number().positive() })).max(12) }),
+      }))
+      .query(async ({ input }) => {
+        try {
+          const response = await invokeLLM({
+            model: "gpt-5-mini",
+            messages: [
+              { role: "system", content: "تو تحلیل‌گر Nexus Bet هستی. فقط insight داده‌محور و غیرقطعی بده؛ نتیجه یا سود را تضمین نکن، توصیهٔ شخصی برای شرط نده و اگر داده کافی نیست صادقانه بگو. پاسخ فارسی و کوتاه باشد." },
+              { role: "user", content: `برای این مسابقه حداکثر سه نکتهٔ قابل‌فهم دربارهٔ وضعیت، بازارهای موجود و ریسک بنویس. فقط JSON مطابق schema برگردان. دادهٔ backend:\n${JSON.stringify(input.match)}` },
+            ],
+            response_format: { type: "json_schema", json_schema: { name: "nexus_match_insight", strict: true, schema: { type: "object", properties: { summary: { type: "string" }, signals: { type: "array", maxItems: 3, items: { type: "object", properties: { label: { type: "string" }, detail: { type: "string" }, risk: { type: "string", enum: ["کم", "متوسط", "بالا"] } }, required: ["label", "detail", "risk"], additionalProperties: false } } }, required: ["summary", "signals"], additionalProperties: false } } },
+          });
+          const raw = response.choices[0]?.message?.content;
+          const parsed = JSON.parse(typeof raw === "string" ? raw : "{}");
+          return { summary: typeof parsed.summary === "string" ? parsed.summary : "برای این مسابقه insight قابل اتکایی تولید نشد.", signals: Array.isArray(parsed.signals) ? parsed.signals.slice(0, 3) : [], source: "ai" as const };
+        } catch (error) {
+          console.warn("[Nexus AI] Match insight unavailable:", error);
+          return { summary: "تحلیل هوشمند فعلاً در دسترس نیست؛ دادهٔ مسابقه و بازارها را مستقل بررسی کن.", signals: [], source: "empty" as const };
+        }
+      }),
   }),
 });
 

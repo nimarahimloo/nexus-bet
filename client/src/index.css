@@ -1183,3 +1183,12 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 .round-proof-details summary { cursor: pointer; list-style: none; white-space: nowrap; }
 .round-proof-details summary::-webkit-details-marker { display: none; }
 .round-proof-details > small { max-width: 220px; color: #9c93a5; font: 500 8px "Manrope"; overflow-wrap: anywhere; }
+
+.match-insight { display: grid; gap: 8px; margin: 14px 0; padding: 14px; border-radius: 16px; background: rgba(138,88,235,.08); border-color: rgba(177,139,255,.18); }
+.match-insight > div:first-child { display: flex; align-items: center; gap: 7px; color: var(--nexus-mint); font-size: 11px; }
+.match-insight p { margin: 0; color: #c9bfd5; font-size: 10px; line-height: 1.9; }
+.insight-signals { display: grid; gap: 7px; }
+.insight-signals span { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; background: rgba(0,0,0,.18); }
+.insight-signals b { color: #eee7f7; font-size: 10px; }
+.insight-signals small { color: #9d93a9; font-size: 9px; line-height: 1.7; }
+@media (max-width: 520px) { .match-insight { padding: 12px; } .insight-signals { grid-template-columns: 1fr; } }
