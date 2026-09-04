@@ -295,6 +295,25 @@ export async function upsertSportAlertPreference(userId: number, input: { watchl
   return rows[0] ?? null;
 }
 
+export async function dispatchDueSportAlerts() {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const now = new Date();
+  const horizon = new Date(now.getTime() + 15 * 60 * 1000);
+  const preferences = await db.select().from(sportAlertPreferences).where(and(eq(sportAlertPreferences.enabled, 1), eq(sportAlertPreferences.alertType, "kickoff")));
+  let sent = 0;
+  for (const preference of preferences) {
+    const watchRows = await db.select().from(sportWatchlist).where(eq(sportWatchlist.id, preference.watchlistId)).limit(1);
+    const watch = watchRows[0];
+    if (!watch?.eventTime || watch.eventTime < now || watch.eventTime > horizon) continue;
+    if (preference.lastNotifiedAt && preference.lastNotifiedAt >= watch.eventTime) continue;
+    await db.insert(notifications).values({ userId: preference.userId, type: "sports", title: "شروع مسابقه نزدیک است", message: `${watch.home} — ${watch.away} تا چند دقیقهٔ دیگر آغاز می‌شود.`, href: "/matches" });
+    await db.update(sportAlertPreferences).set({ lastNotifiedAt: new Date() }).where(and(eq(sportAlertPreferences.id, preference.id), eq(sportAlertPreferences.userId, preference.userId), isNull(sportAlertPreferences.lastNotifiedAt)));
+    sent += 1;
+  }
+  return { sent };
+}
+
 export async function getUserBets(userId: number) {
   const db = await getDb();
   if (!db) return [];

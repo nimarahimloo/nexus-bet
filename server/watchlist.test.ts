@@ -16,12 +16,15 @@ describe("Watchlist and Smart Alerts contract", () => {
   it("keeps all watchlist mutations scoped to the authenticated user", () => {
     const db = read("./db.ts");
     const routers = read("./routers.ts");
+    const handler = read("./sportAlerts.ts");
     expect(db).toContain("eq(sportWatchlist.userId, userId)");
     expect(db).toContain("eq(sportAlertPreferences.userId, userId)");
     expect(db).toContain('throw new Error("WATCHLIST_NOT_FOUND")');
     expect(routers).toContain("watchlist: router");
     expect(routers).toContain("protectedProcedure");
     expect(routers).toContain("watchlistId: z.number().int().positive()");
+    expect(handler).toContain('if (!user.isCron || !user.taskUid)');
+    expect(handler).toContain('/api/scheduled/processSportAlerts');
   });
 
   it("does not fabricate background notifications before a real trigger exists", () => {

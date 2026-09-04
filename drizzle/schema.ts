@@ -81,6 +81,7 @@ export const sportAlertPreferences = mysqlTable("sportAlertPreferences", {
   alertType: mysqlEnum("alertType", ["kickoff", "odds_change", "result"]).notNull(),
   threshold: decimal("threshold", { precision: 12, scale: 4 }),
   enabled: int("enabled").default(1).notNull(),
+  lastNotifiedAt: timestamp("lastNotifiedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({ userWatchAlertUnique: uniqueIndex("sportAlertPreferences_user_watch_alert_unique").on(table.userId, table.watchlistId, table.alertType) }));
