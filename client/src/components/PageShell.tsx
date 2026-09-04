@@ -41,9 +41,11 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
   useEffect(() => {
     const onAuthOpen = (event: Event) => { const mode = (event as CustomEvent<{ mode?: AuthMode }>).detail?.mode; setAuthMode(mode ?? "login"); setAuthOpen(true); };
     const onSupportOpen = () => setSupportOpen(true);
+    const onNotificationsOpen = () => setNotificationsOpen(true);
     window.addEventListener("nexus:auth-open", onAuthOpen);
     window.addEventListener("nexus:support-open", onSupportOpen);
-    return () => { window.removeEventListener("nexus:auth-open", onAuthOpen); window.removeEventListener("nexus:support-open", onSupportOpen); };
+    window.addEventListener("nexus:notifications-open", onNotificationsOpen);
+    return () => { window.removeEventListener("nexus:auth-open", onAuthOpen); window.removeEventListener("nexus:support-open", onSupportOpen); window.removeEventListener("nexus:notifications-open", onNotificationsOpen); };
   }, []);
   useEffect(() => {
     if (!open) return;

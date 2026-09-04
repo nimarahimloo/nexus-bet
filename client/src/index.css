@@ -1208,3 +1208,7 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 .watch-toggle { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; color: #a79bb8; border: 1px solid rgba(255,255,255,.1); border-radius: 9px; background: rgba(255,255,255,.04); }
 .watch-toggle.is-watched { color: var(--nexus-mint); border-color: rgba(95,226,208,.3); background: rgba(95,226,208,.08); }
 @media (max-width: 520px) { .watchlist-item { align-items: stretch; flex-direction: column; } .watchlist-actions { width: 100%; } .watchlist-actions button:first-child { flex: 1; } }
+
+.watchlist-note { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.watchlist-note button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 36px; padding: 0 10px; color: var(--nexus-mint); border: 1px solid rgba(95,226,208,.24); border-radius: 10px; background: rgba(95,226,208,.06); font-size: 9px; white-space: nowrap; }
+@media (max-width: 520px) { .watchlist-note { align-items: stretch; flex-direction: column; } .watchlist-note button { width: 100%; } }
