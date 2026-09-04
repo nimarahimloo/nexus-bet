@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ArrowDownLeft, ArrowLeft, ArrowUpRight, BrainCircuit, Check, CheckCircle2, Clock3, Crown, Gift, LockKeyhole, ShieldCheck, Sparkles, Ticket, WalletCards, XCircle } from "lucide-react";
+import { ArrowDownLeft, ArrowLeft, ArrowUpRight, Bell, BrainCircuit, Check, CheckCircle2, Clock3, Crown, Gift, LockKeyhole, ShieldCheck, Sparkles, Ticket, Trash2, WalletCards, XCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { formatFaDecimal } from "@shared/format";
 import type { AiPick } from "@shared/ai";
@@ -39,6 +39,11 @@ export function AccountPage() {
     lost: bets.filter((bet) => bet.status === "lost").length,
   };
   const openBets = bets.filter((bet) => bet.status === "pending");
+  const watchlistQuery = trpc.watchlist.list.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
+  const alertQuery = trpc.watchlist.alerts.useQuery(undefined, { enabled: isAuthenticated, staleTime: 30_000 });
+  const removeWatchMutation = trpc.watchlist.remove.useMutation({ onSuccess: () => { void watchlistQuery.refetch(); void alertQuery.refetch(); toast.success("مسابقه از پیگیری حذف شد."); }, onError: () => toast.error("حذف پیگیری انجام نشد.") });
+  const setAlertMutation = trpc.watchlist.setAlert.useMutation({ onSuccess: () => { void alertQuery.refetch(); toast.success("تنظیم اعلان ذخیره شد."); }, onError: (error) => toast.error(error.message.includes("WATCHLIST_NOT_FOUND") ? "این مسابقه دیگر در پیگیری نیست." : "تنظیم اعلان ذخیره نشد.") });
+  const alertEnabled = (watchlistId: number, alertType: "kickoff" | "odds_change" | "result") => alertQuery.data?.some((alert) => alert.watchlistId === watchlistId && alert.alertType === alertType && alert.enabled === 1) ?? false;
 
   return <PageShell eyebrow="حساب کاربری" title="همه‌چیز دربارهٔ حساب تو" description="شرط‌ها، spinها و تراکنش‌های کیف پول از overview واقعی backend خوانده می‌شوند؛ هیچ رکورد نمایشی جای فعالیت واقعی را نمی‌گیرد." heroImage="/manus-storage/nexus-bet-account-hero-v2_f471d0ea.png">
     <div className="account-summary glass-panel"><div className="avatar">N</div><div><b>{user?.name ?? "حساب Nexus"}</b><span>{isAuthenticated ? "فعالیت حساب از منبع واقعی" : "برای مشاهدهٔ فعالیت وارد حساب شوید."}</span></div><ShieldCheck size={21} /></div>
@@ -49,7 +54,7 @@ export function AccountPage() {
         {visibleBets.length ? <div className="bet-history-list">{visibleBets.map((bet) => { const meta = bet.status === "pending" || bet.status === "won" || bet.status === "lost" ? betStatusMeta[bet.status] : betStatusMeta.pending; const StatusIcon = meta.icon; return <article className={`bet-history-card ${meta.className}`} key={bet.id}><div className="bet-history-card-head"><span className="bet-ticket"><Ticket size={15} /> {bet.ticketCode}</span><span className={`bet-status ${meta.className}`}><StatusIcon size={14} /> {meta.label}</span></div><div className="bet-history-metrics"><div><span>مبلغ شرط</span><b>{formatFaDecimal(bet.stake)} {bet.currency}</b></div><div><span>ضریب ترکیبی</span><b>{formatFaDecimal(bet.combinedOdds)}</b></div><div><span>{bet.status === "won" ? "بازگشت نهایی" : "بازگشت احتمالی"}</span><b className={bet.status === "won" ? "mint-text" : ""}>{formatFaDecimal(bet.potentialReturn)} {bet.currency}</b></div></div><div className="bet-selections">{bet.selections.map((selection) => <span key={`${bet.id}-${selection.id}`}>{selection.match} · {selection.market} · <b>{formatFaDecimal(selection.odds)}</b></span>)}</div><time dateTime={new Date(bet.createdAt).toISOString()}>{new Date(bet.createdAt).toLocaleString("fa-IR")}</time></article>; })}</div> : <div className="empty-state"><Check size={20} /><p>در این وضعیت هنوز bet واقعی ثبت نشده است.</p></div>}
       </>}
     </section>
-    {overviewQuery.error && <div className="inline-alert">اطلاعات حساب فعلاً از backend دریافت نشد.</div>}
+    {isAuthenticated && <section className="watchlist-panel glass-panel" aria-labelledby="watchlist-title"><div className="section-heading"><div><span className="section-kicker"><Bell size={15} /> پیگیری</span><h2 id="watchlist-title">مسابقه‌های پیگیری‌شده</h2></div><span className="sample-chip">{watchlistQuery.data?.length ?? 0} مسابقه</span></div>{watchlistQuery.isLoading ? <p className="data-state">در حال دریافت پیگیری‌ها…</p> : watchlistQuery.data?.length ? <div className="watchlist-list">{watchlistQuery.data.map((item) => <article className="watchlist-item" key={item.id}><div><b>{item.home} — {item.away}</b><small>{item.sport} · {item.league}</small></div><div className="watchlist-actions"><button type="button" className={alertEnabled(item.id, "kickoff") ? "is-active" : ""} onClick={() => setAlertMutation.mutate({ watchlistId: item.id, alertType: "kickoff", enabled: !alertEnabled(item.id, "kickoff") })} aria-label="اعلان شروع مسابقه"><Bell size={14} /> شروع</button><button type="button" className="watchlist-remove" onClick={() => removeWatchMutation.mutate({ watchlistId: item.id })} aria-label="حذف مسابقه از پیگیری"><Trash2 size={14} /></button></div></article>)}</div> : <p className="data-state">هنوز مسابقه‌ای برای پیگیری ذخیره نشده است.</p>}<small className="watchlist-note">اعلان‌ها فقط پس از اجرای trigger واقعی backend ساخته می‌شوند؛ در این مرحله داده یا فعالیت ساختگی نمایش داده نمی‌شود.</small></section>}{overviewQuery.error && <div className="inline-alert">اطلاعات حساب فعلاً از backend دریافت نشد.</div>}
   </PageShell>;
 }
 function FileClockIcon() { return <LockKeyhole size={21} />; }

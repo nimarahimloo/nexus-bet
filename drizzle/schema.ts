@@ -62,6 +62,34 @@ export const notifications = mysqlTable("notifications", {
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
 
+export const sportWatchlist = mysqlTable("sportWatchlist", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  eventId: varchar("eventId", { length: 96 }).notNull(),
+  sport: varchar("sport", { length: 48 }).notNull(),
+  league: varchar("league", { length: 160 }).notNull(),
+  home: varchar("home", { length: 160 }).notNull(),
+  away: varchar("away", { length: 160 }).notNull(),
+  eventTime: timestamp("eventTime"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ userEventUnique: uniqueIndex("sportWatchlist_user_event_unique").on(table.userId, table.eventId) }));
+
+export const sportAlertPreferences = mysqlTable("sportAlertPreferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  watchlistId: int("watchlistId").notNull().references(() => sportWatchlist.id),
+  alertType: mysqlEnum("alertType", ["kickoff", "odds_change", "result"]).notNull(),
+  threshold: decimal("threshold", { precision: 12, scale: 4 }),
+  enabled: int("enabled").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ userWatchAlertUnique: uniqueIndex("sportAlertPreferences_user_watch_alert_unique").on(table.userId, table.watchlistId, table.alertType) }));
+
+export type SportWatchlistItem = typeof sportWatchlist.$inferSelect;
+export type InsertSportWatchlistItem = typeof sportWatchlist.$inferInsert;
+export type SportAlertPreference = typeof sportAlertPreferences.$inferSelect;
+export type InsertSportAlertPreference = typeof sportAlertPreferences.$inferInsert;
+
 export const wallets = mysqlTable("wallets", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().references(() => users.id),

@@ -1192,3 +1192,19 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 .insight-signals b { color: #eee7f7; font-size: 10px; }
 .insight-signals small { color: #9d93a9; font-size: 9px; line-height: 1.7; }
 @media (max-width: 520px) { .match-insight { padding: 12px; } .insight-signals { grid-template-columns: 1fr; } }
+
+.watchlist-panel { padding: var(--card-space); border-radius: 20px; }
+.watchlist-list { display: grid; gap: 9px; }
+.watchlist-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid var(--nexus-line); border-radius: 14px; background: rgba(255,255,255,.035); }
+.watchlist-item > div:first-child { display: grid; gap: 4px; min-width: 0; }
+.watchlist-item b { color: #f1eafa; font-size: 11px; overflow-wrap: anywhere; }
+.watchlist-item small, .watchlist-note { color: #978da5; font-size: 9px; line-height: 1.8; }
+.watchlist-actions { display: flex; align-items: center; gap: 7px; flex: none; }
+.watchlist-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 36px; padding: 0 10px; color: #a9a0b3; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(255,255,255,.04); font-size: 9px; }
+.watchlist-actions button.is-active { color: var(--nexus-mint); border-color: rgba(95,226,208,.35); background: rgba(95,226,208,.08); }
+.watchlist-actions .watchlist-remove { width: 36px; padding: 0; color: #c49aad; }
+.watchlist-note { display: block; margin-top: 12px; }
+.match-card-topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.watch-toggle { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; color: #a79bb8; border: 1px solid rgba(255,255,255,.1); border-radius: 9px; background: rgba(255,255,255,.04); }
+.watch-toggle.is-watched { color: var(--nexus-mint); border-color: rgba(95,226,208,.3); background: rgba(95,226,208,.08); }
+@media (max-width: 520px) { .watchlist-item { align-items: stretch; flex-direction: column; } .watchlist-actions { width: 100%; } .watchlist-actions button:first-child { flex: 1; } }

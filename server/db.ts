@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
+import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, sportAlertPreferences, sportWatchlist, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "./wheel";
 import { randomInt, randomUUID } from "node:crypto";
 import { createCrashSeed, isCrashed, multiplierAt } from "./crash";
@@ -247,6 +247,52 @@ export async function markAllNotificationsRead(userId: number) {
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   await db.update(notifications).set({ readAt: new Date() }).where(and(eq(notifications.userId, userId), isNull(notifications.readAt)));
   return { success: true as const };
+}
+
+export async function getSportWatchlist(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(sportWatchlist).where(eq(sportWatchlist.userId, userId)).orderBy(desc(sportWatchlist.createdAt));
+}
+
+export async function addSportWatchlist(userId: number, input: { eventId: string; sport: string; league: string; home: string; away: string; eventTime?: Date | null }) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const eventId = input.eventId.trim();
+  const existing = await db.select().from(sportWatchlist).where(and(eq(sportWatchlist.userId, userId), eq(sportWatchlist.eventId, eventId))).limit(1);
+  if (existing[0]) return existing[0];
+  const inserted = await db.insert(sportWatchlist).values({ userId, eventId, sport: input.sport.trim(), league: input.league.trim(), home: input.home.trim(), away: input.away.trim(), eventTime: input.eventTime ?? null });
+  const rows = await db.select().from(sportWatchlist).where(eq(sportWatchlist.id, Number(inserted[0].insertId))).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function removeSportWatchlist(userId: number, watchlistId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  await db.delete(sportAlertPreferences).where(and(eq(sportAlertPreferences.userId, userId), eq(sportAlertPreferences.watchlistId, watchlistId)));
+  await db.delete(sportWatchlist).where(and(eq(sportWatchlist.id, watchlistId), eq(sportWatchlist.userId, userId)));
+  return { success: true as const };
+}
+
+export async function getSportAlertPreferences(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(sportAlertPreferences).where(eq(sportAlertPreferences.userId, userId)).orderBy(desc(sportAlertPreferences.updatedAt));
+}
+
+export async function upsertSportAlertPreference(userId: number, input: { watchlistId: number; alertType: "kickoff" | "odds_change" | "result"; threshold?: number | null; enabled: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  const watch = await db.select({ id: sportWatchlist.id }).from(sportWatchlist).where(and(eq(sportWatchlist.id, input.watchlistId), eq(sportWatchlist.userId, userId))).limit(1);
+  if (!watch[0]) throw new Error("WATCHLIST_NOT_FOUND");
+  const existing = await db.select().from(sportAlertPreferences).where(and(eq(sportAlertPreferences.userId, userId), eq(sportAlertPreferences.watchlistId, input.watchlistId), eq(sportAlertPreferences.alertType, input.alertType))).limit(1);
+  if (existing[0]) {
+    await db.update(sportAlertPreferences).set({ enabled: input.enabled ? 1 : 0, threshold: input.threshold == null ? null : input.threshold.toFixed(4), updatedAt: new Date() }).where(and(eq(sportAlertPreferences.id, existing[0].id), eq(sportAlertPreferences.userId, userId)));
+    return { ...existing[0], enabled: input.enabled ? 1 : 0, threshold: input.threshold == null ? null : input.threshold.toFixed(4) };
+  }
+  const inserted = await db.insert(sportAlertPreferences).values({ userId, watchlistId: input.watchlistId, alertType: input.alertType, threshold: input.threshold == null ? null : input.threshold.toFixed(4), enabled: input.enabled ? 1 : 0 });
+  const rows = await db.select().from(sportAlertPreferences).where(eq(sportAlertPreferences.id, Number(inserted[0].insertId))).limit(1);
+  return rows[0] ?? null;
 }
 
 export async function getUserBets(userId: number) {

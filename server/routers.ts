@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, addSportWatchlist, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getSportAlertPreferences, getSportWatchlist, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, removeSportWatchlist, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser, upsertSportAlertPreference } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
@@ -186,6 +186,14 @@ export const appRouter = router({
     unreadCount: protectedProcedure.query(({ ctx }) => getUnreadNotificationCount(ctx.user.id)),
     markRead: protectedProcedure.input(z.object({ notificationId: z.number().int().positive() })).mutation(({ ctx, input }) => markNotificationRead(ctx.user.id, input.notificationId)),
     markAllRead: protectedProcedure.mutation(({ ctx }) => markAllNotificationsRead(ctx.user.id)),
+  }),
+
+  watchlist: router({
+    list: protectedProcedure.query(({ ctx }) => getSportWatchlist(ctx.user.id)),
+    add: protectedProcedure.input(z.object({ eventId: z.string().trim().min(1).max(96), sport: z.string().trim().min(1).max(48), league: z.string().trim().min(1).max(160), home: z.string().trim().min(1).max(160), away: z.string().trim().min(1).max(160), eventTime: z.date().nullable().optional() })).mutation(({ ctx, input }) => addSportWatchlist(ctx.user.id, input)),
+    remove: protectedProcedure.input(z.object({ watchlistId: z.number().int().positive() })).mutation(({ ctx, input }) => removeSportWatchlist(ctx.user.id, input.watchlistId)),
+    alerts: protectedProcedure.query(({ ctx }) => getSportAlertPreferences(ctx.user.id)),
+    setAlert: protectedProcedure.input(z.object({ watchlistId: z.number().int().positive(), alertType: z.enum(["kickoff", "odds_change", "result"]), threshold: z.number().positive().max(100).nullable().optional(), enabled: z.boolean() })).mutation(({ ctx, input }) => upsertSportAlertPreference(ctx.user.id, input)),
   }),
 
   admin: router({

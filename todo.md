@@ -433,3 +433,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 ## NOWPayments activation follow-up
 - [ ] تکمیل invoice/payout واقعی پس از پذیرش و ورود secrets امن NOWPayments.
 - [ ] اجرای sandbox smoke و فعال‌سازی settlement فقط پس از تأیید پاسخ provider.
+
+
+## Blueprint Watchlist and Smart Alerts
+- [x] ممیزی schema و قراردادهای فعلی sports، notifications و user settings برای Watchlist و Alert.
+- [x] طراحی و اعمال schema واقعی برای watchlist و alert preferences با authorization کاربر.
+- [x] افزودن procedureهای backend برای ایجاد، حذف، فهرست‌کردن و فعال/غیرفعال‌کردن alertها.
+- [ ] اتصال UI فارسی‌محور Watchlist/Smart Alerts به مسیرهای واقعی backend و notification inbox.
+- [x] افزودن تست‌های contract، authorization، migration و responsive برای Watchlist/Smart Alerts.
+- [ ] ثبت checkpoint و مستندسازی محدودیت‌های اعلان‌های پس‌زمینه تا زمان انتخاب scheduler/trigger واقعی.
