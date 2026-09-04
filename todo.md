@@ -441,4 +441,6 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن procedureهای backend برای ایجاد، حذف، فهرست‌کردن و فعال/غیرفعال‌کردن alertها.
 - [x] اتصال UI فارسی‌محور Watchlist/Smart Alerts به مسیرهای واقعی backend و notification inbox.
 - [x] افزودن تست‌های contract، authorization، migration و responsive برای Watchlist/Smart Alerts.
-- [ ] ثبت checkpoint و مستندسازی محدودیت‌های اعلان‌های پس‌زمینه تا زمان انتخاب scheduler/trigger واقعی.
+- [x] ثبت checkpoint و مستندسازی محدودیت‌های اعلان‌های پس‌زمینه تا زمان انتخاب scheduler/trigger واقعی.
+
+- [x] ایجاد و تأیید Heartbeat پنج‌دقیقه‌ای `nexus-sport-alerts` برای `/api/scheduled/processSportAlerts` با task UID ثبت‌شده در blueprint_execution.md.

@@ -22,3 +22,12 @@
 ## Explicitly deferred items
 
 فعال‌سازی invoice/payout و settlement واقعی NOWPayments بدون secrets پذیرفته‌شده انجام نمی‌شود. Social Prediction Rooms، presence، private challenges، watchlist alerts و ZK fairness در این iteration به‌صورت mock یا local-only ساخته نمی‌شوند؛ ابتدا قرارداد محصول و زیرساخت آن‌ها باید تصویب شود.
+
+
+## Active Heartbeat
+
+| Job | Schedule | Callback | Task UID |
+|---|---|---|---|
+| `nexus-sport-alerts` | هر ۵ دقیقه، UTC | `/api/scheduled/processSportAlerts` | `SCUcNJ4GCkw5nZwGtmFG4j` |
+
+این job فقط اعلان‌های kickoff مربوط به مسابقات واقعی ذخیره‌شده در Watchlist را پردازش می‌کند. fixtureهای preview و دادهٔ ساختگی وارد inbox نمی‌شوند.
