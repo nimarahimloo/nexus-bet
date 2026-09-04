@@ -1178,3 +1178,8 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
   .crash-actions label { width: 100%; }
   .crash-balance { padding-inline: 8px; }
 }
+
+.round-proof-details { display: inline-grid; gap: 4px; min-width: 82px; padding: 6px 8px; border-radius: 8px; color: var(--nexus-mint); background: rgba(95,226,208,.08); font: 800 10px "Manrope"; direction: ltr; }
+.round-proof-details summary { cursor: pointer; list-style: none; white-space: nowrap; }
+.round-proof-details summary::-webkit-details-marker { display: none; }
+.round-proof-details > small { max-width: 220px; color: #9c93a5; font: 500 8px "Manrope"; overflow-wrap: anywhere; }
