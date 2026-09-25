@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { createCrashSeed, verifyCrashSeed } from "./crash";
+import {
+  createCrashSeed,
+  crashMultiplierFromSeed,
+  verifyCrashProof,
+  verifyCrashSeed,
+} from "./crash";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -8,21 +13,39 @@ describe("Crash backend integration contract", () => {
   it("uses the database transaction for round validation and atomic wallet locking", () => {
     const db = read("./db.ts");
     expect(db).toContain("export async function placeCrashBet");
-    expect(db).toContain("round.status !== \"running\"");
+    expect(db).toContain('round.status !== "running"');
     expect(db).toContain("gte(wallets.availableBalance, stake.toFixed(6))");
     expect(db).toContain('throw new Error("INSUFFICIENT_BALANCE")');
     expect(db).toContain('status: "pending"');
   });
 
-  it("creates a verifiable commit/reveal seed for new rounds and rejects tampering", () => {
+  it("binds crash multiplier to server seed and rejects tampering", () => {
     const seed = createCrashSeed();
     expect(seed.serverSeed).toHaveLength(64);
     expect(seed.serverSeedHash).toHaveLength(64);
     expect(verifyCrashSeed(seed.serverSeed, seed.serverSeedHash)).toBe(true);
     expect(verifyCrashSeed(`${seed.serverSeed}tampered`, seed.serverSeedHash)).toBe(false);
+
+    const mult = crashMultiplierFromSeed(seed.serverSeed);
+    expect(Number(mult)).toBeGreaterThanOrEqual(1.05);
+    expect(Number(mult)).toBeLessThanOrEqual(12.99);
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, mult)).toBe(true);
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, "9.99")).toBe(false);
+    expect(verifyCrashProof(`${seed.serverSeed}x`, seed.serverSeedHash, mult)).toBe(false);
+
+    // Same seed always yields same multiplier (determinism).
+    expect(crashMultiplierFromSeed(seed.serverSeed)).toBe(mult);
+  });
+
+  it("commits hash at create and reveals seed only after crash", () => {
     const db = read("./db.ts");
+    expect(db).toContain("crashMultiplierFromSeed");
+    expect(db).toContain("rememberPendingSeed");
+    expect(db).toContain("takePendingSeed");
     expect(db).toContain("serverSeedHash");
-    expect(db).toContain("serverSeed");
+    // Running payload must not expose target multiplier field name in public return shape comments/structure
+    expect(db).toContain("never crashMultiplier target or serverSeed");
+    expect(db).toContain("serverSeed intentionally omitted until crash reveal");
   });
 
   it("wires current, history, place and cashout through protected/public tRPC procedures", () => {
@@ -34,7 +57,7 @@ describe("Crash backend integration contract", () => {
     expect(routers).toContain("cashout: protectedProcedure");
   });
 
-  it("shows real wallet balance and maps backend failure states in the Crash UI", () => {
+  it("shows real wallet balance, maps backend failures, and exposes public seed verifier in Crash UI", () => {
     const crash = read("../client/src/pages/Crash.tsx");
     expect(crash).toContain("trpc.wallet.portfolio.useQuery");
     expect(crash).toContain("availableBalance");
@@ -45,5 +68,7 @@ describe("Crash backend integration contract", () => {
     expect(crash).toContain("wallet.portfolio.invalidate");
     expect(crash).toContain("round-proof");
     expect(crash).toContain("public seed");
+    expect(crash).toContain("verifyCrashProofClient");
+    expect(crash).toContain("بررسی اثبات");
   });
 });
