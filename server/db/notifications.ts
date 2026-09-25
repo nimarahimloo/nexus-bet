@@ -69,7 +69,7 @@ export async function upsertSportAlertPreference(userId: number, input: { watchl
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   const watch = await db.select({ id: sportWatchlist.id }).from(sportWatchlist).where(and(eq(sportWatchlist.id, input.watchlistId), eq(sportWatchlist.userId, userId))).limit(1);
   if (!watch[0]) throw new Error("WATCHLIST_NOT_FOUND");
-  const existing = await db.select().from(sportAlertPreferences).where(and(eq(sportAlertPreferences.userId, userId), eq(sportAlertPreferences.watchlistId, input.alertType), eq(sportAlertPreferences.alertType, input.alertType))).limit(1);
+  const existing = await db.select().from(sportAlertPreferences).where(and(eq(sportAlertPreferences.userId, userId), eq(sportAlertPreferences.watchlistId, input.watchlistId), eq(sportAlertPreferences.alertType, input.alertType))).limit(1);
   if (existing[0]) {
     await db.update(sportAlertPreferences).set({ enabled: input.enabled ? 1 : 0, threshold: input.threshold == null ? null : input.threshold.toFixed(4), updatedAt: new Date() }).where(and(eq(sportAlertPreferences.id, existing[0].id), eq(sportAlertPreferences.userId, userId)));
     return { ...existing[0], enabled: input.enabled ? 1 : 0, threshold: input.threshold == null ? null : input.threshold.toFixed(4) };
