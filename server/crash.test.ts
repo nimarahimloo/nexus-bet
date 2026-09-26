@@ -9,9 +9,23 @@ import {
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
+/** Aggregate db layer after modular split under server/db/*. */
+const readDbLayer = () =>
+  [
+    read("./db.ts"),
+    read("./db/core.ts"),
+    read("./db/auth.ts"),
+    read("./db/wallet.ts"),
+    read("./db/bets.ts"),
+    read("./db/notifications.ts"),
+    read("./db/rewards.ts"),
+    read("./db/crash.ts"),
+    read("./db/misc.ts"),
+  ].join("\n");
+
 describe("Crash backend integration contract", () => {
   it("uses the database transaction for round validation and atomic wallet locking", () => {
-    const db = read("./db.ts");
+    const db = readDbLayer();
     expect(db).toContain("export async function placeCrashBet");
     expect(db).toContain('round.status !== "running"');
     expect(db).toContain("gte(wallets.availableBalance, stake.toFixed(6))");
@@ -38,7 +52,7 @@ describe("Crash backend integration contract", () => {
   });
 
   it("commits hash at create and reveals seed only after crash", () => {
-    const db = read("./db.ts");
+    const db = readDbLayer();
     expect(db).toContain("crashMultiplierFromSeed");
     expect(db).toContain("rememberPendingSeed");
     expect(db).toContain("takePendingSeed");
@@ -46,6 +60,8 @@ describe("Crash backend integration contract", () => {
     // Running payload must not expose target multiplier field name in public return shape comments/structure
     expect(db).toContain("never crashMultiplier target or serverSeed");
     expect(db).toContain("serverSeed intentionally omitted until crash reveal");
+    // Seed is persisted so proof survives process restart, but still omitted from public running return
+    expect(db).toContain("serverSeed,");
   });
 
   it("wires current, history, place and cashout through protected/public tRPC procedures", () => {
