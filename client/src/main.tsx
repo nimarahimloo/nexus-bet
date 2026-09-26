@@ -9,6 +9,7 @@ import "./index.css";
 import "./ui-polish.css";
 import "./ui-micro.css";
 import "./ui-responsive.css";
+import "./ui-touch.css";
 
 const queryClient = new QueryClient();
 

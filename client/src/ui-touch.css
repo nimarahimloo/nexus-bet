@@ -1,0 +1,164 @@
+/**
+ * Mobile touch interactions — Nexus Bet
+ * Refs: design-research (44px), research_sportsbook_ux (large targets, docked slip)
+ */
+
+/* Kill 300ms tap delay + grey flash on WebKit */
+button,
+a,
+[role="button"],
+.nav-link,
+.odds-button,
+.odds-btn,
+.market-row button,
+.login-button,
+.primary-cta,
+.ticket-button,
+.sheet-submit,
+.auth-submit,
+.icon-button,
+.mobile-bottom-nav a,
+.mobile-slip-trigger,
+.support-launcher,
+.filter-row button,
+.league-filter-pills button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Inputs still need text selection / pan */
+input,
+textarea,
+select {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(155, 92, 255, 0.15);
+  font-size: 16px; /* iOS: avoid auto-zoom on focus */
+}
+
+/* Horizontal chip rows: pan-x only so vertical page scroll stays smooth */
+.filter-row,
+.league-filter-pills,
+.tournament-tabs,
+.feature-filter-row,
+.casino-filters {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Minimum hit area 44×44 (Apple HIG / design-research) */
+@media (max-width: 720px) {
+  .odds-button,
+  .odds-btn,
+  .market-row button,
+  .match-markets button,
+  .login-button,
+  .primary-cta,
+  .ticket-button,
+  .sheet-submit,
+  .auth-submit,
+  .icon-button,
+  .outline-cta,
+  .mobile-slip-trigger,
+  .support-launcher {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .mobile-bottom-nav a {
+    min-height: 48px !important;
+    min-width: 44px !important;
+  }
+
+  /* Expand hit area for tiny icon-only controls without changing visual size much */
+  .modal-close,
+  .overlay-close,
+  .sheet-selection button,
+  .prediction-sheet-head button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-grid !important;
+    place-items: center !important;
+  }
+
+  /* Sticky hover on touch devices: force rest state after tap */
+  .match-card:hover,
+  .feature-hub-card:hover,
+  .offer-card:hover,
+  .game-card:hover {
+    transform: none;
+  }
+
+  /* Press is the real feedback on touch */
+  .odds-button:active,
+  .odds-btn:active,
+  .market-row button:active,
+  .login-button:active,
+  .primary-cta:active,
+  .ticket-button:active,
+  .sheet-submit:active,
+  .mobile-bottom-nav a:active {
+    transform: scale(0.97) !important;
+    opacity: 0.92;
+  }
+}
+
+/* Only apply hover lift when a real mouse is present */
+@media (hover: none), (pointer: coarse) {
+  .match-card:hover,
+  .feature-hub-card:hover,
+  .offer-card:hover,
+  .game-card:hover,
+  .nav-link:hover {
+    transform: none !important;
+  }
+}
+
+/* Overlay layers: full-screen touch targets for dismiss */
+.bet-sheet-layer,
+.overlay-backdrop,
+.auth-backdrop,
+.mobile-nav-backdrop {
+  touch-action: none; /* prevent scroll bleed under modal */
+}
+
+.bet-sheet,
+.auth-modal,
+.more-nav-drawer {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sheet grab handle — clearer affordance */
+.sheet-handle {
+  width: 40px !important;
+  height: 4px !important;
+  margin: 6px auto 10px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.28) !important;
+  flex-shrink: 0;
+}
+
+/* Prevent double-tap zoom on rapid odds taps (with viewport max-scale still primary) */
+.market-row,
+.match-markets {
+  touch-action: manipulation;
+}
+
+/* Scrollable sheet body on small screens */
+@media (max-width: 720px) {
+  .bet-sheet {
+    max-height: min(85dvh, calc(100dvh - 80px)) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .sheet-submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-top: 12px;
+  }
+}
