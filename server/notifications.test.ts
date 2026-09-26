@@ -14,7 +14,7 @@ describe("custom notifications contract", () => {
   });
 
   it("creates a user-scoped notification as part of successful bet placement", () => {
-    const db = read("./db.ts");
+    const db = read("./db/bets.ts");
     expect(db).toContain("tx.insert(notifications).values");
     expect(db).toContain('type: "bet"');
     expect(db).toContain('href: "/account"');

@@ -29,7 +29,7 @@ describe("platform truth and UI consolidation", () => {
   it("keeps the lucky wheel operational and backend-driven", () => {
     const featurePages = read("../client/src/pages/FeaturePages.tsx");
     const routers = read("./routers.ts");
-    const db = read("./db.ts");
+    const db = read("./db/rewards.ts");
     expect(featurePages).toContain("trpc.rewards.spin.useMutation");
     expect(featurePages).toContain("trpc.rewards.history.useQuery");
     expect(routers).toContain("rewards: router");

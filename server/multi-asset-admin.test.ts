@@ -6,7 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 describe("multi-asset and admin contracts", () => {
   it("keeps the asset catalog and wallet identity currency-scoped", () => {
     const schema = read("../drizzle/schema.ts");
-    const db = read("./db.ts");
+    const db = read("./db/wallet.ts");
     const wallet = read("../client/src/components/MultiAssetWallet.tsx");
     expect(schema).toContain("export const supportedAssets");
     expect(schema).toContain("userCurrencyUnique");

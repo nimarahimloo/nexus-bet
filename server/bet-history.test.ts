@@ -5,7 +5,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 
 describe("betting history contract", () => {
   it("uses the protected backend overview and preserves real bet fields", () => {
-    const db = read("./db.ts");
+    const db = read("./db/bets.ts");
     const routers = read("./routers.ts");
     expect(db).toContain("export async function getUserBets");
     expect(db).toContain("selectionsJson");
