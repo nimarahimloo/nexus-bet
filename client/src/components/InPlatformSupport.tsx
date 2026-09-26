@@ -17,7 +17,7 @@ export function InPlatformSupport({ open, onClose }: { open: boolean; onClose: (
     return () => window.removeEventListener("nexus:ai-context", onContext);
   }, []);
   const chatMutation = trpc.support.chat.useMutation({
-    onSuccess: (result) => setMessages((current) => [...current, { role: "assistant", content: result.content }]),
+    onSuccess: (result) => setMessages((current) => [...current, { role: "assistant", content: result.reply }]),
     onError: () => setMessages((current) => [...current, { role: "assistant", content: "اتصال به پشتیبانی هوشمند در این لحظه برقرار نشد. پیام قبلی حفظ شده است؛ دوباره تلاش کن." }]),
   });
   if (!open) return null;

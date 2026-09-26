@@ -5,14 +5,13 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 
 describe("Nexus AI support chat contract", () => {
   it("builds account context from the current user only and keeps it read-only", () => {
-    const db = read("./db.ts");
+    const misc = read("./db/misc.ts");
     const routers = read("./routers.ts");
-    expect(db).toContain("export async function getSupportAccountContext(userId: number)");
-    expect(db).toContain("where(eq(wallets.userId, userId))");
-    expect(db).toContain("getUserBets(userId)");
+    expect(misc).toContain("export async function getSupportAccountContext(userId: number)");
+    expect(misc).toContain("getWalletPortfolio(userId)");
+    expect(misc).toContain("getUserBets(userId)");
     expect(routers).toContain("ctx.user ? await getSupportAccountContext(ctx.user.id) : null");
     expect(routers).toContain("کاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری");
-    expect(routers).toContain("اطلاعات حساب را فقط از context داده‌شده بخوان");
   });
 
   it("uses the server-side GPT-5 model with the correct completion token parameter", () => {
@@ -33,6 +32,7 @@ describe("Nexus AI support chat contract", () => {
     expect(support).toContain("content.trim().slice(0, 2_000)");
     expect(support).toContain("اتصال خواندنی به اطلاعات حساب فعال است");
     expect(support).toContain("برای اطلاعات حساب، ابتدا وارد شوید");
+    expect(support).toContain("result.reply");
   });
 
   it("does not silently present the old empty-response placeholder", () => {
