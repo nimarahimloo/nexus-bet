@@ -15,6 +15,7 @@ export async function getActiveCrashRound(now = new Date()) {
   const target = Number(round.crashMultiplier);
   const current = multiplierAt(round.startedAt, now);
   if (current >= target) {
+    // Prefer in-process buffer; fall back to DB seed so proof survives process restart.
     const revealedSeed = takePendingSeed(round.id) ?? round.serverSeed ?? null;
     await db.update(crashRounds).set({
       status: "crashed",
@@ -32,6 +33,7 @@ export async function getActiveCrashRound(now = new Date()) {
       currentMultiplier: target,
     };
   }
+  // Public running payload: never crashMultiplier target or serverSeed
   return {
     id: round.id,
     roundCode: round.roundCode,
@@ -49,10 +51,12 @@ export async function createCrashRound() {
   if (existing?.status === "running") return existing;
   const { serverSeed, serverSeedHash } = createCrashSeed();
   const crashMultiplier = crashMultiplierFromSeed(serverSeed);
+  // Persist seed in DB so reveal survives process restart. Public API never returns it while running.
   const inserted = await db.insert(crashRounds).values({
     roundCode: `CR-${randomUUID().replace(/-/g, "").slice(0, 16).toUpperCase()}`,
     crashMultiplier,
     serverSeedHash,
+    serverSeed,
     status: "running",
   });
   const id = Number(inserted[0].insertId);
@@ -123,7 +127,12 @@ export async function cashoutCrashBet(userId: number, crashBetId: number) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   return db.transaction(async (tx) => {
-    const rows = await tx.select({ bet: crashBets, round: crashRounds }).from(crashBets).innerJoin(crashRounds, eq(crashBets.roundId, crashRounds.id)).where(and(eq(crashBets.id, crashBetId), eq(crashBets.userId, userId)));
+    const rows = await tx
+      .select({ bet: crashBets, round: crashRounds })
+      .from(crashBets)
+      .innerJoin(crashRounds, eq(crashBets.roundId, crashRounds.id))
+      .where(and(eq(crashBets.id, crashBetId), eq(crashBets.userId, userId)))
+      .limit(1);
     const row = rows[0];
     if (!row || row.bet.status !== "pending") throw new Error("BET_CLOSED");
     const current = multiplierAt(row.round.startedAt);
