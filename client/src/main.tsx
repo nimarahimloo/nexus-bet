@@ -8,6 +8,7 @@ import App from "./App";
 import "./index.css";
 import "./ui-polish.css";
 import "./ui-micro.css";
+import "./ui-responsive.css";
 
 const queryClient = new QueryClient();
 
