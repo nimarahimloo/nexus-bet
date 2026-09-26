@@ -2,32 +2,29 @@
 
 | Domain | Current backend source | Current UI surface | Blueprint status | Next safe increment |
 |---|---|---|---|---|
-| Foundation | auth, wallets, bets, crash rounds, wallet transactions | auth modal, wallet, bet sheet, Crash | Partially operational | NOWPayments credentials and sandbox verification |
-| Sports Core | sports feed adapters and details mapper | Matches, filters, details modal | Operational with truthful fallback | Extend match-scoped insights and watchlist only when persistence is added |
-| Crash & Games | crash round/bet lifecycle, wallet locks, settlement | Crash page + public seed verifier | Operational; seed persisted for restart-safe proof; contract tests cover modular db | Optional encrypt-at-rest for running seeds; server lifecycle integration tests with DB |
-| Intelligence | smartPicks and support chat through internal LLM | Home AI picks, AI page, support widget, match modal | Partially operational | Add account-safe bankroll explanations; never present guaranteed outcomes |
-| Social | no persistent rooms/challenges/presence model | none | Not started | Requires product rules, moderation, privacy, and real-time backend decision |
-| Loyalty | VIP activity, reward wheel, activity ledger | VIP, Rewards | Operational for existing ledger | Add streak/achievement only with explicit ledger schema and policy |
-| Trust | responsible play and source labels | shared shell and route states | Partially operational | Audit trail / ops logs; no decorative trust copy |
-| Experience | shared shell, responsive spacing, bottom sheets | all main routes | Operational baseline | Add gesture interactions only after preserving keyboard/accessibility paths |
+| Foundation | auth, wallets, bets, crash, NOWPayments settle path | auth modal, wallet, bet sheet, Crash | Code-complete for provider; **secrets still required** | Supply NOWPayments + APP_PUBLIC_URL + DB; sandbox smoke |
+| Sports Core | sports feed adapters and details mapper | Matches, filters, details modal | Operational with truthful fallback | SPORTS_API_KEY for live source |
+| Crash & Games | seed-bound rounds, wallet locks, public verifier | Crash page | Operational; restart-safe seed | Optional encrypt-at-rest for running seeds |
+| Intelligence | smartPicks / support LLM | Home AI, support | Partially operational | Account-safe explanations only |
+| Social | none | none | Deferred | Product + persistence decision |
+| Loyalty | VIP, wheel, activity ledger | VIP, Rewards | Operational for ledger | Policy for real rewards only with provider |
+| Trust | responsible play, source labels, health | shell + `/api/health` | Operational baseline | Ops logs as needed |
+| Experience | shell, spacing, bottom sheets | main routes | Operational | Accessibility before gestures |
 
-## Data model decisions
+## Payment path (code ready)
 
-مسابقات، odds، موجودی، bet، round و تراکنش فقط از backend یا provider مجاز وارد UI می‌شوند. presence، social rooms، alerts و private challenges تا زمان تعریف persistence و privacy policy نباید با شمارنده یا دادهٔ نمونه شبیه‌سازی شوند. برای Crashهای جدید `serverSeedHash` قبل از شروع commit می‌شود؛ `serverSeed` در DB ذخیره می‌شود تا پس از ریستارت پروسس قابل reveal باشد، اما در API عمومی تا وضعیت crashed برنمی‌گردد. ستون‌ها برای roundهای legacy nullable هستند.
+1. `wallet.request` → ledger pending + NOWPayments payment/payout when credentials exist
+2. IPN `/api/payments/nowpayments/ipn` verifies HMAC → atomic `settleWalletProviderTransaction`
+3. Without credentials, mutations stay `SERVICE_UNAVAILABLE` (no fake pending money)
 
-## Dependency order
+See `docs/GO_LIVE.md` and `.env.example`.
 
-اول Foundation و صحت ledger، سپس sports/crash data contracts، سپس intelligence و در ادامه social/loyalty enhancements. هر قابلیت پرداختی به credential امن و sandbox smoke وابسته است. هر قابلیت social به مدل داده، authorization، rate-limit، moderation و تصمیم محصول دربارهٔ real-time transport وابسته است.
+## Explicitly deferred
 
-## Explicitly deferred items
-
-فعال‌سازی invoice/payout و settlement واقعی NOWPayments بدون secrets پذیرفته‌شده انجام نمی‌شود. Social Prediction Rooms، presence، private challenges، watchlist alerts و ZK fairness در این iteration به‌صورت mock یا local-only ساخته نمی‌شوند؛ ابتدا قرارداد محصول و زیرساخت آن‌ها باید تصویب شود.
-
+Social rooms, presence, private challenges, ZK fairness without product decision. Real-money claim only after sandbox verification.
 
 ## Active Heartbeat
 
 | Job | Schedule | Callback | Task UID |
 |---|---|---|---|
-| `nexus-sport-alerts` | هر ۵ دقیقه، UTC | `/api/scheduled/processSportAlerts` | `SCUcNJ4GCkw5nZwGtmFG4j` |
-
-این job فقط اعلان‌های kickoff مربوط به مسابقات واقعی ذخیره‌شده در Watchlist را پردازش می‌کند. fixtureهای preview و دادهٔ ساختگی وارد inbox نمی‌شوند.
+| `nexus-sport-alerts` | every 5 min UTC | `/api/scheduled/processSportAlerts` | `SCUcNJ4GCkw5nZwGtmFG4j` |
