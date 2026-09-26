@@ -1,5 +1,5 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
-import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, sportAlertPreferences, sportWatchlist, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../../drizzle/schema";
+import { activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, sportAlertPreferences, sportWatchlist, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "../wheel";
 import { randomUUID } from "node:crypto";
 import { createCrashSeed, crashMultiplierFromSeed, isCrashed, multiplierAt, rememberPendingSeed, takePendingSeed } from "../crash";
@@ -13,6 +13,19 @@ function parseNetworks(networksJson: string): string[] {
   } catch {
     return [];
   }
+}
+
+/** Stable order_id sent to NOWPayments so IPN can resolve the ledger row. */
+export function walletOrderId(transactionId: number) {
+  return `wallet-${transactionId}`;
+}
+
+export function parseWalletOrderId(orderId: string | undefined): number | null {
+  if (!orderId) return null;
+  const match = /^wallet-(\d+)$/.exec(orderId.trim());
+  if (!match) return null;
+  const id = Number(match[1]);
+  return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 export async function getActiveAssets() {
@@ -40,6 +53,24 @@ export async function getWalletTransactions(userId: number) {
   return rows.map((row) => ({ ...row, amount: Number(row.amount) }));
 }
 
+export async function getWalletTransactionById(transactionId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(walletTransactions).where(eq(walletTransactions.id, transactionId)).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function getWalletTransactionByProviderEvent(provider: string, providerEventId: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db
+    .select()
+    .from(walletTransactions)
+    .where(and(eq(walletTransactions.provider, provider), eq(walletTransactions.providerEventId, providerEventId)))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 export async function requestWalletTransaction(input: { userId: number; type: "deposit" | "withdrawal"; amount: number; currency?: string; network?: string; address?: string }) {
   if (!Number.isFinite(input.amount) || input.amount <= 0) throw new Error("INVALID_AMOUNT");
   const db = await getDb();
@@ -48,12 +79,26 @@ export async function requestWalletTransaction(input: { userId: number; type: "d
   return db.transaction(async (tx) => {
     const assets = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, currency), eq(supportedAssets.status, "active"))).limit(1);
     if (!assets[0]) throw new Error("UNSUPPORTED_CURRENCY");
+    // Ensure wallet row exists before deposit credit or withdrawal lock.
+    await tx.insert(wallets).values({ userId: input.userId, currency }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
     if (input.type === "withdrawal") {
+      if (!input.address?.trim()) throw new Error("WITHDRAWAL_ADDRESS_REQUIRED");
       const updated = await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} - ${input.amount}`, lockedBalance: sql`${wallets.lockedBalance} + ${input.amount}`, updatedAt: new Date() }).where(and(eq(wallets.userId, input.userId), eq(wallets.currency, currency), gte(wallets.availableBalance, input.amount.toFixed(6))));
       if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
     }
-    const inserted = await tx.insert(walletTransactions).values({ userId: input.userId, type: input.type, status: "pending", currency, amount: input.amount.toFixed(6), network: input.network, address: input.address });
-    return { id: Number(inserted[0].insertId), type: input.type, status: "pending" as const, currency, amount: input.amount };
+    const inserted = await tx.insert(walletTransactions).values({
+      userId: input.userId,
+      type: input.type,
+      status: "pending",
+      currency,
+      amount: input.amount.toFixed(6),
+      network: input.network ?? "BEP20",
+      address: input.address,
+      referenceId: walletOrderId(0), // placeholder; rewritten after insertId known
+    });
+    const id = Number(inserted[0].insertId);
+    await tx.update(walletTransactions).set({ referenceId: walletOrderId(id) }).where(eq(walletTransactions.id, id));
+    return { id, type: input.type, status: "pending" as const, currency, amount: input.amount, orderId: walletOrderId(id) };
   });
 }
 
@@ -64,7 +109,18 @@ export async function attachWalletProviderTransaction(input: { transactionId: nu
   return Number(result[0]?.affectedRows) > 0;
 }
 
-export async function settleWalletProviderTransaction(input: { transactionId: number; status: "confirmed" | "failed"; provider: string; providerEventId: string; providerStatus: string; providerCurrency?: string; providerNetwork?: string; providerAmount?: number; payloadJson?: string; txHash?: string }) {
+export async function settleWalletProviderTransaction(input: {
+  transactionId: number;
+  status: "confirmed" | "failed";
+  provider: string;
+  providerEventId: string;
+  providerStatus: string;
+  providerCurrency?: string;
+  providerNetwork?: string;
+  providerAmount?: number;
+  payloadJson?: string;
+  txHash?: string;
+}) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   return db.transaction(async (tx) => {
@@ -78,15 +134,35 @@ export async function settleWalletProviderTransaction(input: { transactionId: nu
     if (normalizedProviderCurrency && normalizedProviderCurrency !== transaction.currency) throw new Error("PROVIDER_CURRENCY_MISMATCH");
     if (input.providerNetwork && input.providerNetwork.toUpperCase() !== "BEP20") throw new Error("PROVIDER_NETWORK_MISMATCH");
     if (input.providerAmount !== undefined && Math.abs(input.providerAmount - amount) > 0.000001) throw new Error("PROVIDER_AMOUNT_MISMATCH");
+
+    await tx.insert(wallets).values({ userId: transaction.userId, currency: transaction.currency }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
+
     if (input.status === "confirmed" && transaction.type === "deposit") {
       await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${amount}`, updatedAt: new Date() }).where(and(eq(wallets.userId, transaction.userId), eq(wallets.currency, transaction.currency)));
     } else if (transaction.type === "withdrawal") {
-      const set = input.status === "confirmed" ? { lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() } : { availableBalance: sql`${wallets.availableBalance} + ${amount}`, lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() };
+      const set =
+        input.status === "confirmed"
+          ? { lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() }
+          : { availableBalance: sql`${wallets.availableBalance} + ${amount}`, lockedBalance: sql`${wallets.lockedBalance} - ${amount}`, updatedAt: new Date() };
       const updated = await tx.update(wallets).set(set).where(and(eq(wallets.userId, transaction.userId), eq(wallets.currency, transaction.currency), sql`${wallets.lockedBalance} >= ${amount.toFixed(6)}`));
       if (!Number(updated[0]?.affectedRows)) throw new Error("LOCKED_BALANCE_MISMATCH");
     }
-    await tx.update(walletTransactions).set({ status: input.status, provider: input.provider, providerEventId: input.providerEventId, providerStatus: input.providerStatus, providerPayloadJson: input.payloadJson, txHash: input.txHash, updatedAt: new Date() }).where(and(eq(walletTransactions.id, transaction.id), eq(walletTransactions.status, "pending")));
-    await tx.insert(notifications).values({ userId: transaction.userId, type: "wallet", title: "وضعیت کیف پول به‌روزرسانی شد", message: `درخواست ${transaction.type === "deposit" ? "واریز" : "برداشت"} ${amount.toFixed(6)} ${transaction.currency} اکنون ${input.status} است.`, href: "/wallet" });
+    await tx.update(walletTransactions).set({
+      status: input.status,
+      provider: input.provider,
+      providerEventId: input.providerEventId,
+      providerStatus: input.providerStatus,
+      providerPayloadJson: input.payloadJson,
+      txHash: input.txHash,
+      updatedAt: new Date(),
+    }).where(and(eq(walletTransactions.id, transaction.id), eq(walletTransactions.status, "pending")));
+    await tx.insert(notifications).values({
+      userId: transaction.userId,
+      type: "wallet",
+      title: "وضعیت کیف پول به‌روزرسانی شد",
+      message: `درخواست ${transaction.type === "deposit" ? "واریز" : "برداشت"} ${amount.toFixed(6)} ${transaction.currency} اکنون ${input.status === "confirmed" ? "تأیید" : "ناموفق"} است.`,
+      href: "/wallet",
+    });
     return { applied: true, status: input.status };
   });
 }
