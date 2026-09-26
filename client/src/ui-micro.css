@@ -1,0 +1,258 @@
+/**
+ * Nexus Bet micro-interactions
+ * product_design + design-research: short, predictable, reduced-motion safe
+ * Durations 120–220ms, transform/opacity only where possible.
+ */
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-press: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --dur-sheet: 220ms;
+}
+
+/* Shared interactive transition */
+.nav-link,
+.login-button,
+.icon-button,
+.primary-cta,
+.outline-cta,
+.solid-cta,
+.ticket-button,
+.auth-submit,
+.market-row button,
+.match-markets button,
+.odds-btn,
+.filter-row button,
+.league-filter-pills button,
+.tournament-tabs button,
+.mobile-bottom-nav a,
+.support-launcher,
+.match-card,
+.feature-hub-card,
+.offer-card,
+.game-card,
+.modal-close,
+.overlay-close {
+  transition:
+    transform var(--dur-fast) var(--ease-press),
+    background-color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    opacity var(--dur) var(--ease-out) !important;
+}
+
+/* Press feedback (thumb / mouse) */
+.login-button:active,
+.primary-cta:active,
+.ticket-button:active,
+.auth-submit:active,
+.icon-button:active,
+.market-row button:active,
+.match-markets button:active,
+.odds-btn:active,
+.filter-row button:active,
+.league-filter-pills button:active,
+.mobile-bottom-nav a:active,
+.support-launcher:active {
+  transform: scale(0.97) !important;
+}
+
+/* Focus-visible — always on keyboard */
+.login-button:focus-visible,
+.primary-cta:focus-visible,
+.ticket-button:focus-visible,
+.auth-submit:focus-visible,
+.icon-button:focus-visible,
+.nav-link:focus-visible,
+.market-row button:focus-visible,
+.odds-btn:focus-visible,
+.mobile-bottom-nav a:focus-visible,
+.auth-form input:focus-visible,
+.sheet-summary input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--nexus-mint, #5fe2d0) !important;
+  outline-offset: 2px !important;
+}
+
+/* Odds / market selection cue */
+.market-row button.is-selected,
+.market-row button[aria-pressed="true"],
+.odds-btn.is-selected,
+.odds-btn[aria-pressed="true"],
+.match-markets button.is-selected {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(92, 229, 209, 0.35), 0 6px 16px rgba(92, 229, 209, 0.12) !important;
+}
+
+/* Live pulse — mint status */
+.live-dot,
+.live-tag i,
+.status-live i,
+.support-status-dot {
+  position: relative;
+}
+.live-dot::after,
+.support-status-dot::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.55;
+  animation: nexus-pulse 1.6s var(--ease-out) infinite;
+}
+
+@keyframes nexus-pulse {
+  0% { transform: scale(0.85); opacity: 0.55; }
+  70% { transform: scale(1.55); opacity: 0; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+/* Bet sheet enter */
+.bet-sheet-layer {
+  animation: nexus-backdrop-in var(--dur-sheet) var(--ease-out) both;
+}
+.bet-sheet {
+  animation: nexus-sheet-up var(--dur-sheet) var(--ease-out) both;
+}
+.auth-backdrop {
+  animation: nexus-backdrop-in var(--dur-sheet) var(--ease-out) both;
+}
+.auth-modal {
+  animation: nexus-modal-up var(--dur-sheet) var(--ease-out) both;
+}
+
+@keyframes nexus-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes nexus-sheet-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes nexus-modal-up {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Selection row in slip — subtle appear */
+.sheet-selection {
+  animation: nexus-row-in var(--dur) var(--ease-out) both;
+}
+.sheet-selection:nth-child(2) { animation-delay: 40ms; }
+.sheet-selection:nth-child(3) { animation-delay: 80ms; }
+.sheet-selection:nth-child(4) { animation-delay: 120ms; }
+
+@keyframes nexus-row-in {
+  from { opacity: 0; transform: translateX(6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Success / error status in slip */
+.sheet-status,
+.sheet-success,
+.status-message {
+  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+.sheet-success,
+[data-status="success"] {
+  animation: nexus-row-in var(--dur) var(--ease-out) both;
+}
+
+/* Card hover lift — desktop only, subtle */
+@media (hover: hover) and (pointer: fine) {
+  .match-card:hover,
+  .feature-hub-card:hover,
+  .offer-card:hover,
+  .game-card:hover {
+    transform: translateY(-2px);
+  }
+  .match-card:active,
+  .feature-hub-card:active {
+    transform: translateY(0) scale(0.995);
+  }
+}
+
+/* Disabled controls */
+button:disabled,
+.ticket-button:disabled,
+.auth-submit:disabled,
+.primary-cta:disabled {
+  opacity: 0.45 !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Loading spinner already uses animate-spin — keep calm opacity */
+.auth-submit .animate-spin,
+.ticket-button .animate-spin {
+  opacity: 0.9;
+}
+
+/* Bottom nav active indicator */
+.mobile-bottom-nav a {
+  position: relative;
+}
+.mobile-bottom-nav a.is-active::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--nexus-violet, #9b5cff);
+  animation: nexus-row-in var(--dur-fast) var(--ease-out) both;
+}
+
+/* Reduced motion — hard stop */
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .login-button,
+  .icon-button,
+  .primary-cta,
+  .ticket-button,
+  .auth-submit,
+  .market-row button,
+  .odds-btn,
+  .match-card,
+  .feature-hub-card,
+  .offer-card,
+  .mobile-bottom-nav a,
+  .support-launcher {
+    transition: none !important;
+  }
+
+  .login-button:active,
+  .primary-cta:active,
+  .ticket-button:active,
+  .market-row button:active,
+  .odds-btn:active,
+  .mobile-bottom-nav a:active {
+    transform: none !important;
+  }
+
+  .live-dot::after,
+  .support-status-dot::after {
+    animation: none !important;
+  }
+
+  .bet-sheet-layer,
+  .bet-sheet,
+  .auth-backdrop,
+  .auth-modal,
+  .sheet-selection,
+  .sheet-success,
+  .mobile-bottom-nav a.is-active::before {
+    animation: none !important;
+  }
+
+  .match-card:hover,
+  .feature-hub-card:hover,
+  .offer-card:hover {
+    transform: none !important;
+  }
+}
