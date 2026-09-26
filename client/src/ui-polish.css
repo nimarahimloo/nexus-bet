@@ -1,83 +1,205 @@
 /**
- * Nexus Bet UI polish — loaded last. Overrides clutter without rewriting 180kb of legacy CSS.
- * Goals: clearer hierarchy, less chrome noise, better mobile density, honest auth UI.
+ * Nexus Bet — global UI/UX polish
+ * Source of truth: docs/spacing-system.md, product_design.md, design-research.md
+ * Loaded last from main.tsx so it wins over index.css + ios26.css conflicts.
  */
 
-/* Restore readable section labels (legacy hid them globally) */
+/* -------------------------------------------------------------------------- */
+/* 1. Token reassertion (4px scale from spacing-system.md)                    */
+/* -------------------------------------------------------------------------- */
+:root {
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 56px;
+  --space-13: 64px;
+  --space-14: 72px;
+  --space-15: 80px;
+
+  --space-page-inline: clamp(var(--space-4), 4vw, var(--space-10));
+  --space-page-block: clamp(var(--space-5), 4vw, var(--space-10));
+  --space-section: clamp(var(--space-6), 4vw, var(--space-11));
+  --space-section-compact: clamp(var(--space-4), 3vw, var(--space-7));
+  --space-card: clamp(var(--space-4), 2.4vw, var(--space-6));
+  --space-card-compact: clamp(var(--space-3), 2vw, var(--space-5));
+  --space-control: var(--space-2);
+  --space-control-lg: var(--space-3);
+  --space-inline: var(--space-2);
+  --space-stack: var(--space-4);
+
+  --touch-target: 44px;
+  --nexus-radius: 18px;
+  --nexus-radius-lg: 22px;
+  --nexus-radius-sm: 12px;
+
+  --nexus-bg: #08070d;
+  --nexus-ink: #f4f1fa;
+  --nexus-muted: #a59cb8;
+  --nexus-violet: #9b5cff;
+  --nexus-violet-deep: #6d3ad4;
+  --nexus-cyan: #5ce5d1;
+  --nexus-mint: #5fe2d0;
+  --nexus-glass: rgba(26, 20, 40, 0.72);
+  --nexus-glass-strong: rgba(22, 16, 34, 0.88);
+  --nexus-stroke: rgba(255, 255, 255, 0.11);
+  --nexus-stroke-soft: rgba(255, 255, 255, 0.07);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Global base                                                             */
+/* -------------------------------------------------------------------------- */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--nexus-bg) !important;
+  color: var(--nexus-ink) !important;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 0;
+}
+button:not(.icon-button):not(.overlay-close):not(.nav-link),
+.primary-cta,
+.ticket-button,
+.auth-submit,
+.login-button {
+  min-height: var(--touch-target);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Shell + page rhythm                                                     */
+/* -------------------------------------------------------------------------- */
+.nexus-shell {
+  min-height: 100dvh !important;
+  padding-top: var(--space-3) !important;
+  padding-bottom: calc(var(--space-11) + env(safe-area-inset-bottom, 0px)) !important;
+  background:
+    radial-gradient(ellipse 70% 45% at 92% -8%, rgba(140, 80, 255, 0.12), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 85%, rgba(60, 200, 180, 0.05), transparent 50%),
+    var(--nexus-bg) !important;
+  overflow-x: hidden !important;
+}
+.nexus-shell::before {
+  opacity: 0.08 !important;
+}
+
+.container {
+  width: min(1100px, calc(100% - (var(--space-page-inline) * 2))) !important;
+  margin-inline: auto !important;
+}
+
+.space-stack { display: grid; gap: var(--space-stack); }
+.space-stack-compact { display: grid; gap: var(--space-3); }
+.space-inline { display: flex; align-items: center; gap: var(--space-inline); }
+.space-section { margin-block: var(--space-section); }
+.space-page {
+  padding-inline: var(--space-page-inline);
+  padding-block: var(--space-page-block);
+}
+.space-card { padding: var(--space-card); }
+
+/* Section titles — product_design: short headings, scannable */
 .section-kicker,
 .eyebrow {
   display: inline-flex !important;
   align-items: center;
-  gap: 6px;
-  color: var(--nexus-mint, #5fe2d0) !important;
+  gap: var(--space-2);
+  color: var(--nexus-cyan) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.04em;
-  opacity: 0.95;
+  letter-spacing: 0.03em;
 }
-
-/* Context AI strip was pure noise on every page */
 .context-ai-strip {
   display: none !important;
 }
 
-/* Shell: tighter, calmer background */
-.nexus-shell {
-  padding-top: 12px !important;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
-  background:
-    radial-gradient(ellipse 80% 50% at 90% -10%, rgba(140, 80, 255, 0.14), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(60, 200, 180, 0.06), transparent 45%),
-    #08070d !important;
-}
-.nexus-shell::before {
-  opacity: 0.12 !important;
+section[class*="section"],
+.feature-hub,
+.live-center,
+.ai-section,
+.matches-section {
+  margin-block: var(--space-section-compact) !important;
 }
 
-.container {
-  width: min(1120px, calc(100% - 28px)) !important;
+h1, h2, h3 {
+  color: var(--nexus-ink);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-size: clamp(1.15rem, 2.5vw, 1.4rem) !important;
+  margin: 0 0 var(--space-3) !important;
+  font-weight: 700 !important;
+}
+h3 {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
 }
 
-/* Topbar: one clear bar, less chrome */
+/* -------------------------------------------------------------------------- */
+/* 4. Topbar — low chrome, one task (reference-redesign-notes)                */
+/* -------------------------------------------------------------------------- */
 .topbar {
-  width: min(1120px, calc(100% - 20px)) !important;
+  width: min(1100px, calc(100% - var(--space-4))) !important;
   min-height: 56px !important;
-  padding: 8px 10px 8px 14px !important;
-  border-radius: 18px !important;
-  background: rgba(18, 14, 28, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(24px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  margin-inline: auto !important;
+  padding: var(--space-2) var(--space-3) !important;
+  border-radius: var(--nexus-radius) !important;
+  background: var(--nexus-glass-strong) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  backdrop-filter: blur(20px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32) !important;
+  z-index: 40 !important;
 }
 
-.brand b {
-  font-size: 14px !important;
-  letter-spacing: 0.06em !important;
-}
-.brand small {
-  font-size: 9px !important;
-  opacity: 0.55;
+.brand {
+  gap: var(--space-2) !important;
 }
 .brand-mark {
   width: 32px !important;
   height: 32px !important;
   border-radius: 10px !important;
+  overflow: hidden;
 }
 .brand-mark img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: inherit;
+}
+.brand b {
+  font-size: 14px !important;
+  letter-spacing: 0.04em !important;
+}
+.brand small {
+  font-size: 9px !important;
+  color: var(--nexus-cyan) !important;
+  opacity: 0.8;
 }
 
 .nav-link {
+  min-height: 40px !important;
+  padding: 0 var(--space-3) !important;
+  border-radius: var(--nexus-radius-sm) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
-  padding: 8px 12px !important;
-  border-radius: 12px !important;
-  color: rgba(230, 224, 245, 0.72) !important;
-  transition: color 0.15s ease, background 0.15s ease !important;
+  color: rgba(230, 224, 245, 0.7) !important;
 }
 .nav-link:hover {
   color: #fff !important;
@@ -85,219 +207,553 @@
 }
 .nav-link.is-active {
   color: #fff !important;
-  background: rgba(137, 59, 255, 0.22) !important;
+  background: rgba(155, 92, 255, 0.22) !important;
 }
 
 .login-button {
-  height: 36px !important;
-  padding: 0 14px !important;
-  border-radius: 12px !important;
-  font-size: 12.5px !important;
+  min-height: var(--touch-target) !important;
+  height: auto !important;
+  padding: 0 var(--space-4) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
+  background: linear-gradient(135deg, var(--nexus-violet), var(--nexus-violet-deep)) !important;
+  box-shadow: 0 6px 16px rgba(120, 70, 221, 0.25) !important;
   border: 0 !important;
-  background: linear-gradient(135deg, #9b5cff, #6d3ad4) !important;
-  box-shadow: 0 6px 18px rgba(120, 70, 221, 0.28) !important;
+  gap: var(--space-2) !important;
 }
 .login-button.is-user {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
   box-shadow: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid var(--nexus-stroke) !important;
 }
 
 .icon-button {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 12px !important;
+  width: var(--touch-target) !important;
+  height: var(--touch-target) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
 }
 
-/* Glass cards: less muddy, clearer border */
+/* -------------------------------------------------------------------------- */
+/* 5. Glass hierarchy — material for elevation, not decoration                */
+/* -------------------------------------------------------------------------- */
 .glass-panel {
-  background: rgba(26, 20, 40, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  background: var(--nexus-glass) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  border-radius: var(--nexus-radius) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(16px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
 }
 
-/* Hero: readable scale */
+/* Secondary surfaces: flatter, less blur (design-research Liquid Glass) */
+.match-card,
+.offer-card,
+.game-card,
+.feature-hub-card,
+.standalone-card,
+.ai-pick,
+.account-card,
+.wallet-row,
+.crash-history-item {
+  background: rgba(28, 22, 42, 0.55) !important;
+  border: 1px solid var(--nexus-stroke-soft) !important;
+  border-radius: var(--nexus-radius) !important;
+  padding: var(--space-card) !important;
+  box-shadow: none !important;
+}
+
+.match-card:hover,
+.feature-hub-card:hover,
+.offer-card:hover {
+  border-color: rgba(155, 92, 255, 0.35) !important;
+  background: rgba(36, 28, 52, 0.7) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. Home hero                                                               */
+/* -------------------------------------------------------------------------- */
 .hero {
-  gap: 40px !important;
-  padding-top: 40px !important;
-  padding-bottom: 36px !important;
+  display: grid !important;
+  gap: var(--space-6) !important;
+  padding-top: var(--space-6) !important;
+  padding-bottom: var(--space-6) !important;
+  align-items: center !important;
 }
-.hero-copy h1 {
-  font-size: clamp(1.65rem, 4vw, 2.35rem) !important;
-  line-height: 1.25 !important;
-  letter-spacing: -0.02em !important;
-  margin: 10px 0 12px !important;
+.hero-copy h1,
+.hero h1 {
+  font-size: clamp(1.55rem, 4.2vw, 2.4rem) !important;
+  line-height: 1.2 !important;
+  margin: var(--space-3) 0 !important;
+  letter-spacing: -0.025em !important;
 }
-.hero-copy > p {
-  color: rgba(200, 192, 220, 0.78) !important;
+.hero-copy > p,
+.hero p {
+  max-width: 38ch !important;
+  color: var(--nexus-muted) !important;
   font-size: 14.5px !important;
   line-height: 1.75 !important;
-  max-width: 36ch;
+  margin: 0 0 var(--space-4) !important;
 }
 .primary-cta {
-  min-height: 44px !important;
+  min-height: var(--touch-target) !important;
+  padding: 0 var(--space-5) !important;
   border-radius: 14px !important;
   font-weight: 700 !important;
-  padding: 0 18px !important;
-  background: linear-gradient(135deg, #9b5cff, #6d3ad4) !important;
+  background: linear-gradient(135deg, var(--nexus-violet), var(--nexus-violet-deep)) !important;
+}
+.hero-trust {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--space-3) !important;
+  margin-top: var(--space-4) !important;
+  font-size: 11px !important;
+  color: var(--nexus-muted) !important;
+}
+.hero-score {
+  transform: none !important;
+  min-height: 0 !important;
+  border-radius: var(--nexus-radius-lg) !important;
+  padding: var(--space-card) !important;
 }
 
-/* Match cards / lists */
-.match-card,
-.ai-pick,
-.feature-strip,
-.live-center {
-  border-radius: 18px !important;
-}
-.match-card {
-  padding: 14px 16px !important;
+/* Feature hub grid */
+.feature-hub-grid,
+.standalone-grid,
+.offer-grid,
+.game-grid,
+.match-list,
+.content-grid {
+  display: grid !important;
+  gap: var(--space-3) !important;
 }
 
-/* Floating support: smaller, less aggressive */
-.support-launcher {
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
-  left: 12px !important;
-  right: auto !important;
-  min-height: 44px !important;
-  padding: 0 14px !important;
-  border-radius: 999px !important;
-  font-size: 12px !important;
-  gap: 8px !important;
-  background: rgba(28, 22, 42, 0.88) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
-  z-index: 40 !important;
+/* -------------------------------------------------------------------------- */
+/* 7. Matches — scannable sportsbook cards                                    */
+/* -------------------------------------------------------------------------- */
+.filter-row,
+.league-filter-pills,
+.tournament-tabs,
+.feature-filter-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: var(--space-2) !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-block: var(--space-2) var(--space-3) !important;
+  scrollbar-width: none;
 }
-.support-launcher span:last-child {
+.filter-row::-webkit-scrollbar,
+.league-filter-pills::-webkit-scrollbar {
   display: none;
 }
-@media (min-width: 900px) {
-  .support-launcher span:last-child {
-    display: inline;
-  }
-}
-
-/* Bottom nav: solid, touch-friendly */
-.mobile-bottom-nav {
-  left: 10px !important;
-  right: 10px !important;
-  bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
-  padding: 6px !important;
-  border-radius: 20px !important;
-  background: rgba(16, 12, 26, 0.92) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(20px) !important;
-  z-index: 50 !important;
-}
-.mobile-bottom-nav a {
-  min-height: 48px !important;
-  border-radius: 14px !important;
-  font-size: 10px !important;
+.filter-row button,
+.league-filter-pills button,
+.tournament-tabs button {
+  min-height: 36px !important;
+  padding: 0 var(--space-3) !important;
+  border-radius: 999px !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
-  color: rgba(200, 192, 220, 0.65) !important;
-  gap: 3px !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--nexus-muted) !important;
 }
-.mobile-bottom-nav a.is-active {
+.filter-row button.is-active,
+.league-filter-pills button.is-active,
+.tournament-tabs button.is-active,
+.filter-row button[aria-pressed="true"] {
   color: #fff !important;
-  background: rgba(137, 59, 255, 0.2) !important;
+  background: rgba(155, 92, 255, 0.25) !important;
+  border-color: rgba(155, 92, 255, 0.4) !important;
 }
 
-/* Auth modal: calmer, no fake social clutter */
+.match-card {
+  display: grid !important;
+  gap: var(--space-3) !important;
+}
+.market-row,
+.match-markets {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--space-2) !important;
+}
+.market-row button,
+.match-markets button,
+.odds-btn {
+  min-height: var(--touch-target) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  background: rgba(0, 0, 0, 0.22) !important;
+  color: var(--nexus-ink) !important;
+}
+.market-row button.is-selected,
+.odds-btn.is-selected,
+.market-row button[aria-pressed="true"] {
+  border-color: var(--nexus-cyan) !important;
+  background: rgba(92, 229, 209, 0.12) !important;
+  color: var(--nexus-cyan) !important;
+}
+
+.status-live,
+.live-tag {
+  color: var(--nexus-cyan) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. Bet slip / sheet                                                        */
+/* -------------------------------------------------------------------------- */
+.slip-card,
+.matches-desktop-slip,
+.bet-sheet,
+.mobile-bet-sheet {
+  padding: var(--space-card) !important;
+  border-radius: var(--nexus-radius-lg) !important;
+  background: var(--nexus-glass-strong) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+}
+.return-box {
+  padding: var(--space-3) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  background: rgba(92, 229, 209, 0.08) !important;
+  border: 1px solid rgba(92, 229, 209, 0.18) !important;
+}
+.ticket-button {
+  min-height: var(--touch-target) !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  background: var(--nexus-cyan) !important;
+  color: #0c1a19 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 9. Crash                                                                   */
+/* -------------------------------------------------------------------------- */
+.crash-board,
+.crash-panel {
+  padding: var(--space-card) !important;
+  border-radius: var(--nexus-radius-lg) !important;
+  background: var(--nexus-glass-strong) !important;
+}
+.crash-multiplier,
+.crash-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+}
+.crash-actions {
+  display: grid !important;
+  gap: var(--space-3) !important;
+}
+.crash-actions input,
+.crash-actions button {
+  min-height: var(--touch-target) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 10. Wallet + account                                                       */
+/* -------------------------------------------------------------------------- */
+.balance-hero,
+.account-summary,
+.wallet-hero {
+  padding: var(--space-card) !important;
+  border-radius: var(--nexus-radius-lg) !important;
+  background: var(--nexus-glass-strong) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+}
+.wallet-request-actions,
+.form-row,
+.button-row,
+.feature-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--space-control-lg) !important;
+}
+.wallet-request-actions button,
+.button-row button {
+  min-height: var(--touch-target) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  font-weight: 600 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 11. VIP / promotions / rewards / casino                                    */
+/* -------------------------------------------------------------------------- */
+.vip-level,
+.reward-wheel,
+.offer-card,
+.game-card {
+  padding: var(--space-card) !important;
+  border-radius: var(--nexus-radius) !important;
+}
+.progress-bar,
+.vip-progress {
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  overflow: hidden;
+}
+.progress-bar > span,
+.vip-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--nexus-violet), var(--nexus-cyan)) !important;
+  border-radius: inherit;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 12. Subpages                                                               */
+/* -------------------------------------------------------------------------- */
+.subpage-hero {
+  display: grid !important;
+  gap: var(--space-4) !important;
+  margin-bottom: var(--space-4) !important;
+  padding-top: var(--space-4) !important;
+}
+.subpage-hero h1 {
+  font-size: clamp(1.35rem, 3.2vw, 1.85rem) !important;
+  margin: var(--space-2) 0 !important;
+}
+.subpage-hero p {
+  color: var(--nexus-muted) !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  max-width: 48ch;
+}
+.subpage-art {
+  max-height: 140px !important;
+  overflow: hidden !important;
+  border-radius: var(--nexus-radius) !important;
+}
+.subpage-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.trust-bar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--space-3) !important;
+  margin-bottom: var(--space-4) !important;
+  font-size: 11px !important;
+  color: var(--nexus-muted) !important;
+  opacity: 0.85;
+}
+.back-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 12px !important;
+  color: var(--nexus-muted) !important;
+  margin-bottom: var(--space-2) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 13. Auth modal                                                             */
+/* -------------------------------------------------------------------------- */
 .auth-modal {
-  width: min(400px, calc(100vw - 32px)) !important;
-  padding: 22px 22px 20px !important;
-  border-radius: 24px !important;
-  background: rgba(22, 16, 34, 0.94) !important;
+  width: min(400px, calc(100vw - var(--space-6))) !important;
+  padding: var(--space-5) !important;
+  border-radius: var(--nexus-radius-lg) !important;
+  background: var(--nexus-glass-strong) !important;
 }
 .auth-modal h2 {
-  font-size: 22px !important;
-  margin: 8px 0 6px !important;
+  font-size: 1.35rem !important;
+  margin: var(--space-2) 0 !important;
 }
 .auth-modal > p {
   font-size: 13px !important;
-  line-height: 1.7 !important;
-  color: rgba(180, 172, 200, 0.85) !important;
+  color: var(--nexus-muted) !important;
+  line-height: 1.65 !important;
 }
-.auth-form label > span {
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: rgba(220, 214, 235, 0.85) !important;
+.auth-form {
+  display: grid !important;
+  gap: var(--space-3) !important;
+  margin-top: var(--space-4) !important;
 }
 .auth-form label > div {
-  min-height: 44px !important;
-  border-radius: 12px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  background: rgba(0, 0, 0, 0.25) !important;
+  min-height: var(--touch-target) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  background: rgba(0, 0, 0, 0.28) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--space-2) !important;
+  padding-inline: var(--space-3) !important;
 }
 .auth-form input {
+  flex: 1;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--nexus-ink) !important;
   font-size: 14px !important;
+  min-height: var(--touch-target) !important;
 }
 .auth-submit {
-  min-height: 46px !important;
+  min-height: var(--touch-target) !important;
   border-radius: 14px !important;
   font-weight: 700 !important;
-  background: linear-gradient(135deg, #9b5cff, #6d3ad4) !important;
+  background: linear-gradient(135deg, var(--nexus-violet), var(--nexus-violet-deep)) !important;
+  border: 0 !important;
+  color: #fff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-2) !important;
 }
 .auth-providers,
 .auth-divider {
   display: none !important;
 }
-.auth-preview-note {
-  display: block !important;
-  margin-top: 12px !important;
-  font-size: 11px !important;
-  line-height: 1.6 !important;
-  color: rgba(160, 150, 180, 0.75) !important;
-}
 .auth-switch {
-  margin-top: 14px !important;
-  gap: 10px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--space-3) !important;
+  margin-top: var(--space-4) !important;
   font-size: 13px !important;
 }
 .auth-switch button {
-  color: var(--nexus-mint, #5fe2d0) !important;
+  color: var(--nexus-cyan) !important;
   font-weight: 700 !important;
+  background: none !important;
+  border: 0 !important;
+  min-height: auto !important;
+  padding: 0 !important;
 }
-
-/* Subpage hero: less tall art, more content space */
-.subpage-hero {
-  gap: 20px !important;
-  margin-bottom: 16px !important;
-}
-.subpage-hero h1 {
-  font-size: clamp(1.4rem, 3.5vw, 1.9rem) !important;
-}
-.subpage-art {
-  max-height: 160px !important;
-  overflow: hidden !important;
-}
-.trust-bar {
+.auth-preview-note {
+  display: block !important;
+  margin-top: var(--space-3) !important;
   font-size: 11px !important;
-  opacity: 0.75;
-  margin-bottom: 12px !important;
+  color: var(--nexus-muted) !important;
+  line-height: 1.55 !important;
+}
+.auth-notice {
+  display: flex !important;
+  gap: var(--space-2) !important;
+  margin-top: var(--space-3) !important;
+  padding: var(--space-3) !important;
+  border-radius: var(--nexus-radius-sm) !important;
+  background: rgba(255, 80, 80, 0.08) !important;
+  border: 1px solid rgba(255, 120, 120, 0.2) !important;
+  font-size: 12px !important;
+  color: #ffb4b4 !important;
 }
 
-/* Reduce excessive motion on low-end */
-@media (prefers-reduced-motion: reduce) {
-  .nexus-shell,
-  .topbar,
-  .glass-panel {
-    transition: none !important;
-  }
+/* -------------------------------------------------------------------------- */
+/* 14. Bottom nav + support (design-research: thumb zone)                     */
+/* -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  position: fixed !important;
+  left: var(--space-3) !important;
+  right: var(--space-3) !important;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px)) !important;
+  display: flex !important;
+  gap: var(--space-1) !important;
+  padding: var(--space-1) !important;
+  border-radius: 20px !important;
+  background: rgba(14, 10, 22, 0.94) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  backdrop-filter: blur(18px) !important;
+  z-index: 50 !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4) !important;
+}
+.mobile-bottom-nav a {
+  flex: 1 !important;
+  min-height: 48px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: rgba(200, 192, 220, 0.6) !important;
+  text-decoration: none !important;
+}
+.mobile-bottom-nav a.is-active {
+  color: #fff !important;
+  background: rgba(155, 92, 255, 0.22) !important;
 }
 
+.support-launcher {
+  position: fixed !important;
+  left: var(--space-3) !important;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+  right: auto !important;
+  min-height: 44px !important;
+  padding: 0 var(--space-3) !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  gap: var(--space-2) !important;
+  background: var(--nexus-glass-strong) !important;
+  border: 1px solid var(--nexus-stroke) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+  z-index: 45 !important;
+  color: var(--nexus-ink) !important;
+}
+.support-launcher span:last-child {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 15. Responsive                                                             */
+/* -------------------------------------------------------------------------- */
 @media (max-width: 720px) {
+  :root {
+    --space-page-inline: var(--space-4);
+    --space-page-block: var(--space-5);
+    --space-section: var(--space-6);
+    --space-card: var(--space-4);
+  }
+
   .hero {
     grid-template-columns: 1fr !important;
-    gap: 20px !important;
-    padding-top: 24px !important;
+    padding-top: var(--space-4) !important;
+  }
+  .hero-score {
+    order: 2;
   }
   .main-nav {
-    /* drawer handles nav on small screens in existing CSS */
+    /* existing mobile drawer handles primary links */
   }
-  .login-button span.login-label-long {
-    display: none;
+  .subpage-hero {
+    grid-template-columns: 1fr !important;
+  }
+  .subpage-art {
+    max-height: 100px !important;
+  }
+  .market-row,
+  .match-markets {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    grid-template-columns: 1.1fr 0.9fr !important;
+  }
+  .support-launcher span:last-child {
+    display: inline;
+  }
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
