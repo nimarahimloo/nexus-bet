@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { createCrashSeed, crashMultiplierFromSeed, isCrashed, multiplierAt, rememberPendingSeed, takePendingSeed } from "../crash";
 import { ENV } from '../_core/env';
 import { getDb } from "./core";
+import { ensureBaseAssets } from "./ensureAssets";
 
 function parseNetworks(networksJson: string): string[] {
   try {
@@ -31,6 +32,7 @@ export function parseWalletOrderId(orderId: string | undefined): number | null {
 export async function getActiveAssets() {
   const db = await getDb();
   if (!db) return [];
+  await ensureBaseAssets();
   const rows = await db.select().from(supportedAssets).where(eq(supportedAssets.status, "active")).orderBy(desc(supportedAssets.isBase), supportedAssets.name);
   return rows.map(({ networksJson, ...asset }) => ({ ...asset, networks: parseNetworks(networksJson) }));
 }
@@ -77,9 +79,9 @@ export async function requestWalletTransaction(input: { userId: number; type: "d
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   const currency = input.currency?.trim().toUpperCase() || "USDT";
   return db.transaction(async (tx) => {
+    await ensureBaseAssets();
     const assets = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, currency), eq(supportedAssets.status, "active"))).limit(1);
     if (!assets[0]) throw new Error("UNSUPPORTED_CURRENCY");
-    // Ensure wallet row exists before deposit credit or withdrawal lock.
     await tx.insert(wallets).values({ userId: input.userId, currency }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
     if (input.type === "withdrawal") {
       if (!input.address?.trim()) throw new Error("WITHDRAWAL_ADDRESS_REQUIRED");
@@ -94,7 +96,7 @@ export async function requestWalletTransaction(input: { userId: number; type: "d
       amount: input.amount.toFixed(6),
       network: input.network ?? "BEP20",
       address: input.address,
-      referenceId: walletOrderId(0), // placeholder; rewritten after insertId known
+      referenceId: walletOrderId(0),
     });
     const id = Number(inserted[0].insertId);
     await tx.update(walletTransactions).set({ referenceId: walletOrderId(id) }).where(eq(walletTransactions.id, id));
@@ -175,6 +177,7 @@ export async function getOrCreateWalletByUserId(userId: number, currency = "USDT
   }
 
   const normalizedCurrency = currency.trim().toUpperCase();
+  await ensureBaseAssets();
   const assetRows = await db.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, normalizedCurrency), eq(supportedAssets.status, "active"))).limit(1);
   if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
   await db.insert(wallets).values({ userId, currency: normalizedCurrency }).onDuplicateKeyUpdate({
