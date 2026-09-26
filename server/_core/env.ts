@@ -12,4 +12,17 @@ export const ENV = {
   nowPaymentsIpnSecret: process.env.NOWPAYMENTS_IPN_SECRET ?? "",
   nowPaymentsPayoutWallet: process.env.NOWPAYMENTS_PAYOUT_WALLET_BEP20 ?? "",
   nowPaymentsPayoutAuthToken: process.env.NOWPAYMENTS_PAYOUT_AUTH_TOKEN ?? "",
+  /** Public base URL of this deployment (no trailing slash), used for IPN callbacks. */
+  appPublicUrl: process.env.APP_PUBLIC_URL ?? "",
 };
+
+/** Fail fast in production when critical secrets are missing. */
+export function assertProductionEnv() {
+  if (!ENV.isProduction) return;
+  const missing: string[] = [];
+  if (!ENV.cookieSecret.trim()) missing.push("JWT_SECRET");
+  if (!ENV.databaseUrl.trim()) missing.push("DATABASE_URL");
+  if (missing.length) {
+    throw new Error(`Production boot blocked: missing required env: ${missing.join(", ")}`);
+  }
+}

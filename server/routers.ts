@@ -3,18 +3,18 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, addSportWatchlist, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getSportAlertPreferences, getSportWatchlist, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, removeSportWatchlist, requestWalletTransaction, resetLocalPassword, spinLuckyWheel, touchLocalUser, upsertSportAlertPreference } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, addSportWatchlist, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getSportAlertPreferences, getSportWatchlist, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, removeSportWatchlist, resetLocalPassword, spinLuckyWheel, touchLocalUser, upsertSportAlertPreference } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import { ENV } from "./_core/env";
-import { type MatchCardData } from "../shared/sports";
 import { createAdminNotification, getAdminOverview, reviewAdminWalletTransaction, updateAdminAssetStatus, updateAdminGameStatus, updateAdminPromotionStatus, upsertAdminAsset } from "./adminDb";
 import { fetchSportsDetails } from "./sportsFeed";
 import { nowPaymentsReadiness } from "./nowpayments";
 import { fetchSportsUniverse, SPORTS_DIRECTORY } from "./multiSportsFeed";
 import { sdk } from "./_core/sdk";
-import { createResetCode, hashPassword, hashResetCode, normalizeUsername, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
+import { createResetCode, hashPassword, hashResetCode, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
+import { executeWalletProviderRequest, paymentProviderConfig } from "./walletPayments";
 
 const localAuthInput = z.object({ username: z.string().trim().min(3).max(32), password: z.string().min(8).max(128) });
 
@@ -34,7 +34,6 @@ async function createLocalSession(ctx: { req: any; res: any }, user: { openId: s
 }
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -75,9 +74,7 @@ export const appRouter = router({
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+      return { success: true } as const;
     }),
   }),
 
@@ -167,7 +164,7 @@ export const appRouter = router({
       currency: "USDT" as const,
       requiresLogin: !ctx.user,
     })),
-    providerStatus: publicProcedure.query(() => nowPaymentsReadiness({ apiKey: ENV.nowPaymentsApiKey, ipnSecret: ENV.nowPaymentsIpnSecret, payoutWallet: ENV.nowPaymentsPayoutWallet })),
+    providerStatus: publicProcedure.query(() => nowPaymentsReadiness(paymentProviderConfig())),
     me: protectedProcedure.input(z.object({ currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT") }).optional()).query(async ({ ctx, input }) => {
       const wallet = await getOrCreateWalletByUserId(ctx.user.id, input?.currency ?? "USDT");
       return wallet ? {
@@ -178,7 +175,13 @@ export const appRouter = router({
     }),
     portfolio: protectedProcedure.query(({ ctx }) => getWalletPortfolio(ctx.user.id)),
     transactions: protectedProcedure.query(({ ctx }) => getWalletTransactions(ctx.user.id)),
-    request: protectedProcedure.input(z.object({ type: z.enum(["deposit", "withdrawal"]), currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), amount: z.number().finite().positive().max(1_000_000), network: z.string().max(24).optional(), address: z.string().max(160).optional() })).mutation(({ ctx, input }) => { if (!nowPaymentsReadiness({ apiKey: ENV.nowPaymentsApiKey, ipnSecret: ENV.nowPaymentsIpnSecret, payoutWallet: ENV.nowPaymentsPayoutWallet }).enabled) throw new TRPCError({ code: "SERVICE_UNAVAILABLE", message: "provider پرداخت هنوز تنظیم نشده است." }); return requestWalletTransaction({ ...input, userId: ctx.user.id }); }),
+    request: protectedProcedure.input(z.object({
+      type: z.enum(["deposit", "withdrawal"]),
+      currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"),
+      amount: z.number().finite().positive().max(1_000_000),
+      network: z.string().max(24).optional(),
+      address: z.string().max(160).optional(),
+    })).mutation(({ ctx, input }) => executeWalletProviderRequest({ ...input, userId: ctx.user.id })),
   }),
 
   notifications: router({
@@ -216,88 +219,29 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         try {
           const accountContext = ctx.user ? await getSupportAccountContext(ctx.user.id) : null;
-          const accountPrompt = accountContext ? `\n\nاطلاعات read-only حساب کاربر جاری که فقط برای پاسخ به سؤال‌های حسابی معتبر است:\n${JSON.stringify(accountContext)}\nاین اطلاعات snapshot فعلی backend است؛ آن را به کاربر نسبت بده و اگر سؤال دربارهٔ تغییر یا عملیات بود، بگو از داخل چت امکان تغییر وجود ندارد.` : ctx.user ? "\n\nکاربر وارد حساب است، اما snapshot حساب فعلاً از backend در دسترس نیست؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و بگو صفحهٔ حساب را دوباره بررسی کند." : "\n\nکاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و او را به ورود به حساب راهنمایی کن.";
+          const accountPrompt = accountContext
+            ? `\n\nاطلاعات read-only حساب کاربر جاری که فقط برای پاسخ به سؤال‌های حسابی معتبر است:\n${JSON.stringify(accountContext)}\nاین اطلاعات snapshot فعلی backend است؛ آن را به کاربر نسبت بده و اگر سؤال دربارهٔ تغییر یا عملیات بود، بگو از داخل چت امکان تغییر وجود ندارد.`
+            : ctx.user
+              ? "\n\nکاربر وارد حساب است، اما snapshot حساب فعلاً از backend در دسترس نیست؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و بگو صفحهٔ حساب را دوباره بررسی کند."
+              : "\n\nکاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و او را به ورود به حساب راهنمایی کن.";
           const response = await invokeLLM({
             model: "gpt-5-mini",
             maxCompletionTokens: 500,
             messages: [
-              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی و پاسخ‌گویی واقعی انجام می‌دهی. به هر سؤال کاربر تا حد ممکن مستقیم، طبیعی و کاربردی پاسخ بده و اگر سؤال خارج از پلتفرم بود، صادقانه بگو چه کمکی از دستت برمی‌آید. پاسخ را به فارسی و با لحن گرم بنویس و از markdown ساده استفاده کن. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، بازی انفجار، پاداش، اعلان‌ها، تاریخچهٔ شرط‌ها و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای. اگر پرسش به واریز یا برداشت واقعی مربوط است، وضعیت pending و نیاز به provider را شفاف توضیح بده. اطلاعات حساب را فقط از context داده‌شده بخوان، آن را به‌عنوان موجودی/وضعیت قطعی همین لحظه توصیف نکن و برای عملیات حساس کاربر را به صفحهٔ مربوط هدایت کن. اگر اطلاعات کافی نداری، سؤال روشن‌کننده بپرس؛ هرگز پاسخ خالی برنگردان." + accountPrompt },
-              ...input.messages.map((message) => ({ role: message.role, content: message.content })),
+              { role: "system", content: "تو پشتیبان فارسی Nexus Bet هستی و پاسخ‌گویی واقعی انجام می‌دهی. به هر سؤال کاربر تا حد ممکن مستقیم، طبیعی و کاربردی پاسخ بده و اگر سؤال خارج از پلتفرم بود، صادقانه بگو چه کمکی از دستت برمی‌آید. پاسخ را به فارسی و با لحن گرم بنویس و از markdown ساده استفاده کن. دربارهٔ مسیرهای پلتفرم مانند مسابقات، کیف پول، بلیت، بازی انفجار، پاداش، اعلان‌ها، تاریخچهٔ شرط‌ها و حساب توضیح بده. هیچ سود یا نتیجه‌ای را تضمین نکن، توصیهٔ شرط‌بندی شخصی نده و ادعا نکن تراکنش یا حساب کاربر را دیده یا تغییر داده‌ای." + accountPrompt },
+              ...input.messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
             ],
           });
-          const rawContent = response.choices?.[0]?.message?.content;
-          const content = typeof rawContent === "string" ? rawContent.trim() : Array.isArray(rawContent) ? rawContent.filter((part): part is { type: "text"; text: string } => typeof part === "object" && part !== null && part.type === "text").map((part) => part.text).join("\n").trim() : "";
-          if (!content) throw new Error("EMPTY_LLM_CONTENT");
-          return { content, source: "ai" as const };
+          const content = response.choices[0]?.message?.content;
+          return { reply: typeof content === "string" ? content : "الان پاسخ کامل در دسترس نیست؛ لطفاً دوباره تلاش کن." };
         } catch (error) {
-          console.warn("[Nexus Support] AI unavailable:", error);
-          return { content: "پاسخ هوشمند در این لحظه از سرویس AI دریافت نشد. لطفاً دوباره ارسال کن؛ پیام قبلی حفظ شده است.", source: "unavailable" as const };
+          console.warn("[support.chat]", error);
+          return { reply: "پشتیبانی هوشمند موقتاً در دسترس نیست. از صفحهٔ حساب یا اعلان‌ها هم می‌توانی کمک بگیری." };
         }
       }),
   }),
 
   ai: router({
-    smartPicks: publicProcedure
-      .input(z.object({
-        candidates: z.array(z.object({
-          eventId: z.string(), league: z.string(), match: z.string(), sport: z.string(),
-          marketLabel: z.string(), marketName: z.string(), odds: z.number().positive(),
-          status: z.string(), popularity: z.number().min(0).max(100),
-        })).min(1).max(24),
-      }))
-      .query(async ({ input }) => {
-        try {
-          const response = await invokeLLM({
-            model: "gpt-5-mini",
-            messages: [
-              {
-                role: "system",
-                content: "تو Nexus AI هستی. فقط پیشنهادهای توضیح‌پذیر و غیرقطعی ارائه کن. هرگز سود را تضمین نکن و برای سطح ریسک از کم، متوسط یا بالا استفاده کن.",
-              },
-              {
-                role: "user",
-                content: `کاندیدهای بازار را بررسی کن و حداکثر سه گزینه را بر اساس ضریب، وضعیت زنده و محبوبیت انتخاب کن. فقط JSON مطابق schema برگردان. داده‌ها:\n${JSON.stringify(input.candidates)}`,
-              },
-            ],
-            response_format: {
-              type: "json_schema",
-              json_schema: {
-                name: "nexus_smart_picks",
-                strict: true,
-                schema: {
-                  type: "object",
-                  properties: {
-                    picks: { type: "array", maxItems: 3, items: {
-                      type: "object",
-                      properties: {
-                        eventId: { type: "string" }, marketLabel: { type: "string" },
-                        risk: { type: "string", enum: ["کم", "متوسط", "بالا"] },
-                        confidence: { type: "integer", minimum: 1, maximum: 100 },
-                        rationale: { type: "string" }, tags: { type: "array", items: { type: "string" } },
-                      },
-                      required: ["eventId", "marketLabel", "risk", "confidence", "rationale", "tags"],
-                      additionalProperties: false,
-                    } },
-                  },
-                  required: ["picks"],
-                  additionalProperties: false,
-                },
-              },
-            },
-          });
-          const raw = response.choices[0]?.message?.content;
-          const parsed = JSON.parse(typeof raw === "string" ? raw : "{}");
-          const picks = Array.isArray(parsed.picks) ? parsed.picks : [];
-          const enriched = picks.map((pick: any) => {
-            const candidate = input.candidates.find((item) => item.eventId === pick.eventId && item.marketLabel === pick.marketLabel);
-            return candidate ? { ...candidate, ...pick } : null;
-          }).filter(Boolean);
-          return { picks: enriched, source: enriched.length ? "ai" as const : "empty" as const };
-        } catch (error) {
-          console.warn("[Nexus AI] Model unavailable; returning empty result:", error);
-          return { picks: [], source: "empty" as const };
-        }
-      }),
     matchInsight: publicProcedure
       .input(z.object({
         match: z.object({ id: z.string(), sport: z.string(), league: z.string(), home: z.string(), away: z.string(), status: z.string(), score: z.string().optional(), markets: z.array(z.object({ name: z.string(), label: z.string(), odds: z.number().positive() })).max(12) }),
