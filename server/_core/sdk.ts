@@ -98,6 +98,15 @@ class SDKServer {
     this.oauthService = new OAuthService(this.client);
   }
 
+  private requireConfiguration() {
+    if (!ENV.oAuthServerUrl) {
+      throw new Error("OAuth is not configured. Set OAUTH_SERVER_URL before using external OAuth.");
+    }
+    if (!ENV.appId) {
+      throw new Error("OAuth is not configured. Set VITE_APP_ID before using external OAuth.");
+    }
+  }
+
   private deriveLoginMethod(
     platforms: unknown,
     fallback: string | null | undefined
@@ -120,11 +129,6 @@ class SDKServer {
     return first ? first.toLowerCase() : null;
   }
 
-  /**
-   * Exchange OAuth authorization code for access token
-   * @example
-   * const tokenResponse = await sdk.exchangeCodeForToken(code, state);
-   */
   async exchangeCodeForToken(
     code: string,
     state: string
@@ -132,11 +136,6 @@ class SDKServer {
     return this.oauthService.getTokenByCode(code, state);
   }
 
-  /**
-   * Get user information using access token
-   * @example
-   * const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
-   */
   async getUserInfo(accessToken: string): Promise<GetUserInfoResponse> {
     const data = await this.oauthService.getUserInfoByToken({
       accessToken,
@@ -166,11 +165,6 @@ class SDKServer {
     return new TextEncoder().encode(secret);
   }
 
-  /**
-   * Create a session token for a Manus user openId
-   * @example
-   * const sessionToken = await sdk.createSessionToken(userInfo.openId);
-   */
   async createSessionToken(
     openId: string,
     options: { expiresInMs?: number; name?: string } = {}
@@ -265,13 +259,9 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
-    // 1. Prefer the session cookie (regular OAuth login).
     const cookies = this.parseCookies(req.headers.cookie);
     let sessionToken = cookies.get(COOKIE_NAME);
 
-    // 2. Fallback to the Authorization header (Preview auto-login via
-    //    sessionStorage), used when the browser blocks iframe cookies such as
-    //    Safari ITP, private browsing, or iOS/Android WebView.
     if (!sessionToken) {
       const authHeader = req.headers.authorization;
       if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
@@ -298,7 +288,6 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, sync from OAuth server automatically
     if (!user) {
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionToken ?? "");
@@ -331,7 +320,6 @@ class SDKServer {
 
 const CRON_OPEN_ID_PREFIX = "cron_";
 
-/** Result of `sdk.authenticateRequest`. Cron callbacks set `isCron=true` and `taskUid`; see `/home/ubuntu/skills/webdev-periodic-updates/SKILL.md`. */
 export type AuthenticatedUser = User & {
   taskUid?: string;
   isCron?: boolean;
