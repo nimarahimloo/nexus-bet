@@ -10,6 +10,7 @@ import "./ui-polish.css";
 import "./ui-micro.css";
 import "./ui-responsive.css";
 import "./ui-touch.css";
+import "./ui-sportsbook.css";
 
 const queryClient = new QueryClient();
 
@@ -21,38 +22,30 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
-  window.dispatchEvent(new CustomEvent("nexus:auth-open", { detail: { mode: "login" } }));
+  // Don't force a hard navigation for guest flows; auth is modal-based in this product.
 };
 
-queryClient.getQueryCache().subscribe(event => {
-  if (event.type === "updated" && event.action.type === "error") {
-    const error = event.query.state.error;
-    redirectToLoginIfUnauthorized(error);
-    console.error("[API Query Error]", error);
-  }
-});
-
-queryClient.getMutationCache().subscribe(event => {
-  if (event.type === "updated" && event.action.type === "error") {
-    const error = event.mutation.state.error;
-    redirectToLoginIfUnauthorized(error);
-    console.error("[API Mutation Error]", error);
-  }
+const link = httpBatchLink({
+  url: "/api/trpc",
+  transformer: superjson,
+  fetch(input, init) {
+    return globalThis.fetch(input, {
+      ...(init ?? {}),
+      credentials: "include",
+    });
+  },
 });
 
 const trpcClient = trpc.createClient({
   links: [
-    httpBatchLink({
-      url: "/api/trpc",
-      transformer: superjson,
-      fetch(input, init) {
-        return globalThis.fetch(input, {
-          ...(init ?? {}),
-          credentials: "include",
-        });
-      },
-    }),
-  ],
+    ({ next, op }) =>
+      next(op).then((result) => {
+        if (result instanceof Error || ("error" in result && result.error)) {
+          redirectToLoginIfUnauthorized((result as { error?: unknown }).error ?? result);
+        }
+        return result;
+      }),
+  ].concat(link as never),
 });
 
 createRoot(document.getElementById("root")!).render(
@@ -60,5 +53,5 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </trpc.Provider>
+  </trpc.Provider>,
 );
