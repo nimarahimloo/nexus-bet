@@ -16,9 +16,19 @@ export const ENV = {
   appPublicUrl: process.env.APP_PUBLIC_URL ?? "",
 };
 
-/** Fail fast in production when critical secrets are missing. */
+/** Fail fast in production when critical secrets are missing (skip on Vercel if soft-boot). */
 export function assertProductionEnv() {
   if (!ENV.isProduction) return;
+  // On Vercel serverless, allow boot without DB so /api/health can report status.
+  if (process.env.VERCEL === "1") {
+    if (!ENV.cookieSecret.trim()) {
+      console.warn("[env] JWT_SECRET missing on Vercel — auth cookies will not work");
+    }
+    if (!ENV.databaseUrl.trim()) {
+      console.warn("[env] DATABASE_URL missing on Vercel — database features unavailable");
+    }
+    return;
+  }
   const missing: string[] = [];
   if (!ENV.cookieSecret.trim()) missing.push("JWT_SECRET");
   if (!ENV.databaseUrl.trim()) missing.push("DATABASE_URL");
