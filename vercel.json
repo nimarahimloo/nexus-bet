@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install --legacy-peer-deps --production=false",
+  "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npx vite build",
   "outputDirectory": "dist/public",
   "rewrites": [
