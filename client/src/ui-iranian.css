@@ -1,0 +1,337 @@
+/**
+ * Iranian sportsbook visual language for Nexus Bet
+ * Inspired by common FA RTL sportsbook patterns (dense lobby, 1X2 odds, live badges)
+ * without cloning a specific brand. Identity stays purple + mint; density & hierarchy shift.
+ */
+
+:root {
+  --ir-bg: #0b0e14;
+  --ir-panel: #141a24;
+  --ir-panel-2: #1a2230;
+  --ir-line: rgba(255, 255, 255, 0.08);
+  --ir-text: #eef2f7;
+  --ir-muted: #8b95a8;
+  --ir-green: #22c55e;
+  --ir-green-dim: rgba(34, 197, 94, 0.14);
+  --ir-red-live: #ef4444;
+  --ir-gold: #f5c542;
+  --ir-odds-bg: #1e2636;
+  --ir-odds-hover: #263044;
+  --ir-radius: 10px;
+}
+
+/* Base closer to commercial FA sportsbooks: flatter, darker, less frosted glass */
+body {
+  background: var(--ir-bg) !important;
+  color: var(--ir-text) !important;
+}
+
+.nexus-shell {
+  background:
+    radial-gradient(ellipse 90% 40% at 50% -20%, rgba(88, 50, 180, 0.18), transparent 55%),
+    var(--ir-bg) !important;
+}
+.nexus-shell::before {
+  opacity: 0.04 !important;
+}
+
+/* Topbar — solid bar, not floating glass island */
+.topbar {
+  background: rgba(12, 16, 24, 0.96) !important;
+  border: 1px solid var(--ir-line) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.nav-link.is-active {
+  background: rgba(34, 197, 94, 0.12) !important;
+  color: #fff !important;
+  box-shadow: inset 0 -2px 0 var(--ir-green) !important;
+}
+
+.login-button {
+  background: linear-gradient(180deg, #7c4dff, #5b2fd6) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(91, 47, 214, 0.35) !important;
+}
+
+/* Section titles like FA sites: short + colored marker */
+.section-heading h2,
+.section-kicker + h2,
+h2 {
+  position: relative;
+  padding-inline-start: 10px !important;
+}
+.section-heading h2::before,
+.home-shell h2::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--ir-green);
+}
+
+.section-kicker,
+.eyebrow {
+  color: var(--ir-green) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+/* Cards — denser, flatter panels */
+.glass-panel,
+.match-card,
+.sb-match,
+.feature-hub-card,
+.offer-card,
+.game-card,
+.standalone-card,
+.balance-hero,
+.account-summary,
+.crash-board,
+.slip-card,
+.bet-sheet {
+  background: var(--ir-panel) !important;
+  border: 1px solid var(--ir-line) !important;
+  border-radius: var(--ir-radius) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.match-card,
+.sb-match {
+  padding: 12px 12px 10px !important;
+  gap: 10px !important;
+}
+
+/* League / meta row */
+.match-meta,
+.sb-match-meta {
+  font-size: 11px !important;
+  color: var(--ir-muted) !important;
+}
+
+/* LIVE badge — red pulse like FA sportsbooks */
+.status-live,
+.live-tag,
+.sb-live-badge {
+  background: rgba(239, 68, 68, 0.16) !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+  color: #fecaca !important;
+  font-weight: 800 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.02em;
+  border-radius: 4px !important;
+  padding: 2px 7px !important;
+}
+
+.live-dot,
+.sb-live-dot,
+.status-live i {
+  background: var(--ir-red-live) !important;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  animation: ir-live-pulse 1.3s ease-out infinite !important;
+}
+
+@keyframes ir-live-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Teams row denser */
+.teams {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+.team-badge {
+  border-radius: 6px !important;
+}
+
+/* Classic 1X2 odds — grey tiles, green selected (Iranian sportsbook pattern) */
+.market-row,
+.match-markets,
+.sb-odds-row {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.market-row button,
+.match-markets button,
+.odds-button,
+.odds-btn,
+.sb-odds-row button {
+  min-height: 44px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: var(--ir-odds-bg) !important;
+  color: var(--ir-text) !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  font-variant-numeric: tabular-nums;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1px !important;
+  line-height: 1.15 !important;
+}
+
+.market-row button small,
+.odds-button small,
+.sb-odds-row button small {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--ir-muted) !important;
+}
+
+.market-row button:hover,
+.odds-button:hover,
+.sb-odds-row button:hover {
+  background: var(--ir-odds-hover) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.market-row button.is-selected,
+.market-row button[aria-pressed="true"],
+.odds-button.is-selected,
+.odds-btn.is-selected,
+.sb-odds-row button.selected,
+.sb-odds-row button.is-selected {
+  background: var(--ir-green-dim) !important;
+  border-color: var(--ir-green) !important;
+  color: #86efac !important;
+  box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.35) !important;
+  transform: none !important;
+}
+
+/* Primary money actions — green like deposit CTAs on FA sites */
+.ticket-button,
+.sheet-submit,
+.primary-cta.deposit,
+.wallet-request-actions button[data-type="deposit"] {
+  background: linear-gradient(180deg, #34d399, #16a34a) !important;
+  color: #052e16 !important;
+  font-weight: 800 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3) !important;
+}
+
+/* Balance / gold chip */
+.balance-chip,
+.balance-hero b,
+.wallet-hero strong {
+  color: var(--ir-gold) !important;
+}
+
+/* Filters — pill bar like FA sports filters */
+.filter-row button,
+.league-filter-pills button,
+.matches-filter-pills button,
+.tournament-tabs button {
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  background: var(--ir-panel-2) !important;
+  border: 1px solid var(--ir-line) !important;
+  color: var(--ir-muted) !important;
+}
+
+.filter-row button.is-active,
+.filter-row button.selected,
+.league-filter-pills button.is-active,
+.matches-filter-pills button.selected,
+.tournament-tabs button.active {
+  background: rgba(34, 197, 94, 0.15) !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+  color: #bbf7d0 !important;
+}
+
+/* Bottom nav — solid dock */
+.mobile-bottom-nav {
+  background: rgba(10, 12, 18, 0.96) !important;
+  border: 1px solid var(--ir-line) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5) !important;
+}
+.mobile-bottom-nav a.is-active {
+  background: rgba(34, 197, 94, 0.12) !important;
+  color: #fff !important;
+}
+.mobile-bottom-nav a.is-active::before {
+  background: var(--ir-green) !important;
+}
+
+/* Auth modal flatter */
+.auth-modal {
+  background: var(--ir-panel) !important;
+  border: 1px solid var(--ir-line) !important;
+  border-radius: 14px !important;
+}
+.auth-submit {
+  background: linear-gradient(180deg, #7c4dff, #5b2fd6) !important;
+  border-radius: 8px !important;
+}
+
+/* Hero less “Apple marketing”, more sportsbook lobby */
+.hero {
+  padding-top: 20px !important;
+  padding-bottom: 16px !important;
+}
+.hero h1 {
+  font-size: clamp(1.35rem, 4vw, 2rem) !important;
+}
+.hero-score {
+  transform: none !important;
+  border-radius: var(--ir-radius) !important;
+}
+
+/* Sample / preview chip */
+.sample-chip {
+  background: rgba(245, 197, 66, 0.12) !important;
+  border: 1px solid rgba(245, 197, 66, 0.35) !important;
+  color: var(--ir-gold) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+}
+
+/* Reduce decorative trust strips noise */
+.trust-bar {
+  opacity: 0.7;
+  font-size: 10px !important;
+}
+
+/* Support launcher less “AI product”, more support chip */
+.support-launcher {
+  background: var(--ir-panel) !important;
+  border: 1px solid var(--ir-line) !important;
+  border-radius: 999px !important;
+}
+
+@media (max-width: 720px) {
+  .match-card,
+  .sb-match {
+    border-radius: 8px !important;
+  }
+  .market-row button,
+  .odds-button {
+    font-size: 13px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  .sb-live-dot,
+  .status-live i {
+    animation: none !important;
+  }
+}

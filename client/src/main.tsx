@@ -11,6 +11,7 @@ import "./ui-micro.css";
 import "./ui-responsive.css";
 import "./ui-touch.css";
 import "./ui-sportsbook.css";
+import "./ui-iranian.css";
 
 const queryClient = new QueryClient();
 
