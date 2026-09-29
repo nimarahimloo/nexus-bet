@@ -1,0 +1,356 @@
+/* Nexus Bet brand layer — cyber neon purple / cyan matching hero art */
+
+:root {
+  --nx-void: #05030c;
+  --nx-deep: #0a0618;
+  --nx-panel: rgba(18, 10, 40, 0.72);
+  --nx-panel-strong: rgba(22, 12, 48, 0.88);
+  --nx-border: rgba(168, 85, 247, 0.28);
+  --nx-border-strong: rgba(192, 132, 252, 0.45);
+  --nx-purple: #a855f7;
+  --nx-purple-bright: #c084fc;
+  --nx-magenta: #e879f9;
+  --nx-cyan: #22d3ee;
+  --nx-cyan-soft: #67e8f9;
+  --nx-glow-purple: 0 0 24px rgba(168, 85, 247, 0.45), 0 0 48px rgba(124, 58, 237, 0.25);
+  --nx-glow-cyan: 0 0 20px rgba(34, 211, 238, 0.35);
+  --nx-text: #f5f3ff;
+  --nx-muted: #c4b5fd;
+  --nx-dim: #8b7cb8;
+}
+
+html, body, #root {
+  background: var(--nx-void) !important;
+  color: var(--nx-text);
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 58, 237, 0.22), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(34, 211, 238, 0.08), transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(168, 85, 247, 0.12), transparent 60%);
+  background-attachment: fixed;
+}
+
+.nexus-shell {
+  min-height: 100dvh;
+  background: transparent;
+}
+
+/* Glass panels — deep violet glass matching hero art */
+.glass-panel {
+  background: var(--nx-panel) !important;
+  border: 1px solid var(--nx-border) !important;
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(168, 85, 247, 0.08);
+}
+
+.topbar.glass-panel {
+  background: rgba(8, 4, 20, 0.82) !important;
+  border-bottom: 1px solid var(--nx-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), var(--nx-glow-purple);
+}
+
+/* Brand mark / logo */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(168, 85, 247, 0.25), rgba(34, 211, 238, 0.12));
+  border: 1px solid var(--nx-border-strong);
+  box-shadow: var(--nx-glow-purple);
+  overflow: hidden;
+}
+
+.brand-mark img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.6));
+}
+
+.brand b {
+  background: linear-gradient(90deg, var(--nx-purple-bright), var(--nx-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.04em;
+}
+
+/* Subpage hero art */
+.subpage-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding-block: 1.75rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .subpage-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+.subpage-art {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 220px;
+  max-height: 320px;
+  box-shadow: var(--nx-glow-purple);
+}
+
+.subpage-art img {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.subpage-art .art-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(5, 3, 12, 0.55) 0%,
+    rgba(88, 28, 135, 0.15) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.subpage-copy h1 {
+  font-size: clamp(1.65rem, 3.5vw, 2.35rem);
+  line-height: 1.25;
+  background: linear-gradient(105deg, #fff 20%, var(--nx-purple-bright) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow, .section-kicker {
+  color: var(--nx-cyan-soft) !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Home hero */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 1.75rem;
+  align-items: center;
+  padding-block: 1.5rem 2rem;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero-score {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  min-height: 340px;
+  box-shadow: var(--nx-glow-purple);
+}
+
+.hero-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center left;
+  opacity: 0.92;
+}
+
+.hero-score > *:not(.hero-art):not(.nexus-network) {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-score::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(5, 3, 12, 0.75) 0%,
+    rgba(10, 6, 24, 0.35) 40%,
+    rgba(88, 28, 135, 0.2) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-copy h1 {
+  font-size: clamp(1.85rem, 4vw, 2.75rem);
+  line-height: 1.2;
+  background: linear-gradient(105deg, #ffffff 10%, var(--nx-purple-bright) 70%, var(--nx-cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Section art (AI, wallet) */
+.section-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ai-picks, .balance-overview {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-picks > *:not(.section-art),
+.balance-overview > *:not(.section-art) {
+  position: relative;
+  z-index: 1;
+}
+
+.match-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.match-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Neon CTAs */
+.primary-cta, .sheet-submit, button.primary-cta {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #22d3ee 120%) !important;
+  border: 1px solid rgba(192, 132, 252, 0.5) !important;
+  color: #fff !important;
+  box-shadow: var(--nx-glow-purple), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+}
+
+.primary-cta:hover, .sheet-submit:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 32px rgba(168, 85, 247, 0.55), 0 0 16px rgba(34, 211, 238, 0.25);
+}
+
+.outline-cta, .text-cta {
+  color: var(--nx-cyan-soft) !important;
+  border-color: rgba(34, 211, 238, 0.35) !important;
+}
+
+/* Live chips & dots */
+.live-chip, .status-live {
+  color: var(--nx-cyan) !important;
+  background: rgba(34, 211, 238, 0.12) !important;
+  border: 1px solid rgba(34, 211, 238, 0.35) !important;
+  box-shadow: var(--nx-glow-cyan);
+}
+
+.live-dot, .status-live i, .support-status-dot {
+  background: var(--nx-cyan) !important;
+  box-shadow: 0 0 8px var(--nx-cyan);
+}
+
+/* Nav active */
+.nav-link.is-active {
+  color: var(--nx-purple-bright) !important;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+}
+
+.nav-link.is-active::after {
+  background: linear-gradient(90deg, var(--nx-purple), var(--nx-cyan)) !important;
+}
+
+/* Mobile bottom nav */
+.mobile-bottom-nav {
+  background: rgba(8, 4, 20, 0.92) !important;
+  border-top: 1px solid var(--nx-border) !important;
+  backdrop-filter: blur(16px);
+}
+
+.mobile-bottom-nav a.is-active {
+  color: var(--nx-cyan) !important;
+}
+
+/* Feature cards on home */
+.feature-hub-card, .standalone-card, .ai-pick-card {
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.feature-hub-card:hover, .standalone-card:hover, .match-card:hover {
+  border-color: var(--nx-border-strong) !important;
+  box-shadow: var(--nx-glow-purple);
+  transform: translateY(-2px);
+}
+
+/* Filter pills */
+.filter-pill.selected, .matches-filter-pills button.selected {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(34, 211, 238, 0.2)) !important;
+  border-color: var(--nx-border-strong) !important;
+  color: #fff !important;
+  box-shadow: var(--nx-glow-purple);
+}
+
+/* Trust bar */
+.trust-bar {
+  color: var(--nx-muted);
+  border-color: var(--nx-border);
+}
+
+/* Support launcher */
+.support-launcher {
+  background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+  box-shadow: var(--nx-glow-purple);
+  border: 1px solid rgba(192, 132, 252, 0.4) !important;
+}
+
+/* Soft aurora already in Home — tint them */
+.aurora-one {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent 70%) !important;
+}
+.aurora-two {
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.1), transparent 70%) !important;
+}
+
+/* Scoreboard on hero */
+.scoreboard b, .score-center strong {
+  text-shadow: 0 0 16px rgba(192, 132, 252, 0.4);
+}
+
+/* Inputs */
+input, select, textarea {
+  background: rgba(10, 6, 24, 0.65) !important;
+  border-color: var(--nx-border) !important;
+  color: var(--nx-text) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--nx-purple-bright) !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2) !important;
+}
