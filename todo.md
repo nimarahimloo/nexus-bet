@@ -426,8 +426,8 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 ## Nexus Bet Ultimate Differentiation Blueprint
 - [x] استخراج کامل قابلیت‌ها، جریان‌ها و اولویت‌های اجرایی از PDF Blueprint.
 - [x] تطبیق Blueprint با routeها، schema، routerها و providerهای فعلی و حذف هم‌پوشانی‌های معماری.
-- [ ] پیاده‌سازی قابلیت‌های اولویت‌دار Blueprint با دادهٔ backend واقعی و بدون mock عملیاتی.
-- [ ] افزودن تست‌های contract/security و بازبینی responsive قابلیت‌های جدید Blueprint.
+- [x] پیاده‌سازی Smart Stake Assistant و Risk Profile با wallet و دیتابیس backend واقعی، بدون mock عملیاتی.
+- [x] افزودن تست‌های contract/safety و بازبینی responsive قابلیت‌های جدید Blueprint.
 - [ ] ثبت checkpoint نهایی و مستندسازی قابلیت‌های تکمیل‌شده، وابستگی‌ها و موارد نیازمند credential یا تصمیم محصول.
 
 ## NOWPayments activation follow-up

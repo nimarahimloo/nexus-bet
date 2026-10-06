@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, addSportWatchlist, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getSportAlertPreferences, getSportWatchlist, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, removeSportWatchlist, resetLocalPassword, spinLuckyWheel, touchLocalUser, upsertSportAlertPreference } from "./db";
+import { cashoutCrashBet, claimPromotion, createCrashRound, createLocalUser, createPasswordResetToken, addSportWatchlist, getActiveAssets, getActiveCrashRound, getActiveGameCatalog, getActivePromotions, getActivityRewardStatus, getCrashHistory, getLocalCredentialByUsername, getNotifications, getSportAlertPreferences, getSportWatchlist, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead, getOrCreateWalletByUserId, getSupportAccountContext, getTournamentLeaderboard, getTournaments, getUserBets, getVipSummary, getWalletPortfolio, getWalletTransactions, getWheelHistory, claimActivityReward, getWheelStatus, placeBet, placeCrashBet, removeSportWatchlist, resetLocalPassword, spinLuckyWheel, touchLocalUser, upsertSportAlertPreference, getUserRiskProfile, setUserRiskProfile } from "./db";
 import { getWheelSegments } from "./wheel";
 import { invokeLLM } from "./_core/llm";
 import { rankSmartPicks } from "./aiPicks";
@@ -16,6 +16,7 @@ import { fetchSportsUniverse, SPORTS_DIRECTORY } from "./multiSportsFeed";
 import { sdk } from "./_core/sdk";
 import { createResetCode, hashPassword, hashResetCode, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
 import { executeWalletProviderRequest, paymentProviderConfig } from "./walletPayments";
+import { calculateStakeSuggestion, normalizeRiskProfile, riskProfileValues } from "./stakeAssistant";
 
 const localAuthInput = z.object({ username: z.string().trim().min(3).max(32), password: z.string().min(8).max(128) });
 
@@ -220,8 +221,9 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         try {
           const accountContext = ctx.user ? await getSupportAccountContext(ctx.user.id) : null;
+          const riskProfile = ctx.user ? await getUserRiskProfile(ctx.user.id) : null;
           const accountPrompt = accountContext
-            ? `\n\nاطلاعات read-only حساب کاربر جاری که فقط برای پاسخ به سؤال‌های حسابی معتبر است:\n${JSON.stringify(accountContext)}\nاین اطلاعات snapshot فعلی backend است؛ آن را به کاربر نسبت بده و اگر سؤال دربارهٔ تغییر یا عملیات بود، بگو از داخل چت امکان تغییر وجود ندارد.`
+            ? `\n\nاطلاعات read-only حساب کاربر جاری که فقط برای پاسخ به سؤال‌های حسابی معتبر است:\n${JSON.stringify({ ...accountContext, riskProfile: riskProfile?.profile ?? "balanced" })}\nاین اطلاعات snapshot فعلی backend است؛ آن را به کاربر نسبت بده و اگر سؤال دربارهٔ تغییر یا عملیات بود، بگو از داخل چت امکان تغییر وجود ندارد. پروفایل ریسک فقط برای توضیح سقف‌های محتاطانه است و هرگز مجوز توصیهٔ شخصی یا تضمین نتیجه نیست.`
             : ctx.user
               ? "\n\nکاربر وارد حساب است، اما snapshot حساب فعلاً از backend در دسترس نیست؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و بگو صفحهٔ حساب را دوباره بررسی کند."
               : "\n\nکاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری؛ دربارهٔ موجودی یا betهای شخصی حدس نزن و او را به ورود به حساب راهنمایی کن.";
@@ -244,6 +246,17 @@ export const appRouter = router({
   }),
 
   ai: router({
+    riskProfile: router({
+      get: protectedProcedure.query(({ ctx }) => getUserRiskProfile(ctx.user.id)),
+      set: protectedProcedure.input(z.object({ profile: z.enum(riskProfileValues) })).mutation(({ ctx, input }) => setUserRiskProfile(ctx.user.id, input.profile)),
+    }),
+    stakeAssistant: protectedProcedure
+      .input(z.object({ currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"), combinedOdds: z.number().finite().positive().max(1_000), profile: z.enum(riskProfileValues).optional() }))
+      .query(async ({ ctx, input }) => {
+        const wallet = await getOrCreateWalletByUserId(ctx.user.id, input.currency);
+        const savedProfile = await getUserRiskProfile(ctx.user.id);
+        return calculateStakeSuggestion({ availableBalance: Number(wallet?.availableBalance ?? 0), lockedBalance: Number(wallet?.lockedBalance ?? 0), combinedOdds: input.combinedOdds, profile: normalizeRiskProfile(input.profile ?? savedProfile.profile) });
+      }),
     matchInsight: publicProcedure
       .input(z.object({
         match: z.object({ id: z.string(), sport: z.string(), league: z.string(), home: z.string(), away: z.string(), status: z.string(), score: z.string().optional(), markets: z.array(z.object({ name: z.string(), label: z.string(), odds: z.number().positive() })).max(12) }),

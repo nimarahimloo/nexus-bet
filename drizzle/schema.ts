@@ -25,6 +25,17 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+export const userRiskProfiles = mysqlTable("userRiskProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique().references(() => users.id),
+  profile: mysqlEnum("profile", ["conservative", "balanced", "assertive"]).default("balanced").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserRiskProfile = typeof userRiskProfiles.$inferSelect;
+export type InsertUserRiskProfile = typeof userRiskProfiles.$inferInsert;
+
 export const localCredentials = mysqlTable("localCredentials", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique().references(() => users.id),

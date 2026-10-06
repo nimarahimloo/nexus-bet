@@ -6,3 +6,4 @@ export * from "./db/notifications";
 export * from "./db/rewards";
 export * from "./db/crash";
 export * from "./db/misc";
+export * from "./db/risk";

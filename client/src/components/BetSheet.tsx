@@ -19,6 +19,8 @@ type BetSheetProps = {
   currency?: string;
   onCurrencyChange?: (value: string) => void;
   currencyOptions?: Array<{ code: string; symbol: string; availableBalance: number }>;
+  stakeSuggestion?: { suggestedStake: number; maxStake: number; profileLabel: string; reason: string } | null;
+  onApplyStakeSuggestion?: (value: string) => void;
 };
 
 export function BetSheet({
@@ -36,6 +38,8 @@ export function BetSheet({
   currency = "USDT",
   onCurrencyChange,
   currencyOptions = [],
+  stakeSuggestion = null,
+  onApplyStakeSuggestion,
 }: BetSheetProps) {
   useEffect(() => {
     if (!open) return;
@@ -140,6 +144,14 @@ export function BetSheet({
             </strong>
           </div>
         </div>
+        {stakeSuggestion && selections.length > 0 && (
+          <div className="stake-assistant glass-panel" aria-label="دستیار مبلغ شرط">
+            <div><span>دستیار مبلغ</span><b>{stakeSuggestion.profileLabel}</b></div>
+            <strong>{formatFaDecimal(stakeSuggestion.suggestedStake)} {currency}</strong>
+            <button type="button" onClick={() => onApplyStakeSuggestion?.(String(stakeSuggestion.suggestedStake))}>اعمال پیشنهاد</button>
+            <small>{stakeSuggestion.reason} سقف: {formatFaDecimal(stakeSuggestion.maxStake)} {currency}</small>
+          </div>
+        )}
         {statusMessage && (
           <p className={`sheet-status ${successCode ? "sheet-status-success" : "sheet-status-error"}`}>
             {statusMessage}
