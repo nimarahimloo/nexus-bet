@@ -1,4 +1,4 @@
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, Check, Info, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useEffect } from "react";
 import { formatFaDecimal } from "@shared/format";
 
@@ -145,12 +145,19 @@ export function BetSheet({
           </div>
         </div>
         {stakeSuggestion && selections.length > 0 && (
-          <div className="stake-assistant glass-panel" aria-label="دستیار مبلغ شرط">
-            <div><span>دستیار مبلغ</span><b>{stakeSuggestion.profileLabel}</b></div>
-            <strong>{formatFaDecimal(stakeSuggestion.suggestedStake)} {currency}</strong>
-            <button type="button" onClick={() => onApplyStakeSuggestion?.(String(stakeSuggestion.suggestedStake))}>اعمال پیشنهاد</button>
-            <small>{stakeSuggestion.reason} سقف: {formatFaDecimal(stakeSuggestion.maxStake)} {currency}</small>
-          </div>
+          <section className="stake-assistant glass-panel" aria-label="دستیار مبلغ شرط">
+            <div className="stake-assistant-head">
+              <span className="stake-assistant-icon"><Sparkles size={15} /></span>
+              <div><b>پیشنهاد مبلغ هوشمند</b><small>بر اساس موجودی قابل‌استفاده</small></div>
+              <span className="stake-profile-chip"><ShieldCheck size={12} /> {stakeSuggestion.profileLabel}</span>
+            </div>
+            {stakeSuggestion.suggestedStake > 0 ? <>
+              <div className="stake-assistant-value"><strong>{formatFaDecimal(stakeSuggestion.suggestedStake)}</strong><span>{currency}</span><small>مبلغ پیشنهادی</small></div>
+              <button type="button" className="stake-assistant-apply" onClick={() => onApplyStakeSuggestion?.(String(stakeSuggestion.suggestedStake))}><Check size={14} /> اعمال مبلغ</button>
+              <div className="stake-assistant-meta"><span>سقف این پروفایل</span><b>{formatFaDecimal(stakeSuggestion.maxStake)} {currency}</b></div>
+            </> : <div className="stake-assistant-empty"><Info size={15} /><span>برای این دارایی موجودی قابل‌استفاده‌ای برای پیشنهاد مبلغ وجود ندارد.</span></div>}
+            <small className="stake-assistant-note">{stakeSuggestion.reason}</small>
+          </section>
         )}
         {statusMessage && (
           <p className={`sheet-status ${successCode ? "sheet-status-success" : "sheet-status-error"}`}>

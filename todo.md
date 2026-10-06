@@ -428,7 +428,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] تطبیق Blueprint با routeها، schema، routerها و providerهای فعلی و حذف هم‌پوشانی‌های معماری.
 - [x] پیاده‌سازی Smart Stake Assistant و Risk Profile با wallet و دیتابیس backend واقعی، بدون mock عملیاتی.
 - [x] افزودن تست‌های contract/safety و بازبینی responsive قابلیت‌های جدید Blueprint.
-- [ ] ثبت checkpoint نهایی و مستندسازی قابلیت‌های تکمیل‌شده، وابستگی‌ها و موارد نیازمند credential یا تصمیم محصول.
+- [x] ثبت checkpoint پیشرفت `e579e461` و مستندسازی قابلیت‌های تکمیل‌شده، وابستگی‌ها و موارد نیازمند credential یا تصمیم محصول.
 
 ## NOWPayments activation follow-up
 - [ ] تکمیل invoice/payout واقعی پس از پذیرش و ورود secrets امن NOWPayments.
