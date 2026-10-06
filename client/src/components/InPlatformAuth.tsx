@@ -50,6 +50,9 @@ export function InPlatformAuth({ open, mode, onClose, onModeChange }: { open: bo
   return (
     <div className="overlay-backdrop auth-backdrop" role="presentation" onMouseDown={onClose}>
       <section className={`auth-modal glass-panel auth-mode-${mode}`} role="dialog" aria-modal="true" aria-label="ورود و ثبت‌نام" onMouseDown={(event) => event.stopPropagation()}>
+        <span className="auth-liquid-orb auth-orb-one" aria-hidden="true" />
+        <span className="auth-liquid-orb auth-orb-two" aria-hidden="true" />
+        <span className="auth-specular" aria-hidden="true" />
         <button className="overlay-close" type="button" onClick={onClose} aria-label="بستن"><X size={19} /></button>
         <div className="auth-mark"><LockKeyhole size={21} /></div>
         <span className="auth-eyebrow">{copy.eyebrow}</span>

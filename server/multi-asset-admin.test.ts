@@ -35,7 +35,7 @@ describe("multi-asset and admin contracts", () => {
     expect(page).toContain("trpc.admin.notify.useMutation");
     expect(page).toContain("trpc.admin.assetStatus.useMutation");
     const provider = read("./nowpayments.ts");
-    const entry = read("./_core/index.ts");
+    const entry = read("./app.ts");
     const webhook = read("./nowpaymentsWebhook.ts");
     expect(provider).toContain("USDTBSC");
     expect(provider).toContain("timingSafeEqual");

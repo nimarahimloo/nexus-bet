@@ -1,9 +1,9 @@
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Regular_d2e47802.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; }
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Medium_3a1ce066.woff2") format("woff2"); font-style: normal; font-weight: 500; font-display: swap; }
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-SemiBold_2791712b.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; }
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Bold_4740a017.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; }
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-ExtraBold_4f4d9369.woff2") format("woff2"); font-style: normal; font-weight: 800; font-display: swap; }
-@font-face { font-family: "Nexus Kalameh"; src: url("/manus-storage/KalamehWebFaNum-Black_53c00ed8.woff2") format("woff2"); font-style: normal; font-weight: 900; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-Regular.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-Medium.woff2") format("woff2"); font-style: normal; font-weight: 500; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-SemiBold.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-Bold.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-ExtraBold.woff2") format("woff2"); font-style: normal; font-weight: 800; font-display: swap; }
+@font-face { font-family: "Nexus Kalameh"; src: url("/fonts/Kalameh-Black.woff2") format("woff2"); font-style: normal; font-weight: 900; font-display: swap; }
 
 :root {
   --font-body: "Nexus Kalameh", Tahoma, sans-serif;

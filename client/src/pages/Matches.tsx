@@ -64,7 +64,7 @@ export default function Matches() {
   const toggleWatch = (match: MatchCardData) => { if (!isAuthenticated) { openAuthModal(); return; } const existing = (watchlistQuery.data ?? []).find((item) => item.eventId === match.id); if (existing) removeWatchMutation.mutate({ watchlistId: existing.id }); else addWatchMutation.mutate({ eventId: match.id, sport: match.sport, league: match.league, home: match.home, away: match.away }); };
   const addSelection = (match: MatchCardData, market: MatchCardData["markets"][number]) => { const id = `${match.id}-${market.label}`; setSelections((items) => items.some((item) => item.id === id) ? items.filter((item) => item.id !== id) : [...items, { id, match: `${match.home} — ${match.away}`, market: market.name, odds: market.odds }]); setSheetOpen(true); };
   return (
-    <PageShell eyebrow="مرکز مسابقات" title="مسابقه‌ها، منظم و قابل‌فهم" description="فید مسابقات از API ورزشی می‌آید؛ بازار را انتخاب کن یا کارت را باز کن تا جزئیات کامل را ببینی." heroImage="/manus-storage/nexus-bet-matches-hero-v2_fbfab850.png">
+    <PageShell eyebrow="مرکز مسابقات" title="مسابقه‌ها، منظم و قابل‌فهم" description="فید مسابقات از API ورزشی می‌آید؛ بازار را انتخاب کن یا کارت را باز کن تا جزئیات کامل را ببینی." heroImage="/brand/nexus-bet-matches-hero-v2_fbfab850.png">
       <div className="matches-filter-wrap sb-filter-sticky">
         <div className="subpage-toolbar matches-filter-bar">
           <label><Search size={16} /><input placeholder="جست‌وجوی تیم یا لیگ" value={search} onChange={(event) => setSearch(event.target.value)} /></label>

@@ -8,8 +8,8 @@ describe("iOS-inspired mobile redesign", () => {
     const css = read("../client/src/ios26.css");
     const indexCss = read("../client/src/index.css");
     expect(indexCss).toContain('@import "./ios26.css"');
-    expect(css).toContain("KalamehWebFaNum-Regular_d2e47802.woff2");
-    expect(css).toContain("KalamehWebFaNum-Black_53c00ed8.woff2");
+    expect(css).toContain("/fonts/Kalameh-Regular.woff2");
+    expect(css).toContain("/fonts/Kalameh-Black.woff2");
     expect(css).toContain('font-family: "Nexus Kalameh"');
     expect(css).toContain("letter-spacing: normal");
   });

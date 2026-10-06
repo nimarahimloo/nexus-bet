@@ -39,7 +39,12 @@ export function createApp(): Express {
     res.json({
       ok: true,
       database: Boolean(db),
-      payments: nowPaymentsReadiness(),
+      payments: nowPaymentsReadiness({
+        apiKey: ENV.nowPaymentsApiKey,
+        ipnSecret: ENV.nowPaymentsIpnSecret,
+        payoutWallet: ENV.nowPaymentsPayoutWallet,
+        payoutAuthToken: ENV.nowPaymentsPayoutAuthToken,
+      }),
       env: {
         hasDatabaseUrl: Boolean(ENV.databaseUrl?.trim()),
       },

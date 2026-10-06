@@ -10,12 +10,12 @@ import { PageShell } from "@/components/PageShell";
 const wheelPalette = ["#893bff", "#5fe2d0", "#ab71ff", "#f4c96c", "#6d3fd1", "#51b9ad"];
 
 const featureCards = [
-  { title: "مسابقات زنده", detail: "فید رسمی و لحظه‌ای.", icon: Trophy, href: "/matches", image: "/manus-storage/nexus-bet-live-match_f1d157ef.jpg" },
-  { title: "فوتبال", detail: "بازارهای خوانا و سریع.", icon: Trophy, href: "/matches", image: "/manus-storage/nexus-bet-matches-hero-v2_fbfab850.png" },
-  { title: "انفجار", detail: "ضریب زنده، کنترل با تو.", icon: Zap, href: "/crash", image: "/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png" },
-  { title: "پاداش‌ها", detail: "گردونه و فعالیت روزانه.", icon: Gift, href: "/rewards", image: "/manus-storage/nexus-bet-rewards-hero-v3_92731f27.png" },
-  { title: "باشگاه VIP", detail: "سطح و مزایای روشن.", icon: BadgePercent, href: "/vip", image: "/manus-storage/nexus-bet-vip-hero-v2_6e37762c.png" },
-  { title: "کیف پول چندارزی", detail: "USDT پایه؛ دارایی‌های رایج در یکجا.", icon: WalletCards, href: "/wallet", image: "/manus-storage/nexus-bet-wallet-hero-v2_884a12f2.png" },
+  { title: "مسابقات زنده", detail: "فید رسمی و لحظه‌ای.", icon: Trophy, href: "/matches", image: "/brand/nexus-bet-live-match_f1d157ef.jpg" },
+  { title: "فوتبال", detail: "بازارهای خوانا و سریع.", icon: Trophy, href: "/matches", image: "/brand/nexus-bet-matches-hero-v2_fbfab850.png" },
+  { title: "انفجار", detail: "ضریب زنده، کنترل با تو.", icon: Zap, href: "/crash", image: "/brand/nexus-bet-crash-hero-v2_ef7fde4d.png" },
+  { title: "پاداش‌ها", detail: "گردونه و فعالیت روزانه.", icon: Gift, href: "/rewards", image: "/brand/nexus-bet-rewards-hero-v3_92731f27.png" },
+  { title: "باشگاه VIP", detail: "سطح و مزایای روشن.", icon: BadgePercent, href: "/vip", image: "/brand/nexus-bet-vip-hero-v2_6e37762c.png" },
+  { title: "کیف پول چندارزی", detail: "USDT پایه؛ دارایی‌های رایج در یکجا.", icon: WalletCards, href: "/wallet", image: "/brand/nexus-bet-wallet-hero-v2_884a12f2.png" },
 ];
 
 function OperationalEmpty({ title, detail, href = "/matches", cta = "بازگشت به مسابقات" }: { title: string; detail: string; href?: string; cta?: string }) {
@@ -26,7 +26,7 @@ export function PromotionsPage() {
   const promotionsQuery = trpc.promotions.active.useQuery();
   const claimMutation = trpc.promotions.claim.useMutation({ onSuccess: () => { toast.success("پیشنهاد فعال شد."); void promotionsQuery.refetch(); }, onError: (error) => toast.error(error.message) });
   const promotions = promotionsQuery.data ?? [];
-  return <PageShell title="پیشنهادها" heroImage="/manus-storage/nexus-bet-promotions-hero-v3_65559fc7.png">
+  return <PageShell title="پیشنهادها" heroImage="/brand/nexus-bet-promotions-hero-v3_65559fc7.png">
     {promotionsQuery.error && <div className="inline-alert">کمپین‌ها فعلاً از backend دریافت نشدند.</div>}
     {promotionsQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت…</div> : promotions.length ? <div className="offer-grid">{promotions.map((promotion) => <article className="offer-card glass-panel" key={promotion.id}><span className="sample-chip">{promotion.rewardType.toUpperCase()}</span><h2>{promotion.title}</h2><p>{promotion.description}</p><small>{promotion.terms}</small><div className="offer-card-footer"><span>تا {new Date(promotion.endsAt).toLocaleDateString("fa-IR")}</span><button className="solid-cta" disabled={claimMutation.isPending} onClick={() => claimMutation.mutate({ promotionId: promotion.id })}>فعال‌سازی <ArrowLeft size={15} /></button></div></article>)}</div> : <OperationalEmpty title="کمپین فعال پیدا نشد" detail="در حال حاضر کمپین فعالی وجود ندارد." />}
     
@@ -39,7 +39,7 @@ export function TournamentsPage() {
   const tournaments = tournamentsQuery.data ?? [];
   const selected = tournaments.find((item) => item.id === (selectedId ?? tournaments[0]?.id));
   const leaderboardQuery = trpc.tournaments.leaderboard.useQuery({ tournamentId: selected?.id ?? 0 }, { enabled: Boolean(selected?.id) });
-  return <PageShell eyebrow="رقابت‌ها" title="رقابت را با جدول واقعی شروع کن" description="رتبه‌بندی، امتیاز، جایزه و قوانین از جدول‌های backend خوانده می‌شوند؛ هیچ participant یا prize pool ساختگی ساخته نمی‌شود." heroImage="/manus-storage/nexus-bet-tournaments-hero-v3_d13dd980.png">
+  return <PageShell eyebrow="رقابت‌ها" title="رقابت را با جدول واقعی شروع کن" description="رتبه‌بندی، امتیاز، جایزه و قوانین از جدول‌های backend خوانده می‌شوند؛ هیچ participant یا prize pool ساختگی ساخته نمی‌شود." heroImage="/brand/nexus-bet-tournaments-hero-v3_d13dd980.png">
     {tournamentsQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت رقابت‌ها…</div> : tournaments.length ? <><div className="feature-filter-row">{tournaments.map((tournament) => <button className={selected?.id === tournament.id ? "selected" : ""} key={tournament.id} onClick={() => setSelectedId(tournament.id)}>{tournament.title}</button>)}</div>{selected && <div className="tournament-feature glass-panel"><div><span className="sample-chip">{selected.status}</span><h2>{selected.title}</h2><p>{selected.description}</p><small>{selected.rules}</small></div><strong>{formatFaDecimal(Number(selected.prizePool))} {selected.currency}</strong></div>}<div className="standings-grid">{leaderboardQuery.data?.map((entry) => <article className="standings-card glass-panel" key={entry.id}><b>{entry.rank ?? "—"}</b><span>{entry.userName}</span><strong>{formatFaDecimal(entry.points)}</strong></article>)}</div>{selected && !leaderboardQuery.data?.length && <div className="empty-state glass-panel">هنوز ورودی یا امتیاز ثبت‌شده‌ای برای این رقابت وجود ندارد.</div>}</> : <OperationalEmpty title="تورنمنت فعال پیدا نشد" detail="داده‌ای از جدول tournaments در backend منتشر نشده است." />}
   </PageShell>;
 }
@@ -73,7 +73,7 @@ export function RewardsPage() {
   const canSpin = isAuthenticated && wheelIsReady && Boolean(statusQuery.data?.canSpin) && !spinMutation.isPending;
   const wheelGradient = wheelIsReady ? `conic-gradient(from -${360 / segments.length / 2}deg, ${segments.map((_, index) => `${wheelPalette[index % wheelPalette.length]} ${(index / segments.length) * 100}% ${((index + 1) / segments.length) * 100}%`).join(", ")})` : undefined;
 
-  return <PageShell title="هر روز، یک شانس واقعی" heroImage="/manus-storage/nexus-bet-rewards-hero-v3_92731f27.png">
+  return <PageShell title="هر روز، یک شانس واقعی" heroImage="/brand/nexus-bet-rewards-hero-v3_92731f27.png">
     <div className="reward-wheel-card glass-panel">
       <div className="wheel-visual" aria-label="گردونهٔ شانس">{segmentsQuery.isLoading ? <div className="wheel-loading"><Loader2 className="spin" size={28} /><span>در حال بارگذاری گردونه…</span></div> : segmentsQuery.error || !wheelIsReady ? <div className="wheel-loading"><CircleHelp size={28} /><span>گردونه موقتاً در دسترس نیست.</span><button type="button" className="outline-cta" onClick={() => void segmentsQuery.refetch()}>تلاش دوباره</button></div> : <><div className="wheel-pointer" /><div className="wheel-disc" style={{ transform: `rotate(${rotation}deg)`, background: wheelGradient }}>{segments.map((segment, index) => <span key={segment.code} style={{ transform: `rotate(${index * (360 / Math.max(segments.length, 1))}deg)` }}>{segment.label}</span>)}</div><div className="wheel-core"><Gift size={28} /><span aria-live="polite">{spinMutation.isPending ? "در حال چرخش…" : result?.label ?? "یک بار در روز"}</span></div></>}</div>
       <div className="wheel-copy"><span className="sample-chip">{isAuthenticated ? (statusQuery.data?.canSpin ? "امروز آماده‌ای" : "امروز استفاده شد") : "نیازمند ورود"}</span><h2>{result ? result.type === "usdt" ? `${formatFaDecimal(result.amount)} USDT به کیف پولت اضافه شد` : result.label : "شانس روزانه"}</h2><p>{result ? "ثبت شد و در تاریخچه است." : "نتیجه در backend؛ پاداش مستقیماً به wallet."}</p><div className="wheel-actions"><button className="primary-cta" disabled={!canSpin} onClick={() => isAuthenticated ? spinMutation.mutate() : openAuthModal()}>{!isAuthenticated ? "ورود برای چرخاندن" : !wheelIsReady ? "گردونه در دسترس نیست" : spinMutation.isPending ? "در حال ثبت نتیجه…" : statusQuery.data?.canSpin ? "چرخاندن گردونه" : "فردا دوباره امتحان کن"} {!isAuthenticated ? <LockKeyhole size={15} /> : <Gift size={15} />}</button>{!isAuthenticated && <button className="text-link" onClick={() => openAuthModal()}>ورود به Nexus Bet <ArrowLeft size={15} /></button>}</div>{spinMutation.error && <p className="inline-alert">{spinMutation.error.message}</p>}</div>
@@ -87,7 +87,7 @@ export function RewardsPage() {
 export function CasinoPage() {
   const catalogQuery = trpc.games.catalog.useQuery();
   const games = catalogQuery.data ?? [];
-  return <PageShell title="بازی‌ها" heroImage="/manus-storage/nexus-bet-casino-hero-v3_e26e607d.png">
+  return <PageShell title="بازی‌ها" heroImage="/brand/nexus-bet-casino-hero-v3_e26e607d.png">
     {catalogQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت…</div> : games.length ? <div className="game-grid">{games.map((game) => <article className="game-card glass-panel" key={game.id}><div className="game-card-icon"><Zap size={21} /></div><span>{game.provider}</span><h3>{game.title}</h3><p>وضعیت: {game.status}</p><a href={game.launchUrl} className="outline-cta">ورود به بازی <Zap size={15} /></a></article>)}</div> : <OperationalEmpty title="بازی فعالی در catalog نیست" detail="در حال حاضر بازی فعالی وجود ندارد." />}
     
   </PageShell>;

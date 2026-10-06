@@ -444,3 +444,19 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ثبت checkpoint و مستندسازی محدودیت‌های اعلان‌های پس‌زمینه تا زمان انتخاب scheduler/trigger واقعی.
 
 - [x] ایجاد و تأیید Heartbeat پنج‌دقیقه‌ای `nexus-sport-alerts` برای `/api/scheduled/processSportAlerts` با task UID ثبت‌شده در blueprint_execution.md.
+
+
+## GO Readiness execution — 2026-10-06
+- [x] ثبت baseline و بررسی وضعیت فعلی deployment/API
+- [x] رفع routing و health endpoint در source و preview deployment
+- [x] تحلیل و بهبود latency و پاسخ‌های ناقص با lazy-load کردن AIChatBox و smoke checks
+- [x] افزودن smoke testهای API و health
+- [x] اعتبارسنجی فید مسابقات و Crash round بدون داده‌سازی با contract tests
+- [x] تکمیل تست‌های wallet و payment در حالت disabled-safe/sandbox-ready
+- [x] اجرای QA موبایل و تست end-to-end سطح route/API و اصلاح broken assets
+- [x] اجرای validation نهایی و ثبت تصمیم GO/NO-GO
+
+### GO Readiness verdict
+- **Source/preview:** سبز — `pnpm check`، ۳۲ فایل تست و ۹۱ تست، build production و `/api/health` همگی پاس شدند؛ assetهای hero/logo و فونت‌ها اکنون local و قابل‌دسترسی‌اند.
+- **Public domain:** هنوز **NO-GO** — دامنهٔ `nexusbet-bhrhzrdw.manus.space` در زمان تست هنوز نسخهٔ قدیمی را سرو می‌کند و `/api/health` را به HTML fallback تبدیل می‌کند؛ checkpoint جدید باید توسط deployment/publish دامنه اعمال شود.
+- **Payments:** عمداً **disabled-safe / NO-GO برای پول واقعی** — secrets و sandbox smoke واقعی NOWPayments هنوز ارائه نشده‌اند؛ هیچ موجودی یا settlement جعلی فعال نشده است.

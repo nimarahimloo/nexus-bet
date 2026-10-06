@@ -224,7 +224,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-score glass-panel"><img className="hero-art" src="/manus-storage/nexus-bet-hero_64d33d2f.jpg" alt="استادیوم شبانه و شبکهٔ Nexus Bet" />
+        <div className="hero-score glass-panel"><img className="hero-art" src="/brand/nexus-bet-hero_64d33d2f.jpg" alt="استادیوم شبانه و شبکهٔ Nexus Bet" />
           <div className="nexus-network" aria-hidden="true"><i /><i /><i /><i /></div>
           {featuredMatch ? <><div className="score-top"><span className={sportsQuery.data?.source === "api" ? "live-chip" : "demo-tag"}>{sportsQuery.data?.source === "api" ? "API واقعی" : sportsQuery.data?.source === "preview" ? "دادهٔ تستی" : "بدون دادهٔ عملیاتی"}</span><span>{featuredMatch.league}</span><span aria-hidden="true"><Crown size={16} /></span></div><div className="scoreboard"><div><span className="team-orb red">{featuredMatch.home.slice(0, 1)}</span><b>{featuredMatch.home}</b></div><div className="score-center"><strong>{featuredMatch.score ?? "— · —"}</strong><span>{featuredMatch.status}</span></div><div><span className="team-orb blue">{featuredMatch.away.slice(0, 1)}</span><b>{featuredMatch.away}</b></div></div>{featuredMarket ? <div className="hero-market"><span>{featuredMarket.name}</span><b>{numberFa(featuredMarket.odds)}</b><button onClick={() => addSelection(featuredMatch, featuredMarket)} aria-label="افزودن بازار به بلیت"><Plus size={17} /></button></div> : <div className="hero-market is-unavailable"><span>بازار رسمی این مسابقه هنوز دریافت نشده است</span><span>—</span></div>}<div className="signal-row"><span><Activity size={14} /> {formatFaNumber(featuredMatch.markets.length, { maximumFractionDigits: 0 })} بازار رسمی</span><span>{sportsQuery.data?.source === "api" ? "فید API" : sportsQuery.data?.source === "preview" ? "پیش‌نمایش" : "در انتظار منبع"}</span></div></> : <div className="hero-empty"><span><Activity size={18} /></span><b>هنوز مسابقهٔ قابل‌نمایشی از منبع واقعی دریافت نشده است.</b><small>{sportsQuery.isLoading ? "در حال دریافت فید مسابقات…" : sportsQuery.data?.error ?? "به‌محض آماده‌شدن فید، این بخش به‌روزرسانی می‌شود."}</small><Link href="/matches" className="outline-cta">رفتن به مرکز مسابقات <ArrowLeft size={15} /></Link></div>}
         </div>
@@ -251,7 +251,7 @@ export default function Home() {
             <button onClick={() => setActiveFilter("همه")}>نمایش <ArrowLeft size={15} /></button>
           </div>
 
-          <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title"><img className="section-art ai-art" src="/manus-storage/nexus-bet-ai_93b4cb7e.jpg" alt="هستهٔ هوش مصنوعی Nexus AI" />
+          <section className="ai-picks glass-panel" aria-labelledby="ai-picks-title"><img className="section-art ai-art" src="/brand/nexus-bet-ai_93b4cb7e.jpg" alt="هستهٔ هوش مصنوعی Nexus AI" />
             <div className="ai-heading">
               <div className="ai-title-wrap"><span className="ai-orb"><Sparkles size={18} /></span><div><span className="section-kicker">تحلیل Nexus AI</span><h3 id="ai-picks-title">انتخاب‌های دقیق امروز</h3></div></div>
               <button className="ai-refresh" onClick={() => aiQuery.refetch()} disabled={aiQuery.isFetching}>{aiQuery.isFetching ? "در حال تحلیل…" : "تحلیل مسابقات"}<ArrowLeft size={15} /></button>
@@ -265,7 +265,7 @@ export default function Home() {
 
           <div className="match-list">
             {filteredMatches.map((match) => (
-              <article className={`match-card glass-panel ${match.status === "نمونه" ? "is-demo" : ""}`} key={match.id}>{match.status === "نمونه" && <img className="match-art" src="/manus-storage/nexus-bet-live-match_f1d157ef.jpg" alt="تصویر تزئینی مسابقات فوتبال" />}
+              <article className={`match-card glass-panel ${match.status === "نمونه" ? "is-demo" : ""}`} key={match.id}>{match.status === "نمونه" && <img className="match-art" src="/brand/nexus-bet-live-match_f1d157ef.jpg" alt="تصویر تزئینی مسابقات فوتبال" />}
                 <div className="match-meta">
                   <span className={match.status === "نمونه" ? "status-demo" : "status-upcoming"}>{match.status}</span>
                   <span>{match.league}</span><span className="dot-divider">•</span><span>{match.insight}</span>
@@ -319,7 +319,7 @@ export default function Home() {
       <section className="wallet-section container" id="wallet">
         <div className="section-heading"><div><span className="section-kicker">دارایی‌های شما</span><h2>موجودی‌ات، یک نگاه</h2></div><button className="text-link" onClick={() => scrollTo("account")}>همهٔ تراکنش‌ها <ArrowLeft size={16} /></button></div>
         <div className="wallet-layout">
-          <div className="balance-overview glass-panel"><img className="section-art wallet-art" src="/manus-storage/nexus-bet-wallet_041598ee.jpg" alt="کیف پول شیشه‌ای USDT" />
+          <div className="balance-overview glass-panel"><img className="section-art wallet-art" src="/brand/nexus-bet-wallet_041598ee.jpg" alt="کیف پول شیشه‌ای USDT" />
             <div className="wallet-card-top"><span className="wallet-logo"><WalletCards size={22} /></span><div><span>کیف پول اصلی</span><b>USDT <small>· Tether</small></b></div><button><Eye size={18} /></button></div>
             <div className="total-balance"><span>موجودی کل</span><strong>{numberFa(availableBalance + lockedBalance)} <small>USDT</small></strong><em>≈ {numberFa((availableBalance + lockedBalance) * 1.0, 0)} دلار آمریکا</em></div>
             <div className="balance-breakdown"><div><span>قابل‌استفاده</span><b>{numberFa(availableBalance)} USDT</b><i className="positive" /></div><div><span>قفل‌شده در شرط‌های باز</span><b>{numberFa(lockedBalance)} USDT</b><i className="locked" /></div></div>

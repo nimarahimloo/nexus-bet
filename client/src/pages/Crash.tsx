@@ -119,7 +119,7 @@ export default function Crash() {
       eyebrow="بازی انفجار"
       title="ریسک را قبل از توقف ببین"
       description="ضریب جاری از زمان شروع round محاسبه می‌شود. نقطهٔ توقف از seed مشتق شده و پس از پایان reveal می‌شود. bet و cashout واقعی‌اند."
-      heroImage="/manus-storage/nexus-bet-crash-hero-v2_ef7fde4d.png"
+      heroImage="/brand/nexus-bet-crash-hero-v2_ef7fde4d.png"
     >
       <div className="crash-board glass-panel">
         <div className="crash-status">

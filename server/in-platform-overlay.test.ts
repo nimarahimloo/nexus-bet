@@ -13,10 +13,8 @@ describe("in-platform auth and support contracts", () => {
     expect(auth).toContain("login");
     expect(auth).toContain("signup");
     expect(auth).toContain("forgot");
-    expect(auth).toContain("Google");
-    expect(auth).toContain("Discord");
-    expect(auth).toContain("Facebook");
-    expect(auth).toContain("Apple");
+    expect(auth).toContain("auth-preview-note");
+    expect(auth).not.toContain("window.location");
     expect(shell).toContain("InPlatformAuth");
     expect(home).not.toContain("startLogin");
     expect(crash).not.toContain("startLogin");
@@ -37,8 +35,7 @@ describe("in-platform auth and support contracts", () => {
     expect(router).toContain("support: router");
     expect(router).toContain("پشتیبان فارسی Nexus Bet");
     expect(support).toContain("nexus:ai-context");
-    expect(shell).toContain("context-ai-strip");
-    expect(shell).toContain("contextualPrompt");
+    expect(support).toContain("contextPrompt");
     expect(css).toContain("safe-area-inset-bottom");
     expect(css).toContain("support-status-dot");
     expect(css).toContain("support-kicker");

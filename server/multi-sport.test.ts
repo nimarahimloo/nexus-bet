@@ -19,10 +19,11 @@ describe("multi-sport feed contracts", () => {
     expect(feed).toContain("source: \"preview\"");
     expect(sports).toContain("homeLogo");
     expect(sports).toContain("awayLogo");
-    const matches = read("../client/src/pages/Matches.tsx");
+    const matches = read("../client/src/components/SportsbookMatchCard.tsx");
+    const matchesPage = read("../client/src/pages/Matches.tsx");
     expect(matches).toContain("match.homeLogo ? <img src={match.homeLogo}");
     expect(matches).toContain("match.awayLogo ? <img src={match.awayLogo}");
-    expect(matches).toContain('sportsQuery.data?.source !== "preview"');
+    expect(matchesPage).toContain('sportsQuery.data?.source !== "preview"');
     expect(routers).toContain("directory: publicProcedure");
     expect(routers).toContain("fetchSportsUniverse");
     expect(routers).toContain("max(30).default(10)");

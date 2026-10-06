@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
@@ -11,7 +11,7 @@ describe("hero asset and font recovery", () => {
     expect(features).toContain("nexus-bet-tournaments-hero-v3_d13dd980.png");
     expect(features).toContain("nexus-bet-rewards-hero-v3_92731f27.png");
     expect(features).toContain("nexus-bet-casino-hero-v3_e26e607d.png");
-    expect(supporting).toContain("nexus-bet-account-hero-v2_f471d0ea.png");
+    expect(supporting).toContain("nexus-bet-account-hero-v2_f471d0ea.jpg");
   });
 
   it("keeps image overlays readable yet bright and prevents font fallback in the product shell", () => {
@@ -20,5 +20,19 @@ describe("hero asset and font recovery", () => {
     expect(css).toContain(".art-overlay { background: rgba(8, 6, 14, .06) !important; opacity: 1 !important; }");
     expect(css).toContain(".nexus-shell, .nexus-shell *");
     expect(css).toContain("font-family: var(--font-body) !important");
+  });
+
+  it("uses project-owned public assets instead of the removed storage proxy", () => {
+    const home = read("../client/src/pages/Home.tsx");
+    const shell = read("../client/src/components/PageShell.tsx");
+    const css = read("../client/src/index.css");
+    expect(home).toContain("/brand/nexus-bet-hero_64d33d2f.jpg");
+    expect(shell).toContain("/brand/nexus-bet-logo_92fe8c09.png");
+    expect(css).toContain("/fonts/Peyda-Regular.woff2");
+    expect(css).toContain("/fonts/Kalameh-Regular.woff2");
+    expect(home).not.toContain("/manus-storage/");
+    expect(shell).not.toContain("/manus-storage/");
+    expect(existsSync(new URL("../client/public/brand/nexus-bet-hero_64d33d2f.jpg", import.meta.url))).toBe(true);
+    expect(existsSync(new URL("../client/public/fonts/Kalameh-Regular.woff2", import.meta.url))).toBe(true);
   });
 });
