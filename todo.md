@@ -460,3 +460,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - **Source/preview:** سبز — `pnpm check`، ۳۲ فایل تست و ۹۱ تست، build production و `/api/health` همگی پاس شدند؛ assetهای hero/logo و فونت‌ها اکنون local و قابل‌دسترسی‌اند.
 - **Public domain:** هنوز **NO-GO** — دامنهٔ `nexusbet-bhrhzrdw.manus.space` در زمان تست هنوز نسخهٔ قدیمی را سرو می‌کند و `/api/health` را به HTML fallback تبدیل می‌کند؛ checkpoint جدید باید توسط deployment/publish دامنه اعمال شود.
 - **Payments:** عمداً **disabled-safe / NO-GO برای پول واقعی** — secrets و sandbox smoke واقعی NOWPayments هنوز ارائه نشده‌اند؛ هیچ موجودی یا settlement جعلی فعال نشده است.
+
+
+## Brand identity and multi-device responsive pass — 2026-10-06
+- [x] تقویت wordmark مشترک NEXUS BET در header و footer با لوگوی واقعی و trust line یکپارچه.
+- [x] بازگردانی برچسب‌های ظریف route و hierarchy برند بدون بازگرداندن پیام‌های سبز تزئینی قدیمی.
+- [x] تعریف tokenهای هویت بصری violet/ink/teal و max-width مشترک برای صفحات.
+- [x] پوشش breakpointهای مانیتور بزرگ، لپ‌تاپ/تبلت، موبایل و موبایل کوچک با تست screenshot در ۳۲۰، ۳۷۵ و ۷۶۸ پیکسل.
+- [x] افزودن micro-interaction کنترل‌شده برای mark برند، hero و CTAها با پشتیبانی prefers-reduced-motion.
+- [x] افزودن تست contract برای برندینگ header/footer و breakpointهای responsive.

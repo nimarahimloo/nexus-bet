@@ -59,7 +59,7 @@ export function PageShell({ title, eyebrow, description, heroImage, children, is
 
   return <motion.main className={`nexus-shell ${isHome ? "home-shell" : "subpage-shell"} route-${routeSlug}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : .18 }}>
     <motion.header className="topbar glass-panel" initial={reduceMotion ? false : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .28, ease: [0.16, 1, 0.3, 1] }}>
-      <Link href="/" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><img src="/brand/nexus-bet-logo_92fe8c09.png" alt="" /></span><span><b>NEXUS</b><small>BET</small></span></Link>
+      <Link href="/" className="brand" aria-label="Nexus Bet، خانه" onClick={() => setOpen(false)}><span className="brand-mark"><img src="/brand/nexus-bet-logo_92fe8c09.png" alt="" /></span><span className="brand-copy"><b>NEXUS</b><small>BET · TRUSTED PLAY</small></span></Link>
       <nav id="mobile-primary-navigation" className="main-nav" aria-label="ناوبری اصلی">
         {primaryNav.map(([href, label]) => <Link key={href} href={href} className={`nav-link ${isActive(href) ? "is-active" : ""}`} onClick={() => setOpen(false)}>{label}{href === "/matches" && <i className="live-dot" />}</Link>)}
       </nav>
