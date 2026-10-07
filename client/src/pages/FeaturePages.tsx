@@ -1,5 +1,5 @@
 import { ArrowLeft, BadgePercent, CircleCheck, CircleHelp, Gift, Layers3, Loader2, LockKeyhole, Trophy, WalletCards, Zap } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import { openAuthModal } from "@/lib/platformOverlay";
@@ -86,9 +86,15 @@ export function RewardsPage() {
 
 export function CasinoPage() {
   const catalogQuery = trpc.games.catalog.useQuery();
+  const [category, setCategory] = useState("all");
+  const [provider, setProvider] = useState("all");
+  const [mode, setMode] = useState<"all" | "demo" | "real">("all");
   const games = catalogQuery.data ?? [];
+  const categories = useMemo(() => ["all", ...Array.from(new Set(games.map((game) => game.category)))], [games]);
+  const providers = useMemo(() => ["all", ...Array.from(new Set(games.map((game) => game.provider)))], [games]);
+  const visibleGames = useMemo(() => games.filter((game) => (category === "all" || game.category === category) && (provider === "all" || game.provider === provider) && (mode === "all" || game.mode === mode)), [category, games, mode, provider]);
   return <PageShell title="بازی‌ها" heroImage="/brand/nexus-bet-casino-hero-v3_e26e607d.png">
-    {catalogQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت…</div> : games.length ? <div className="game-grid">{games.map((game) => <article className="game-card glass-panel" key={game.id}><div className="game-card-icon"><Zap size={21} /></div><span>{game.provider}</span><h3>{game.title}</h3><p>وضعیت: {game.status}</p><a href={game.launchUrl} className="outline-cta">ورود به بازی <Zap size={15} /></a></article>)}</div> : <OperationalEmpty title="بازی فعالی در catalog نیست" detail="در حال حاضر بازی فعالی وجود ندارد." />}
+    {catalogQuery.isLoading ? <div className="empty-state glass-panel">در حال دریافت catalog واقعی…</div> : games.length ? <><div className="casino-toolbar glass-panel"><div className="casino-filter-group" aria-label="دسته‌بندی بازی"><span>دسته</span><div className="casino-filters">{categories.map((item) => <button className={category === item ? "selected" : ""} key={item} onClick={() => setCategory(item)}>{item === "all" ? "همه" : item}</button>)}</div></div><label className="casino-select"><span>Provider</span><select value={provider} onChange={(event) => setProvider(event.target.value)}><option value="all">همهٔ providerها</option>{providers.slice(1).map((item) => <option value={item} key={item}>{item}</option>)}</select></label><label className="casino-select"><span>حالت ورود</span><select value={mode} onChange={(event) => setMode(event.target.value as typeof mode)}><option value="all">همه</option><option value="real">واقعی</option><option value="demo">دمو</option></select></label></div>{visibleGames.length ? <div className="game-grid">{visibleGames.map((game) => <article className="game-card glass-panel" key={game.id}><div className="game-card-visual">{game.thumbnailUrl ? <img src={game.thumbnailUrl} alt="" loading="lazy" /> : <div className="game-card-icon"><Zap size={21} /></div>}<div className="game-card-badges">{game.isNew ? <span>جدید</span> : null}{game.isFeatured ? <span>منتخب</span> : null}</div></div><span>{game.provider} · {game.category}</span><h3>{game.title}</h3><p>{game.mode === "demo" ? "دمو" : "ورود واقعی"}{game.minStake ? ` · حداقل ${formatFaDecimal(Number(game.minStake))}` : ""}</p><a href={game.launchUrl} className="outline-cta">{game.mode === "demo" ? "مشاهدهٔ دمو" : "ورود به بازی"} <Zap size={15} /></a></article>)}</div> : <OperationalEmpty title="نتیجه‌ای برای این فیلتر نیست" detail="فیلتر را تغییر بده یا بعداً دوباره catalog backend را بررسی کن." />}</> : <OperationalEmpty title="بازی فعالی در catalog نیست" detail="در حال حاضر بازی فعالی وجود ندارد." />}
     
   </PageShell>;
 }

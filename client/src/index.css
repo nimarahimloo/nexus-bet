@@ -1306,3 +1306,24 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 @media (prefers-reduced-motion: reduce) {
   .brand-mark::after { animation: none; }
 }
+
+
+/* Data-driven lobby v2 */
+.casino-toolbar { align-items: flex-end; flex-wrap: wrap; border-color: rgba(167,125,242,.22); background: rgba(24,15,40,.66); }
+.casino-filter-group { display: grid; gap: 8px; min-width: 0; flex: 1 1 420px; }
+.casino-filter-group > span, .casino-select > span { color: var(--nexus-text-soft); font-size: 9px; font-weight: 800; }
+.casino-select { display: grid; gap: 8px; min-width: 150px; }
+.casino-select select { min-height: 40px; padding: 0 11px; color: #fff; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: rgba(8,5,16,.64); font: inherit; font-size: 10px; }
+.game-card { overflow: hidden; }
+.game-card-visual { position: relative; display: grid; place-items: center; min-height: 116px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); border-radius: 15px; background: rgba(11,7,20,.74); }
+.game-card-visual img { width: 100%; height: 116px; object-fit: cover; opacity: .88; transition: transform .24s var(--ease-out), opacity .24s var(--ease-out); }
+.game-card:hover .game-card-visual img { transform: scale(1.04); opacity: 1; }
+.game-card-badges { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; }
+.game-card-badges span { padding: 5px 7px; color: #fff; border: 1px solid rgba(95,226,208,.24); border-radius: 999px; background: rgba(8,5,16,.72); font-size: 8px; font-weight: 800; }
+@media (max-width: 720px) {
+  .casino-toolbar { align-items: stretch; }
+  .casino-filter-group, .casino-select { width: 100%; min-width: 0; flex-basis: 100%; }
+  .casino-filters { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; scrollbar-width: none; }
+  .casino-filters button { flex: 0 0 auto; }
+  .game-card-visual, .game-card-visual img { min-height: 140px; height: 140px; }
+}

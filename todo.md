@@ -469,3 +469,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] پوشش breakpointهای مانیتور بزرگ، لپ‌تاپ/تبلت، موبایل و موبایل کوچک با تست screenshot در ۳۲۰، ۳۷۵ و ۷۶۸ پیکسل.
 - [x] افزودن micro-interaction کنترل‌شده برای mark برند، hero و CTAها با پشتیبانی prefers-reduced-motion.
 - [x] افزودن تست contract برای برندینگ header/footer و breakpointهای responsive.
+
+
+## Betfa competitive audit and catalog slice — 2026-10-07
+- [x] ممیزی عمومی صفحات، لابی‌ها، دسته‌بندی بازی‌ها، providerها، promotionها، tournamentها، Poker، trust و responsible-gambling links.
+- [x] ثبت گزارش اجرایی با تفکیک مشاهده مستقیم، استنتاج، محدودیت شواهد و backlog P0/P1/P2.
+- [x] افزودن metadata واقعی Game Catalog v2: vertical، category، mode، thumbnail، featured/new و min/max stake.
+- [x] اعمال migration غیرمخرب روی جدول gameCatalog بدون درج دادهٔ آزمایشی.
+- [x] افزودن filter contract به tRPC و lobby UI برای category/provider و Demo/Real؛ بازی‌های غیرفعال همچنان نمایش داده نمی‌شوند.
+- [x] افزودن contract tests و اجرای TypeScript، ۳۵ فایل تست / ۹۸ تست، build و screenshot در دسکتاپ و موبایل.

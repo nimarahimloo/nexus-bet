@@ -8,10 +8,27 @@ import { getDb } from "./core";
 import { getWalletPortfolio } from "./wallet";
 import { getUserBets } from "./bets";
 
-export async function getActiveGameCatalog() {
+export type GameCatalogFilters = {
+  vertical?: string;
+  category?: string;
+  provider?: string;
+  mode?: "demo" | "real";
+  featured?: boolean;
+  newest?: boolean;
+  limit?: number;
+};
+
+export async function getActiveGameCatalog(filters: GameCatalogFilters = {}) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(gameCatalog).where(eq(gameCatalog.status, "active")).orderBy(gameCatalog.title);
+  const conditions = [eq(gameCatalog.status, "active")];
+  if (filters.vertical) conditions.push(eq(gameCatalog.vertical, filters.vertical));
+  if (filters.category) conditions.push(eq(gameCatalog.category, filters.category));
+  if (filters.provider) conditions.push(eq(gameCatalog.provider, filters.provider));
+  if (filters.mode) conditions.push(eq(gameCatalog.mode, filters.mode));
+  if (filters.featured) conditions.push(eq(gameCatalog.isFeatured, 1));
+  const ordering = filters.newest ? [desc(gameCatalog.updatedAt), gameCatalog.title] : filters.featured ? [desc(gameCatalog.isFeatured), gameCatalog.title] : [gameCatalog.title];
+  return db.select().from(gameCatalog).where(and(...conditions)).orderBy(...ordering).limit(filters.limit ?? 100);
 }
 
 export async function getSupportAccountContext(userId: number) {

@@ -153,7 +153,15 @@ export const appRouter = router({
   }),
 
   games: router({
-    catalog: publicProcedure.query(() => getActiveGameCatalog()),
+    catalog: publicProcedure.input(z.object({
+      vertical: z.string().trim().min(1).max(32).optional(),
+      category: z.string().trim().min(1).max(48).optional(),
+      provider: z.string().trim().min(1).max(96).optional(),
+      mode: z.enum(["demo", "real"]).optional(),
+      featured: z.boolean().optional(),
+      newest: z.boolean().optional(),
+      limit: z.number().int().min(1).max(100).optional(),
+    }).optional()).query(({ input }) => getActiveGameCatalog(input)),
   }),
 
   assets: router({
