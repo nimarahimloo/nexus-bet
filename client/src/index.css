@@ -1327,3 +1327,31 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
   .casino-filters button { flex: 0 0 auto; }
   .game-card-visual, .game-card-visual img { min-height: 140px; height: 140px; }
 }
+
+
+/* Trust Center */
+.trust-status-grid, .trust-policy-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.trust-status-grid { margin-top: 8px; }
+.trust-status-card { display: flex; align-items: flex-start; gap: 12px; padding: 18px; border-radius: 20px; }
+.trust-status-card > div { display: grid; gap: 6px; min-width: 0; }
+.trust-status-card span:not(.trust-status-icon) { color: var(--nexus-text-soft); font-size: 9px; }
+.trust-status-card strong { color: #fff; font-size: 14px; }
+.trust-status-card p, .trust-policy-card p, .trust-boundaries p { margin: 0; color: var(--nexus-text-soft); font-size: 10px; line-height: 1.9; }
+.trust-status-icon, .trust-policy-icon { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 13px; }
+.trust-status-icon.is-ready, .trust-policy-icon { color: var(--nexus-brand-teal); border: 1px solid rgba(95,226,208,.2); background: rgba(95,226,208,.08); }
+.trust-status-icon.is-blocked { color: #f4c96c; border: 1px solid rgba(244,201,108,.2); background: rgba(244,201,108,.08); }
+.trust-policy-grid { margin-top: 26px; }
+.trust-policy-cards { grid-template-columns: repeat(3, 1fr); }
+.trust-policy-card { display: flex; align-items: center; gap: 11px; padding: 16px; border-radius: 18px; color: inherit; text-decoration: none; transition: transform .18s var(--ease-out), border-color .18s var(--ease-out), background-color .18s var(--ease-out); }
+.trust-policy-card:hover { transform: translateY(-3px); border-color: rgba(95,226,208,.32); background-color: rgba(31,30,48,.82); }
+.trust-policy-card > div { flex: 1; min-width: 0; }
+.trust-policy-card h3 { margin: 0 0 5px; font-size: 12px; }
+.trust-policy-card > svg { color: var(--nexus-text-soft); }
+.trust-boundaries { display: grid; gap: 14px; margin-top: 18px; padding: 19px; border-color: rgba(244,201,108,.22); }
+.trust-boundaries-head { display: flex; align-items: center; gap: 10px; }
+.trust-boundaries-head > svg { color: #f4c96c; }
+.trust-boundaries-head h2 { margin: 4px 0 0; font-size: 16px; }
+.trust-boundary-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.trust-boundary-list span { padding: 7px 10px; color: #f6d98c; border: 1px solid rgba(244,201,108,.2); border-radius: 999px; background: rgba(244,201,108,.06); font-size: 9px; }
+@media (max-width: 900px) { .trust-status-grid, .trust-policy-cards { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .trust-status-card, .trust-policy-card, .trust-boundaries { padding: 14px; } .trust-status-grid, .trust-policy-grid { margin-top: 18px; } }

@@ -25,6 +25,7 @@ const moreNav = [
   ["/tournaments", "تورنمنت‌ها", Trophy],
   ["/rewards", "پاداش‌ها", Sparkles],
   ["/casino", "مرکز بازی‌ها", Gamepad2],
+  ["/trust", "مرکز اعتماد", ShieldCheck],
 ] as const;
 
 export function PageShell({ title, eyebrow, description, heroImage, children, isHome = false }: { title?: string; eyebrow?: string; description?: string; heroImage?: string; children: ReactNode; isHome?: boolean }) {

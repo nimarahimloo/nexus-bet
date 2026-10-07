@@ -478,3 +478,9 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اعمال migration غیرمخرب روی جدول gameCatalog بدون درج دادهٔ آزمایشی.
 - [x] افزودن filter contract به tRPC و lobby UI برای category/provider و Demo/Real؛ بازی‌های غیرفعال همچنان نمایش داده نمی‌شوند.
 - [x] افزودن contract tests و اجرای TypeScript، ۳۵ فایل تست / ۹۸ تست، build و screenshot در دسکتاپ و موبایل.
+
+
+## Trust Center slice — 2026-10-07
+- [x] افزودن صفحهٔ عمومی Trust Center با وضعیت واقعی provider، backend-first data، Crash proof و مرزهای disabled-safe.
+- [x] اتصال Trust Center به navigation، footer و route مستقل بدون ادعای مجوز یا فعال‌بودن پرداخت.
+- [x] افزودن تست contract و اجرای screenshot دسکتاپ/موبایل برای Trust Center.
