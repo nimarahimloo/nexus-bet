@@ -484,3 +484,11 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن صفحهٔ عمومی Trust Center با وضعیت واقعی provider، backend-first data، Crash proof و مرزهای disabled-safe.
 - [x] اتصال Trust Center به navigation، footer و route مستقل بدون ادعای مجوز یا فعال‌بودن پرداخت.
 - [x] افزودن تست contract و اجرای screenshot دسکتاپ/موبایل برای Trust Center.
+
+## Sports bet settlement worker — 2026-10-25
+- [x] پیاده‌سازی قواعد تسویهٔ ۱X۲ (برد میزبان/مساوی/برد مهمان) از روی نتیجهٔ نهایی API-Football.
+- [x] انتقال اتمیک بلیت به won/lost/void همراه با آزادسازی موجودی قفل‌شده، ردیف ledger و اعلان کاربر.
+- [x] گارد idempotency روی claim بلیت و شرط `lockedBalance >= stake` برای جلوگیری از پرداخت دوباره یا منفی‌شدن ledger.
+- [x] افزودن endpoint کرون‌محور `POST /api/scheduled/settleSportsBets` با احراز هویت cron-only و حالت `dryRun`.
+- [x] افزودن ۲۲ تست رفتاری برای تسویه، باطل‌شدن، لغو رویداد و محاسبات ledger.
+- [ ] ثبت Heartbeat پنج‌دقیقه‌ای `nexus-sports-settlement` در محیط عملیاتی و اجرای dry-run اولیه.

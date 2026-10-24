@@ -4,6 +4,7 @@ import { registerOAuthRoutes } from "./_core/oauth";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerNowPaymentsWebhook } from "./nowpaymentsWebhook";
+import { registerSettlementRoutes } from "./settlementWorker";
 import { registerSportAlertRoutes } from "./sportAlerts";
 import { ENV } from "./_core/env";
 import { nowPaymentsReadiness } from "./nowpayments";
@@ -25,6 +26,7 @@ export function createApp(): Express {
   registerOAuthRoutes(app);
   registerNowPaymentsWebhook(app);
   registerSportAlertRoutes(app);
+  registerSettlementRoutes(app);
 
   app.use(
     "/api/trpc",
