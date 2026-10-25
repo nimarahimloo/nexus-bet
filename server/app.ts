@@ -8,18 +8,11 @@ import { registerMarketSyncRoutes } from "./marketSyncWorker";
 import { registerSettlementRoutes } from "./settlementWorker";
 import { registerSportAlertRoutes } from "./sportAlerts";
 import { ENV } from "./_core/env";
-<<<<<<< HEAD
 import { allowedHostsFromPublicUrl, originGuard } from "./_core/originGuard";
-=======
-<<<<<<< ours
->>>>>>> dee75e4 (Fixed)
 import { nowPaymentsReadiness } from "./nowpayments";
 import { getDb } from "./db";
-=======
-import { allowedHostsFromPublicUrl, originGuard } from "./_core/originGuard";
 import { securityHeaders } from "./_core/securityHeaders";
 import { buildHealthPayload, probeDatabase } from "./health";
->>>>>>> theirs
 
 /** Shared Express app (local server + Vercel serverless). Does not call listen(). */
 export function createApp(): Express {
