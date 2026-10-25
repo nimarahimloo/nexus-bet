@@ -8,17 +8,30 @@ import { registerMarketSyncRoutes } from "./marketSyncWorker";
 import { registerSettlementRoutes } from "./settlementWorker";
 import { registerSportAlertRoutes } from "./sportAlerts";
 import { ENV } from "./_core/env";
+<<<<<<< HEAD
 import { allowedHostsFromPublicUrl, originGuard } from "./_core/originGuard";
+=======
+<<<<<<< ours
+>>>>>>> dee75e4 (Fixed)
 import { nowPaymentsReadiness } from "./nowpayments";
 import { getDb } from "./db";
+=======
+import { allowedHostsFromPublicUrl, originGuard } from "./_core/originGuard";
+import { securityHeaders } from "./_core/securityHeaders";
+import { buildHealthPayload, probeDatabase } from "./health";
+>>>>>>> theirs
 
 /** Shared Express app (local server + Vercel serverless). Does not call listen(). */
 export function createApp(): Express {
   const app = express();
+  app.disable("x-powered-by");
+  app.use(securityHeaders());
 
   app.use(
     express.json({
-      limit: "50mb",
+      // 50 MB was an invitation: nothing this API accepts is larger than a few
+      // kilobytes, and the IPN body is signed and re-verified from raw bytes.
+      limit: "2mb",
       verify: (req, _res, buffer) => {
         (req as unknown as Request & { rawBody?: string }).rawBody = buffer.toString("utf8");
       },
@@ -44,20 +57,13 @@ export function createApp(): Express {
   );
 
   app.get("/api/health", async (_req, res) => {
-    const db = await getDb();
-    res.json({
-      ok: true,
-      database: Boolean(db),
-      payments: nowPaymentsReadiness({
-        apiKey: ENV.nowPaymentsApiKey,
-        ipnSecret: ENV.nowPaymentsIpnSecret,
-        payoutWallet: ENV.nowPaymentsPayoutWallet,
-        payoutAuthToken: ENV.nowPaymentsPayoutAuthToken,
-      }),
-      env: {
-        hasDatabaseUrl: Boolean(ENV.databaseUrl?.trim()),
-      },
+    const dbOk = await probeDatabase();
+    const payload = buildHealthPayload({
+      dbOk,
+      sportsConfigured: Boolean(ENV.sportsApiKey?.trim()),
+      uptimeSeconds: process.uptime(),
     });
+    res.status(dbOk ? 200 : 503).json(payload);
   });
 
   return app;

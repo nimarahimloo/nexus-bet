@@ -27,21 +27,18 @@ describe("GET /api/health", () => {
     const contentType = response.headers.get("content-type") ?? "";
     const payload = (await response.json()) as {
       ok?: boolean;
-      database?: boolean;
-      payments?: { provider?: string; enabled?: boolean; network?: string; currency?: string };
+      database?: "up" | "down";
+      sports?: "configured" | "missing";
     };
 
-    expect(response.status).toBe(200);
+    // Intent of this test: the route answers JSON, never the SPA fallback.
     expect(contentType).toContain("application/json");
-    expect(payload).toMatchObject({
-      ok: true,
-      payments: {
-        provider: "nowpayments",
-        enabled: false,
-        network: "BEP20",
-        currency: "USDTBSC",
-      },
-    });
-    expect(typeof payload.database).toBe("boolean");
+    // Status now tracks the database probe; no DB in tests means 503.
+    expect([200, 503]).toContain(response.status);
+    expect(payload.ok).toBe(response.status === 200);
+    expect(["up", "down"]).toContain(payload.database);
+    expect(["configured", "missing"]).toContain(payload.sports);
+    // Regression guard: provider readiness used to be published here.
+    expect(payload).not.toHaveProperty("payments");
   });
 });

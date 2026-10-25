@@ -17,7 +17,7 @@
 
 ## Blockers only you can clear (secrets / accounts)
 
-1. **MySQL** — provision DB, set `DATABASE_URL`, run `pnpm db:push`
+1. **MySQL** — provision DB, set `DATABASE_URL`, run `npm run db:push`
 2. **JWT_SECRET** — long random string in production env
 3. **APP_PUBLIC_URL** — HTTPS origin of the live site (for IPN)
 4. **NOWPayments** — account + KYB, then:
@@ -27,7 +27,7 @@
    - `NOWPAYMENTS_PAYOUT_AUTH_TOKEN` (withdrawals)
    - Dashboard IPN URL: `{APP_PUBLIC_URL}/api/payments/nowpayments/ipn`
 5. **SPORTS_API_KEY** — optional; without it Matches stay labeled «نمونه» / fallback
-6. Host process with `pnpm build && pnpm start` (or equivalent) behind HTTPS
+6. Host process with `npm run build && npm start` (or equivalent) behind HTTPS
 7. **Settlement cron** — register the `nexus-sports-settlement` heartbeat job (every 5 min, UTC) against `POST /api/scheduled/settleSportsBets`; without it, tickets stay `pending` forever. See `docs/settlement.md`.
 8. **Market sync cron** — register the `nexus-sports-markets` heartbeat job (every 5 min, UTC) against `POST /api/scheduled/syncSportsMarkets`; without it the price book is empty and every bet is refused with `MARKET_UNAVAILABLE`. See `docs/integrity.md`.
 9. **Migrations** — apply `drizzle/0017_p0_markets_and_rate_limits.sql` (`npm run db:migrate`) before deploying this build.
@@ -38,9 +38,20 @@
 2. Login → Wallet deposit small sandbox amount → provider address shown → IPN `finished` → balance increases once
 3. Withdrawal small amount → locked → provider accept → locked released; failure restores available
 4. Crash place + cashout + history «بررسی اثبات»
+<<<<<<< HEAD
 5. Market sync: `POST /api/scheduled/syncSportsMarkets` → `{ fixtures > 0, markets > 0 }`; then place a bet and confirm the stored `combinedOdds` matches the server book, and that editing the odds in devtools is rejected with `ODDS_CHANGED`
 6. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
 7. `pnpm test` and `pnpm check` green in CI/local
+=======
+<<<<<<< ours
+5. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
+5. `pnpm test` and `pnpm check` green in CI/local
+=======
+5. Market sync: `POST /api/scheduled/syncSportsMarkets` → `{ fixtures > 0, markets > 0 }`; then place a bet and confirm the stored `combinedOdds` matches the server book, and that editing the odds in devtools is rejected with `ODDS_CHANGED`
+6. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
+7. `npm test` and `npm run check` green in CI/local
+>>>>>>> theirs
+>>>>>>> dee75e4 (Fixed)
 
 ## Explicitly not claimed until secrets verified
 
