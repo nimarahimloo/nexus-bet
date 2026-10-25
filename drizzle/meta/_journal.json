@@ -120,6 +120,13 @@
       "when": 1791403040599,
       "tag": "0016_happy_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1792881524315,
+      "tag": "0017_p0_markets_and_rate_limits",
+      "breakpoints": true
     }
   ]
 }

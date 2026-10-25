@@ -6,6 +6,67 @@ import { createCrashSeed, crashMultiplierFromSeed, isCrashed, multiplierAt, reme
 import { ENV } from '../_core/env';
 import { getDb } from "./core";
 
+/**
+ * Settle a crashed round: claim it, mark every pending bet lost, release the
+ * locked stake, and write the ledger row — one transaction, no partial state.
+ *
+ * The claim (`UPDATE ... WHERE status = "running"`) makes this idempotent:
+ * concurrent polls of `crash.current`, a retried request, or a process restart
+ * can never release the same stake twice.
+ */
+export async function settleCrashedRound(roundId: number, revealedSeed: string | null, crashedAt = new Date()) {
+  const db = await getDb();
+  if (!db) throw new Error("DATABASE_UNAVAILABLE");
+  return db.transaction(async (tx) => {
+    const claimed = await tx
+      .update(crashRounds)
+      .set({ status: "crashed", crashedAt, ...(revealedSeed ? { serverSeed: revealedSeed } : {}) })
+      .where(and(eq(crashRounds.id, roundId), eq(crashRounds.status, "running")));
+    if (!Number(claimed[0]?.affectedRows)) return { settled: false, lostBets: 0 };
+
+    const pending = await tx
+      .select({ id: crashBets.id, userId: crashBets.userId, currency: crashBets.currency, stake: crashBets.stake })
+      .from(crashBets)
+      .where(and(eq(crashBets.roundId, roundId), eq(crashBets.status, "pending")));
+
+    for (const bet of pending) {
+      const stake = Number(bet.stake);
+      if (!Number.isFinite(stake) || stake <= 0) continue;
+
+      // Claim the bet too: a cash-out racing the crash must win or lose cleanly,
+      // never both.
+      const claimedBet = await tx
+        .update(crashBets)
+        .set({ status: "lost", updatedAt: crashedAt })
+        .where(and(eq(crashBets.id, bet.id), eq(crashBets.status, "pending")));
+      if (!Number(claimedBet[0]?.affectedRows)) continue;
+
+      const released = await tx
+        .update(wallets)
+        .set({ lockedBalance: sql`${wallets.lockedBalance} - ${stake.toFixed(6)}`, updatedAt: crashedAt })
+        .where(and(
+          eq(wallets.userId, bet.userId),
+          eq(wallets.currency, bet.currency),
+          gte(wallets.lockedBalance, stake.toFixed(6)),
+        ));
+      // Guarded: a locked balance below the stake means the ledger already
+      // disagrees with the ticket, so roll the round back instead of going negative.
+      if (!Number(released[0]?.affectedRows)) throw new Error("LOCKED_BALANCE_MISMATCH");
+
+      await tx.insert(walletTransactions).values({
+        userId: bet.userId,
+        type: "crash_settlement",
+        status: "confirmed",
+        currency: bet.currency,
+        amount: "0.000000",
+        referenceId: `crashBet:${bet.id}`,
+      });
+    }
+
+    return { settled: true, lostBets: pending.length };
+  });
+}
+
 export async function getActiveCrashRound(now = new Date()) {
   const db = await getDb();
   if (!db) return null;
@@ -17,12 +78,7 @@ export async function getActiveCrashRound(now = new Date()) {
   if (current >= target) {
     // Prefer in-process buffer; fall back to DB seed so proof survives process restart.
     const revealedSeed = takePendingSeed(round.id) ?? round.serverSeed ?? null;
-    await db.update(crashRounds).set({
-      status: "crashed",
-      crashedAt: now,
-      ...(revealedSeed ? { serverSeed: revealedSeed } : {}),
-    }).where(eq(crashRounds.id, round.id));
-    await db.update(crashBets).set({ status: "lost", updatedAt: now }).where(and(eq(crashBets.roundId, round.id), eq(crashBets.status, "pending")));
+    await settleCrashedRound(round.id, revealedSeed, now);
     return {
       id: round.id,
       roundCode: round.roundCode,

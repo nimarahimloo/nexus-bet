@@ -31,23 +31,16 @@ export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
   const secure = isSecureRequest(req);
-  const local = isLocalHost(req);
 
-  // Browsers reject SameSite=None without Secure. On local HTTP use Lax so
-  // auth.localLogin / localSignup can persist the session cookie.
-  if (local && !secure) {
-    return {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure: false,
-    };
-  }
-
+  // Always Lax. Nexus Bet is a same-origin SPA: the browser never needs to send
+  // this cookie on a cross-site request, so `SameSite=None` bought nothing and
+  // turned every authenticated mutation into a CSRF target. Lax keeps the
+  // session working (including top-level navigations) while refusing to attach
+  // the cookie to cross-site POSTs.
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: true,
+    sameSite: "lax",
+    secure,
   };
 }

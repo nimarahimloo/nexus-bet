@@ -17,6 +17,7 @@ import { sdk } from "./_core/sdk";
 import { createResetCode, hashPassword, hashResetCode, validateLocalCredentials, validatePassword, validateUsername, verifyPassword } from "./localAuth";
 import { executeWalletProviderRequest, paymentProviderConfig } from "./walletPayments";
 import { calculateStakeSuggestion, normalizeRiskProfile, riskProfileValues } from "./stakeAssistant";
+import { RATE_LIMIT_RULES, clientIp, consumeRateLimit, rateLimitKey, type RateLimitRule } from "./_core/rateLimit";
 
 const localAuthInput = z.object({ username: z.string().trim().min(3).max(32), password: z.string().min(8).max(128) });
 
@@ -27,6 +28,41 @@ function localAuthError(error: unknown): TRPCError {
   if (code.includes("INVALID_RESET_TOKEN")) return new TRPCError({ code: "BAD_REQUEST", message: "کد بازیابی نامعتبر یا منقضی شده است." });
   if (code.includes("DATABASE_UNAVAILABLE")) return new TRPCError({ code: "SERVICE_UNAVAILABLE", message: "دیتابیس احراز هویت موقتاً در دسترس نیست." });
   return new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "انجام درخواست احراز هویت ممکن نشد." });
+}
+
+/** Throws a user-facing error as soon as the bucket is exhausted. */
+async function enforceRateLimit(scope: string, req: { headers?: any; ip?: string; socket?: any } | undefined, rule: RateLimitRule, discriminator?: string) {
+  const key = rateLimitKey(scope, clientIp(req as any), discriminator);
+  const result = await consumeRateLimit(key, rule);
+  if (!result.allowed) {
+    const seconds = Math.max(1, Math.ceil(result.retryAfterMs / 1000));
+    throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: `تلاش‌های زیاد؛ ${seconds} ثانیه دیگر دوباره تلاش کن.` });
+  }
+}
+
+const betErrorMessages: Record<string, string> = {
+  MARKET_UNAVAILABLE: "این بازار در حال حاضر برای ثبت شرط در دسترس نیست.",
+  MARKET_CLOSED: "این مسابقه شروع شده یا بسته شده است.",
+  ODDS_STALE: "قیمت این بازار به‌روز نیست؛ صفحه را تازه کن و دوباره تلاش کن.",
+  ODDS_CHANGED: "ضریب یکی از انتخاب‌ها تغییر کرده است؛ بلیت را دوباره بررسی کن.",
+  ODDS_LIMIT_EXCEEDED: "ضریب ترکیبی این بلیت خارج از محدودهٔ مجاز است.",
+  INSUFFICIENT_BALANCE: "موجودی کافی نیست.",
+  UNSUPPORTED_CURRENCY: "این دارایی برای شرط‌بندی فعال نیست.",
+  INVALID_STAKE: "مبلغ شرط معتبر نیست.",
+  EMPTY_SELECTIONS: "حداقل یک انتخاب لازم است.",
+  TOO_MANY_SELECTIONS: "تعداد انتخاب‌ها بیش از حد مجاز است.",
+  DATABASE_UNAVAILABLE: "سرویس موقتاً در دسترس نیست.",
+};
+
+function betError(error: unknown): TRPCError {
+  if (error instanceof TRPCError) return error;
+  const raw = String(error);
+  for (const [code, message] of Object.entries(betErrorMessages)) {
+    if (raw.includes(code)) {
+      return new TRPCError({ code: code === "DATABASE_UNAVAILABLE" ? "SERVICE_UNAVAILABLE" : "BAD_REQUEST", message });
+    }
+  }
+  return new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ثبت بلیت ممکن نشد." });
 }
 
 async function createLocalSession(ctx: { req: any; res: any }, user: { openId: string; name: string | null; id: number; role: "user" | "admin" }) {
@@ -41,6 +77,7 @@ export const appRouter = router({
     me: publicProcedure.query(opts => opts.ctx.user),
     localSignup: publicProcedure.input(localAuthInput).mutation(async ({ ctx, input }) => {
       try {
+        await enforceRateLimit("signup", ctx.req, RATE_LIMIT_RULES.signup);
         const username = validateLocalCredentials(input.username, input.password);
         if (await getLocalCredentialByUsername(username)) throw new TRPCError({ code: "CONFLICT", message: "این نام کاربری قبلاً ثبت شده است." });
         const user = await createLocalUser({ username, passwordHash: await hashPassword(input.password) });
@@ -50,14 +87,16 @@ export const appRouter = router({
     localLogin: publicProcedure.input(localAuthInput).mutation(async ({ ctx, input }) => {
       try {
         const username = validateLocalCredentials(input.username, input.password);
+        await enforceRateLimit("login", ctx.req, RATE_LIMIT_RULES.login, username);
         const record = await getLocalCredentialByUsername(username);
         if (!record || !(await verifyPassword(input.password, record.credential.passwordHash))) throw new TRPCError({ code: "UNAUTHORIZED", message: "نام کاربری یا رمز عبور درست نیست." });
         await touchLocalUser(record.user.id);
         return { user: await createLocalSession(ctx, record.user) };
       } catch (error) { if (error instanceof TRPCError) throw error; throw localAuthError(error); }
     }),
-    requestPasswordReset: publicProcedure.input(z.object({ username: z.string().trim().min(3).max(32) })).mutation(async ({ input }) => {
+    requestPasswordReset: publicProcedure.input(z.object({ username: z.string().trim().min(3).max(32) })).mutation(async ({ ctx, input }) => {
       try {
+        await enforceRateLimit("reset-request", ctx.req, RATE_LIMIT_RULES.resetRequest);
         const username = validateUsername(input.username);
         const record = await getLocalCredentialByUsername(username);
         if (!record) return { accepted: true, previewCode: null as string | null };
@@ -66,12 +105,14 @@ export const appRouter = router({
         return { accepted: true, previewCode: ENV.isProduction ? null : code };
       } catch (error) { throw localAuthError(error); }
     }),
-    resetPassword: publicProcedure.input(z.object({ code: z.string().regex(/^\d{6}$/), password: z.string().min(8).max(128) })).mutation(async ({ ctx, input }) => {
+    resetPassword: publicProcedure.input(z.object({ username: z.string().trim().min(3).max(32), code: z.string().regex(/^\d{6}$/), password: z.string().min(8).max(128) })).mutation(async ({ ctx, input }) => {
       try {
+        await enforceRateLimit("reset-submit", ctx.req, RATE_LIMIT_RULES.resetSubmit);
         validatePassword(input.password);
-        const user = await resetLocalPassword({ tokenHash: hashResetCode(input.code), passwordHash: await hashPassword(input.password) });
+        const username = validateUsername(input.username);
+        const user = await resetLocalPassword({ username, tokenHash: hashResetCode(input.code), passwordHash: await hashPassword(input.password) });
         return { user: await createLocalSession(ctx, user) };
-      } catch (error) { throw localAuthError(error); }
+      } catch (error) { if (error instanceof TRPCError) throw error; throw localAuthError(error); }
     }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
@@ -94,11 +135,15 @@ export const appRouter = router({
     place: protectedProcedure.input(z.object({
       currency: z.string().trim().toUpperCase().min(2).max(12).default("USDT"),
       stake: z.number().finite().min(1).max(1_000_000),
-      selections: z.array(z.object({ id: z.string().min(1), match: z.string().min(1), market: z.string().min(1), odds: z.number().finite().positive().max(1_000) })).min(1).max(20),
+      // `odds` is advisory: it lets the server detect a stale screen, but the
+      // ticket is priced from the sportsMarkets snapshot inside placeBet.
+      selections: z.array(z.object({ id: z.string().min(1), match: z.string().min(1), market: z.string().min(1), odds: z.number().finite().positive().max(1_000).optional() })).min(1).max(20),
     })).mutation(async ({ ctx, input }) => {
-      const combinedOdds = Number(input.selections.reduce((total, selection) => total * selection.odds, 1).toFixed(2));
-      const potentialReturn = Number((input.stake * combinedOdds).toFixed(2));
-      return placeBet({ userId: ctx.user.id, currency: input.currency, stake: input.stake, combinedOdds, potentialReturn, selections: input.selections });
+      try {
+        return await placeBet({ userId: ctx.user.id, currency: input.currency, stake: input.stake, selections: input.selections });
+      } catch (error) {
+        throw betError(error);
+      }
     }),
   }),
 
@@ -227,6 +272,11 @@ export const appRouter = router({
     chat: publicProcedure
       .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(2_000) })).min(1).max(12) }))
       .mutation(async ({ ctx, input }) => {
+        // Paid inference endpoint: quota is enforced before the model is called,
+        // outside the try so the limit error is not swallowed into a fallback reply.
+        const quotaScope = ctx.user ? "support-user" : "support-guest";
+        const quotaRule = ctx.user ? RATE_LIMIT_RULES.supportChatUser : RATE_LIMIT_RULES.supportChatGuest;
+        await enforceRateLimit(quotaScope, ctx.req, quotaRule, ctx.user ? String(ctx.user.id) : undefined);
         try {
           const accountContext = ctx.user ? await getSupportAccountContext(ctx.user.id) : null;
           const riskProfile = ctx.user ? await getUserRiskProfile(ctx.user.id) : null;
