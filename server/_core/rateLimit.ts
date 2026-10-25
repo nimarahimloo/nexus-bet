@@ -46,17 +46,31 @@ export function clientIp(req: Request | undefined | null): string {
   return first || req.ip || req.socket?.remoteAddress || "unknown";
 }
 
-export function rateLimitKey(scope: string, identifier: string, discriminator?: string) {
-  return [scope, identifier, discriminator].filter((part) => Boolean(part)).join(":").slice(0, 191);
+export function rateLimitKey(
+  scope: string,
+  identifier: string,
+  discriminator?: string
+) {
+  return [scope, identifier, discriminator]
+    .filter(part => Boolean(part))
+    .join(":")
+    .slice(0, 191);
 }
 
-export function evaluateHits(hits: number, rule: RateLimitRule, windowStart: Date, now: Date): RateLimitResult {
+export function evaluateHits(
+  hits: number,
+  rule: RateLimitRule,
+  windowStart: Date,
+  now: Date
+): RateLimitResult {
   const allowed = hits <= rule.limit;
   return {
     allowed,
     hits,
     limit: rule.limit,
-    retryAfterMs: allowed ? 0 : Math.max(0, windowStart.getTime() + rule.windowMs - now.getTime()),
+    retryAfterMs: allowed
+      ? 0
+      : Math.max(0, windowStart.getTime() + rule.windowMs - now.getTime()),
   };
 }
 
@@ -65,7 +79,11 @@ export function evaluateHits(hits: number, rule: RateLimitRule, windowStart: Dat
  * Throws when the database is unreachable — callers on money paths should fail
  * loudly rather than silently dropping the limit.
  */
-export async function consumeRateLimit(key: string, rule: RateLimitRule, now = new Date()): Promise<RateLimitResult> {
+export async function consumeRateLimit(
+  key: string,
+  rule: RateLimitRule,
+  now = new Date()
+): Promise<RateLimitResult> {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
@@ -81,16 +99,27 @@ export async function consumeRateLimit(key: string, rule: RateLimitRule, now = n
       },
     });
 
-  const rows = await db.select({ hits: rateLimits.hits }).from(rateLimits).where(eq(rateLimits.bucketKey, key)).limit(1);
+  const rows = await db
+    .select({ hits: rateLimits.hits })
+    .from(rateLimits)
+    .where(eq(rateLimits.bucketKey, key))
+    .limit(1);
   const hits = rows[0]?.hits ?? 1;
   return evaluateHits(hits, rule, windowStart, now);
 }
 
 /** Best-effort housekeeping; safe to call opportunistically. */
-export async function purgeStaleBuckets(olderThanMs = 24 * 60 * 60 * 1000, now = new Date()) {
+export async function purgeStaleBuckets(
+  olderThanMs = 24 * 60 * 60 * 1000,
+  now = new Date()
+) {
   const db = await getDb();
   if (!db) return 0;
   const cutoff = new Date(now.getTime() - olderThanMs);
-  const result = await db.delete(rateLimits).where(lt(rateLimits.updatedAt, cutoff));
-  return Number((result as unknown as { affectedRows?: number }[])[0]?.affectedRows ?? 0);
+  const result = await db
+    .delete(rateLimits)
+    .where(lt(rateLimits.updatedAt, cutoff));
+  return Number(
+    (result as unknown as { affectedRows?: number }[])[0]?.affectedRows ?? 0
+  );
 }

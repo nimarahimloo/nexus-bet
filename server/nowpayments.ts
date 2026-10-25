@@ -22,8 +22,14 @@ export type ProviderReadiness = {
   payoutEnabled: boolean;
 };
 
-export function nowPaymentsReadiness(config: ProviderConfig): ProviderReadiness {
-  const enabled = Boolean(config.apiKey?.trim() && config.ipnSecret?.trim() && config.payoutWallet?.trim());
+export function nowPaymentsReadiness(
+  config: ProviderConfig
+): ProviderReadiness {
+  const enabled = Boolean(
+    config.apiKey?.trim() &&
+    config.ipnSecret?.trim() &&
+    config.payoutWallet?.trim()
+  );
   const payoutEnabled = enabled && Boolean(config.payoutAuthToken?.trim());
   return {
     provider: NOWPAYMENTS_PROVIDER,
@@ -36,11 +42,19 @@ export function nowPaymentsReadiness(config: ProviderConfig): ProviderReadiness 
 }
 
 function requireConfigured(config: ProviderConfig) {
-  if (!nowPaymentsReadiness(config).enabled) throw new Error("PAYMENT_PROVIDER_NOT_CONFIGURED");
-  return { apiKey: config.apiKey!.trim(), baseUrl: config.apiBaseUrl?.trim() || API_BASE_URL };
+  if (!nowPaymentsReadiness(config).enabled)
+    throw new Error("PAYMENT_PROVIDER_NOT_CONFIGURED");
+  return {
+    apiKey: config.apiKey!.trim(),
+    baseUrl: config.apiBaseUrl?.trim() || API_BASE_URL,
+  };
 }
 
-async function providerRequest<T>(config: ProviderConfig, path: string, body: Record<string, unknown>): Promise<T> {
+async function providerRequest<T>(
+  config: ProviderConfig,
+  path: string,
+  body: Record<string, unknown>
+): Promise<T> {
   const { apiKey, baseUrl } = requireConfigured(config);
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
@@ -95,10 +109,19 @@ export type CreatePayoutResult = {
   id?: string | number;
   batch_withdrawal_id?: string | number;
   status?: string;
-  withdrawals?: Array<{ id?: string | number; status?: string; address?: string; currency?: string; amount?: number | string }>;
+  withdrawals?: Array<{
+    id?: string | number;
+    status?: string;
+    address?: string;
+    currency?: string;
+    amount?: number | string;
+  }>;
 };
 
-export function createNowPaymentsPayment(config: ProviderConfig, input: CreatePaymentInput) {
+export function createNowPaymentsPayment(
+  config: ProviderConfig,
+  input: CreatePaymentInput
+) {
   return providerRequest<CreatePaymentResult>(config, "/v1/payment", {
     price_amount: input.priceAmount,
     price_currency: input.priceCurrency,
@@ -109,7 +132,10 @@ export function createNowPaymentsPayment(config: ProviderConfig, input: CreatePa
   });
 }
 
-export function createNowPaymentsInvoice(config: ProviderConfig, input: CreateInvoiceInput) {
+export function createNowPaymentsInvoice(
+  config: ProviderConfig,
+  input: CreateInvoiceInput
+) {
   return providerRequest<CreateInvoiceResult>(config, "/v1/invoice", {
     price_amount: input.priceAmount,
     price_currency: input.priceCurrency,
@@ -122,9 +148,13 @@ export function createNowPaymentsInvoice(config: ProviderConfig, input: CreateIn
   });
 }
 
-export async function createNowPaymentsPayout(config: ProviderConfig, input: CreatePayoutInput) {
+export async function createNowPaymentsPayout(
+  config: ProviderConfig,
+  input: CreatePayoutInput
+) {
   const { apiKey, baseUrl } = requireConfigured(config);
-  if (!config.payoutAuthToken?.trim()) throw new Error("PAYMENT_PAYOUT_NOT_CONFIGURED");
+  if (!config.payoutAuthToken?.trim())
+    throw new Error("PAYMENT_PAYOUT_NOT_CONFIGURED");
   const response = await fetch(`${baseUrl}/v1/payout`, {
     method: "POST",
     headers: {
@@ -134,7 +164,13 @@ export async function createNowPaymentsPayout(config: ProviderConfig, input: Cre
     },
     body: JSON.stringify({
       ipn_callback_url: input.ipnCallbackUrl,
-      withdrawals: [{ address: input.address, currency: input.currency ?? NOWPAYMENTS_CURRENCY, amount: input.amount }],
+      withdrawals: [
+        {
+          address: input.address,
+          currency: input.currency ?? NOWPAYMENTS_CURRENCY,
+          amount: input.amount,
+        },
+      ],
     }),
   });
   if (!response.ok) throw new Error(`PAYMENT_PROVIDER_HTTP_${response.status}`);
@@ -147,13 +183,17 @@ function sortIpnPayload(value: unknown): unknown {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
         .sort(([left], [right]) => left.localeCompare(right))
-        .map(([key, item]) => [key, sortIpnPayload(item)]),
+        .map(([key, item]) => [key, sortIpnPayload(item)])
     );
   }
   return value;
 }
 
-export function verifyNowPaymentsIpn(rawBody: string, signature: string | undefined, secret: string | undefined) {
+export function verifyNowPaymentsIpn(
+  rawBody: string,
+  signature: string | undefined,
+  secret: string | undefined
+) {
   if (!signature || !secret) return false;
   let canonicalBody: string;
   try {
@@ -161,10 +201,15 @@ export function verifyNowPaymentsIpn(rawBody: string, signature: string | undefi
   } catch {
     return false;
   }
-  const expected = createHmac("sha512", secret).update(canonicalBody).digest("hex");
+  const expected = createHmac("sha512", secret)
+    .update(canonicalBody)
+    .digest("hex");
   const actual = Buffer.from(signature, "utf8");
   const expectedBuffer = Buffer.from(expected, "utf8");
-  return actual.length === expectedBuffer.length && timingSafeEqual(actual, expectedBuffer);
+  return (
+    actual.length === expectedBuffer.length &&
+    timingSafeEqual(actual, expectedBuffer)
+  );
 }
 
 export type NormalizedIpn = {
@@ -177,16 +222,28 @@ export type NormalizedIpn = {
   txHash?: string;
 };
 
-export function normalizeNowPaymentsIpn(payload: Record<string, unknown>): NormalizedIpn {
-  const providerEventId = String(payload.payment_id ?? payload.id ?? payload.order_id ?? "").trim();
+export function normalizeNowPaymentsIpn(
+  payload: Record<string, unknown>
+): NormalizedIpn {
+  const providerEventId = String(
+    payload.payment_id ?? payload.id ?? payload.order_id ?? ""
+  ).trim();
   if (!providerEventId) throw new Error("PAYMENT_PROVIDER_EVENT_ID_MISSING");
-  const amount = Number(payload.actually_paid ?? payload.pay_amount ?? payload.price_amount);
+  const amount = Number(
+    payload.actually_paid ?? payload.pay_amount ?? payload.price_amount
+  );
   return {
     providerEventId,
-    paymentStatus: String(payload.payment_status ?? "").trim().toLowerCase(),
+    paymentStatus: String(payload.payment_status ?? "")
+      .trim()
+      .toLowerCase(),
     orderId: payload.order_id ? String(payload.order_id) : undefined,
-    currency: payload.pay_currency ? String(payload.pay_currency).toUpperCase() : undefined,
-    network: payload.network ? String(payload.network).toUpperCase() : undefined,
+    currency: payload.pay_currency
+      ? String(payload.pay_currency).toUpperCase()
+      : undefined,
+    network: payload.network
+      ? String(payload.network).toUpperCase()
+      : undefined,
     amount: Number.isFinite(amount) ? amount : undefined,
     txHash: payload.payin_hash
       ? String(payload.payin_hash)
@@ -197,7 +254,9 @@ export function normalizeNowPaymentsIpn(payload: Record<string, unknown>): Norma
 }
 
 /** Map provider payment_status → ledger settle status. Intermediate states return null (no settle yet). */
-export function mapProviderStatusToSettle(paymentStatus: string): "confirmed" | "failed" | null {
+export function mapProviderStatusToSettle(
+  paymentStatus: string
+): "confirmed" | "failed" | null {
   const s = paymentStatus.trim().toLowerCase();
   if (s === "finished" || s === "confirmed") return "confirmed";
   if (s === "failed" || s === "expired" || s === "refunded") return "failed";

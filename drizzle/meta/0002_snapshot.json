@@ -96,12 +96,8 @@
           "name": "bets_userId_users_id_fk",
           "tableFrom": "bets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -109,17 +105,13 @@
       "compositePrimaryKeys": {
         "bets_id": {
           "name": "bets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "bets_ticketCode_unique": {
           "name": "bets_ticketCode_unique",
-          "columns": [
-            "ticketCode"
-          ]
+          "columns": ["ticketCode"]
         }
       },
       "checkConstraint": {}
@@ -201,17 +193,13 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ]
+          "columns": ["openId"]
         }
       },
       "checkConstraint": {}
@@ -281,12 +269,8 @@
           "name": "wallets_userId_users_id_fk",
           "tableFrom": "wallets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -294,17 +278,13 @@
       "compositePrimaryKeys": {
         "wallets_id": {
           "name": "wallets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "wallets_userId_unique": {
           "name": "wallets_userId_unique",
-          "columns": [
-            "userId"
-          ]
+          "columns": ["userId"]
         }
       },
       "checkConstraint": {}

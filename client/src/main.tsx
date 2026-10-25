@@ -50,5 +50,5 @@ createRoot(rootEl).render(
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </trpc.Provider>,
+  </trpc.Provider>
 );

@@ -21,7 +21,8 @@ describe("GET /api/health", () => {
     });
 
     const address = server.address();
-    if (!address || typeof address === "string") throw new Error("TEST_SERVER_NOT_LISTENING");
+    if (!address || typeof address === "string")
+      throw new Error("TEST_SERVER_NOT_LISTENING");
 
     const response = await fetch(`http://127.0.0.1:${address.port}/api/health`);
     const contentType = response.headers.get("content-type") ?? "";

@@ -1,17 +1,24 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("Nexus AI support chat contract", () => {
   it("builds account context from the current user only and keeps it read-only", () => {
     const misc = read("./db/misc.ts");
     const routers = read("./routers.ts");
-    expect(misc).toContain("export async function getSupportAccountContext(userId: number)");
+    expect(misc).toContain(
+      "export async function getSupportAccountContext(userId: number)"
+    );
     expect(misc).toContain("getWalletPortfolio(userId)");
     expect(misc).toContain("getUserBets(userId)");
-    expect(routers).toContain("ctx.user ? await getSupportAccountContext(ctx.user.id) : null");
-    expect(routers).toContain("کاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری");
+    expect(routers).toContain(
+      "ctx.user ? await getSupportAccountContext(ctx.user.id) : null"
+    );
+    expect(routers).toContain(
+      "کاربر مهمان است و هیچ اطلاعات حسابی در اختیار نداری"
+    );
   });
 
   it("uses the server-side GPT-5 model with the correct completion token parameter", () => {

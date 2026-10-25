@@ -62,11 +62,7 @@
       "indexes": {
         "activityRewardLedger_user_activity_day_unique": {
           "name": "activityRewardLedger_user_activity_day_unique",
-          "columns": [
-            "userId",
-            "activityCode",
-            "activityDate"
-          ],
+          "columns": ["userId", "activityCode", "activityDate"],
           "isUnique": true
         }
       },
@@ -75,12 +71,8 @@
           "name": "activityRewardLedger_userId_users_id_fk",
           "tableFrom": "activityRewardLedger",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -88,9 +80,7 @@
       "compositePrimaryKeys": {
         "activityRewardLedger_id": {
           "name": "activityRewardLedger_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -188,12 +178,8 @@
           "name": "bets_userId_users_id_fk",
           "tableFrom": "bets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -201,17 +187,13 @@
       "compositePrimaryKeys": {
         "bets_id": {
           "name": "bets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "bets_ticketCode_unique": {
           "name": "bets_ticketCode_unique",
-          "columns": [
-            "ticketCode"
-          ]
+          "columns": ["ticketCode"]
         }
       },
       "checkConstraint": {}
@@ -299,10 +281,7 @@
       "indexes": {
         "crashBets_round_user_unique": {
           "name": "crashBets_round_user_unique",
-          "columns": [
-            "roundId",
-            "userId"
-          ],
+          "columns": ["roundId", "userId"],
           "isUnique": true
         }
       },
@@ -311,12 +290,8 @@
           "name": "crashBets_userId_users_id_fk",
           "tableFrom": "crashBets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -324,12 +299,8 @@
           "name": "crashBets_roundId_crashRounds_id_fk",
           "tableFrom": "crashBets",
           "tableTo": "crashRounds",
-          "columnsFrom": [
-            "roundId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["roundId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -337,9 +308,7 @@
       "compositePrimaryKeys": {
         "crashBets_id": {
           "name": "crashBets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -420,17 +389,13 @@
       "compositePrimaryKeys": {
         "crashRounds_id": {
           "name": "crashRounds_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "crashRounds_roundCode_unique": {
           "name": "crashRounds_roundCode_unique",
-          "columns": [
-            "roundCode"
-          ]
+          "columns": ["roundCode"]
         }
       },
       "checkConstraint": {}
@@ -565,17 +530,13 @@
       "compositePrimaryKeys": {
         "gameCatalog_id": {
           "name": "gameCatalog_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "gameCatalog_slug_unique": {
           "name": "gameCatalog_slug_unique",
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "checkConstraint": {}
@@ -640,9 +601,7 @@
       "indexes": {
         "localCredentials_username_unique": {
           "name": "localCredentials_username_unique",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "isUnique": true
         }
       },
@@ -651,12 +610,8 @@
           "name": "localCredentials_userId_users_id_fk",
           "tableFrom": "localCredentials",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -664,17 +619,13 @@
       "compositePrimaryKeys": {
         "localCredentials_id": {
           "name": "localCredentials_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "localCredentials_userId_unique": {
           "name": "localCredentials_userId_unique",
-          "columns": [
-            "userId"
-          ]
+          "columns": ["userId"]
         }
       },
       "checkConstraint": {}
@@ -747,12 +698,8 @@
           "name": "notifications_userId_users_id_fk",
           "tableFrom": "notifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -760,9 +707,7 @@
       "compositePrimaryKeys": {
         "notifications_id": {
           "name": "notifications_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -826,9 +771,7 @@
       "indexes": {
         "passwordResetTokens_hash_unique": {
           "name": "passwordResetTokens_hash_unique",
-          "columns": [
-            "tokenHash"
-          ],
+          "columns": ["tokenHash"],
           "isUnique": true
         }
       },
@@ -837,12 +780,8 @@
           "name": "passwordResetTokens_userId_users_id_fk",
           "tableFrom": "passwordResetTokens",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -850,9 +789,7 @@
       "compositePrimaryKeys": {
         "passwordResetTokens_id": {
           "name": "passwordResetTokens_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -909,10 +846,7 @@
       "indexes": {
         "promotionClaims_promotion_user_unique": {
           "name": "promotionClaims_promotion_user_unique",
-          "columns": [
-            "promotionId",
-            "userId"
-          ],
+          "columns": ["promotionId", "userId"],
           "isUnique": true
         }
       },
@@ -921,12 +855,8 @@
           "name": "promotionClaims_promotionId_promotions_id_fk",
           "tableFrom": "promotionClaims",
           "tableTo": "promotions",
-          "columnsFrom": [
-            "promotionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["promotionId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -934,12 +864,8 @@
           "name": "promotionClaims_userId_users_id_fk",
           "tableFrom": "promotionClaims",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -947,9 +873,7 @@
       "compositePrimaryKeys": {
         "promotionClaims_id": {
           "name": "promotionClaims_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1052,17 +976,13 @@
       "compositePrimaryKeys": {
         "promotions_id": {
           "name": "promotions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "promotions_code_unique": {
           "name": "promotions_code_unique",
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "checkConstraint": {}
@@ -1107,9 +1027,7 @@
       "compositePrimaryKeys": {
         "rateLimits_bucketKey": {
           "name": "rateLimits_bucketKey",
-          "columns": [
-            "bucketKey"
-          ]
+          "columns": ["bucketKey"]
         }
       },
       "uniqueConstraints": {},
@@ -1176,12 +1094,8 @@
           "name": "rewardLedger_userId_users_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1189,12 +1103,8 @@
           "name": "rewardLedger_spinId_wheelSpins_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "wheelSpins",
-          "columnsFrom": [
-            "spinId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["spinId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1202,17 +1112,13 @@
       "compositePrimaryKeys": {
         "rewardLedger_id": {
           "name": "rewardLedger_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "rewardLedger_spinId_unique": {
           "name": "rewardLedger_spinId_unique",
-          "columns": [
-            "spinId"
-          ]
+          "columns": ["spinId"]
         }
       },
       "checkConstraint": {}
@@ -1291,11 +1197,7 @@
       "indexes": {
         "sportAlertPreferences_user_watch_alert_unique": {
           "name": "sportAlertPreferences_user_watch_alert_unique",
-          "columns": [
-            "userId",
-            "watchlistId",
-            "alertType"
-          ],
+          "columns": ["userId", "watchlistId", "alertType"],
           "isUnique": true
         }
       },
@@ -1304,12 +1206,8 @@
           "name": "sportAlertPreferences_userId_users_id_fk",
           "tableFrom": "sportAlertPreferences",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1317,12 +1215,8 @@
           "name": "sportAlertPreferences_watchlistId_sportWatchlist_id_fk",
           "tableFrom": "sportAlertPreferences",
           "tableTo": "sportWatchlist",
-          "columnsFrom": [
-            "watchlistId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["watchlistId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1330,9 +1224,7 @@
       "compositePrimaryKeys": {
         "sportAlertPreferences_id": {
           "name": "sportAlertPreferences_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1409,10 +1301,7 @@
       "indexes": {
         "sportWatchlist_user_event_unique": {
           "name": "sportWatchlist_user_event_unique",
-          "columns": [
-            "userId",
-            "eventId"
-          ],
+          "columns": ["userId", "eventId"],
           "isUnique": true
         }
       },
@@ -1421,12 +1310,8 @@
           "name": "sportWatchlist_userId_users_id_fk",
           "tableFrom": "sportWatchlist",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1434,9 +1319,7 @@
       "compositePrimaryKeys": {
         "sportWatchlist_id": {
           "name": "sportWatchlist_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1543,10 +1426,7 @@
       "indexes": {
         "sportsMarkets_fixture_code_unique": {
           "name": "sportsMarkets_fixture_code_unique",
-          "columns": [
-            "fixtureId",
-            "code"
-          ],
+          "columns": ["fixtureId", "code"],
           "isUnique": true
         }
       },
@@ -1554,9 +1434,7 @@
       "compositePrimaryKeys": {
         "sportsMarkets_id": {
           "name": "sportsMarkets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1647,17 +1525,13 @@
       "compositePrimaryKeys": {
         "supportedAssets_id": {
           "name": "supportedAssets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "supportedAssets_code_unique": {
           "name": "supportedAssets_code_unique",
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "checkConstraint": {}
@@ -1722,10 +1596,7 @@
       "indexes": {
         "tournamentEntries_tournament_user_unique": {
           "name": "tournamentEntries_tournament_user_unique",
-          "columns": [
-            "tournamentId",
-            "userId"
-          ],
+          "columns": ["tournamentId", "userId"],
           "isUnique": true
         }
       },
@@ -1734,12 +1605,8 @@
           "name": "tournamentEntries_tournamentId_tournaments_id_fk",
           "tableFrom": "tournamentEntries",
           "tableTo": "tournaments",
-          "columnsFrom": [
-            "tournamentId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tournamentId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1747,12 +1614,8 @@
           "name": "tournamentEntries_userId_users_id_fk",
           "tableFrom": "tournamentEntries",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1760,9 +1623,7 @@
       "compositePrimaryKeys": {
         "tournamentEntries_id": {
           "name": "tournamentEntries_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1866,17 +1727,13 @@
       "compositePrimaryKeys": {
         "tournaments_id": {
           "name": "tournaments_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "tournaments_slug_unique": {
           "name": "tournaments_slug_unique",
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "checkConstraint": {}
@@ -1930,12 +1787,8 @@
           "name": "userRiskProfiles_userId_users_id_fk",
           "tableFrom": "userRiskProfiles",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1943,17 +1796,13 @@
       "compositePrimaryKeys": {
         "userRiskProfiles_id": {
           "name": "userRiskProfiles_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "userRiskProfiles_userId_unique": {
           "name": "userRiskProfiles_userId_unique",
-          "columns": [
-            "userId"
-          ]
+          "columns": ["userId"]
         }
       },
       "checkConstraint": {}
@@ -2035,17 +1884,13 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ]
+          "columns": ["openId"]
         }
       },
       "checkConstraint": {}
@@ -2103,12 +1948,8 @@
           "name": "vipActivity_userId_users_id_fk",
           "tableFrom": "vipActivity",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2116,9 +1957,7 @@
       "compositePrimaryKeys": {
         "vipActivity_id": {
           "name": "vipActivity_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -2248,10 +2087,7 @@
       "indexes": {
         "walletTransactions_provider_event_unique": {
           "name": "walletTransactions_provider_event_unique",
-          "columns": [
-            "provider",
-            "providerEventId"
-          ],
+          "columns": ["provider", "providerEventId"],
           "isUnique": true
         }
       },
@@ -2260,12 +2096,8 @@
           "name": "walletTransactions_userId_users_id_fk",
           "tableFrom": "walletTransactions",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2273,9 +2105,7 @@
       "compositePrimaryKeys": {
         "walletTransactions_id": {
           "name": "walletTransactions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -2343,10 +2173,7 @@
       "indexes": {
         "wallets_user_currency_unique": {
           "name": "wallets_user_currency_unique",
-          "columns": [
-            "userId",
-            "currency"
-          ],
+          "columns": ["userId", "currency"],
           "isUnique": true
         }
       },
@@ -2355,12 +2182,8 @@
           "name": "wallets_userId_users_id_fk",
           "tableFrom": "wallets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2368,9 +2191,7 @@
       "compositePrimaryKeys": {
         "wallets_id": {
           "name": "wallets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -2441,10 +2262,7 @@
       "indexes": {
         "wheelSpins_user_day_unique": {
           "name": "wheelSpins_user_day_unique",
-          "columns": [
-            "userId",
-            "spinDate"
-          ],
+          "columns": ["userId", "spinDate"],
           "isUnique": true
         }
       },
@@ -2453,12 +2271,8 @@
           "name": "wheelSpins_userId_users_id_fk",
           "tableFrom": "wheelSpins",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2466,9 +2280,7 @@
       "compositePrimaryKeys": {
         "wheelSpins_id": {
           "name": "wheelSpins_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

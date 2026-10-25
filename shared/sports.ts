@@ -30,14 +30,20 @@ export type MatchCardData = {
   insight: string;
 };
 
-const toFaDigits = (value: string | number) => String(value).replace(/[0-9]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+const toFaDigits = (value: string | number) =>
+  String(value).replace(/[0-9]/g, digit => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
 
 const faTime = (date?: string) => {
   if (!date) return "—";
-  return new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit" }).format(new Date(date));
+  return new Intl.DateTimeFormat("fa-IR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
 };
 
-export function mapSportsFixture(fixture: SportsApiFixture): MatchCardData | null {
+export function mapSportsFixture(
+  fixture: SportsApiFixture
+): MatchCardData | null {
   const id = fixture.fixture?.id;
   const home = fixture.teams?.home?.name;
   const away = fixture.teams?.away?.name;
@@ -54,19 +60,27 @@ export function mapSportsFixture(fixture: SportsApiFixture): MatchCardData | nul
     status,
     time: faTime(fixture.fixture?.date),
     startsAt: fixture.fixture?.date,
-    minute: isLive && fixture.fixture?.status?.elapsed != null ? `${toFaDigits(fixture.fixture.status.elapsed)}′` : undefined,
+    minute:
+      isLive && fixture.fixture?.status?.elapsed != null
+        ? `${toFaDigits(fixture.fixture.status.elapsed)}′`
+        : undefined,
     home,
     homeLogo: fixture.teams?.home?.logo ?? "",
     away,
     awayLogo: fixture.teams?.away?.logo ?? "",
-    score: homeGoals != null && awayGoals != null ? `${homeGoals} — ${awayGoals}` : undefined,
+    score:
+      homeGoals != null && awayGoals != null
+        ? `${homeGoals} — ${awayGoals}`
+        : undefined,
     markets: [],
     insight: isLive ? "دادهٔ زنده از API ورزشی" : "زمان‌بندی‌شده از API ورزشی",
   };
 }
 
-export function mapSportsFixtures(fixtures: SportsApiFixture[]): MatchCardData[] {
-  return fixtures.flatMap((fixture) => {
+export function mapSportsFixtures(
+  fixtures: SportsApiFixture[]
+): MatchCardData[] {
+  return fixtures.flatMap(fixture => {
     const mapped = mapSportsFixture(fixture);
     return mapped ? [mapped] : [];
   });
@@ -82,36 +96,99 @@ export type MatchDetailData = {
   source: "api" | "demo" | "fallback" | "empty";
   error: string | null;
   statistics: { label: string; home: string; away: string }[];
-  lineups: { team: string; formation?: string; players: { name: string; position: string; number?: number }[] }[];
-  events: { minute: string; team: string; player: string; type: string; detail?: string }[];
+  lineups: {
+    team: string;
+    formation?: string;
+    players: { name: string; position: string; number?: number }[];
+  }[];
+  events: {
+    minute: string;
+    team: string;
+    player: string;
+    type: string;
+    detail?: string;
+  }[];
 };
 
 export type SportsApiOddsValue = { value?: string; odd?: string };
-export type SportsApiOddsPayload = { bookmakers?: { bets?: { name?: string; values?: SportsApiOddsValue[] }[] }[] };
+export type SportsApiOddsPayload = {
+  bookmakers?: { bets?: { name?: string; values?: SportsApiOddsValue[] }[] }[];
+};
 
 export function mapSportsOdds(payload: SportsApiOddsPayload | undefined) {
-  const bets = payload?.bookmakers?.flatMap((bookmaker) => bookmaker.bets ?? []) ?? [];
-  const winnerBet = bets.find((bet) => (bet.values?.length ?? 0) >= 2 && /match winner|1x2|winner/i.test(bet.name ?? "")) ?? bets.find((bet) => (bet.values?.length ?? 0) >= 2);
+  const bets =
+    payload?.bookmakers?.flatMap(bookmaker => bookmaker.bets ?? []) ?? [];
+  const winnerBet =
+    bets.find(
+      bet =>
+        (bet.values?.length ?? 0) >= 2 &&
+        /match winner|1x2|winner/i.test(bet.name ?? "")
+    ) ?? bets.find(bet => (bet.values?.length ?? 0) >= 2);
   if (!winnerBet?.values?.length) return [];
   return winnerBet.values.slice(0, 3).flatMap((value, index) => {
     const odds = Number(value.odd);
     if (!Number.isFinite(odds) || odds <= 1) return [];
     const labels = ["۱", "X", "۲"];
     const names = ["برد میزبان", "مساوی", "برد مهمان"];
-    return [{ label: labels[index] ?? String(index + 1), name: value.value ?? names[index] ?? `بازار ${index + 1}`, odds }];
+    return [
+      {
+        label: labels[index] ?? String(index + 1),
+        name: value.value ?? names[index] ?? `بازار ${index + 1}`,
+        odds,
+      },
+    ];
   });
 }
 
 export type SportsApiDetailPayload = {
-  statistics?: { team?: { name?: string }; statistics?: { type?: string; value?: string | number | null }[] }[];
-  lineups?: { team?: { name?: string }; formation?: string; startXI?: { player?: { name?: string; number?: number; pos?: string } }[] }[];
-  events?: { time?: { elapsed?: number; extra?: number | null }; team?: { name?: string }; player?: { name?: string }; type?: string; detail?: string }[];
+  statistics?: {
+    team?: { name?: string };
+    statistics?: { type?: string; value?: string | number | null }[];
+  }[];
+  lineups?: {
+    team?: { name?: string };
+    formation?: string;
+    startXI?: { player?: { name?: string; number?: number; pos?: string } }[];
+  }[];
+  events?: {
+    time?: { elapsed?: number; extra?: number | null };
+    team?: { name?: string };
+    player?: { name?: string };
+    type?: string;
+    detail?: string;
+  }[];
 };
 
-export function mapSportsDetails(fixtureId: string, payloads: { statistics?: SportsApiDetailPayload; lineups?: SportsApiDetailPayload; events?: SportsApiDetailPayload }): MatchDetailData {
-  const statistics = (payloads.statistics?.statistics ?? []).flatMap((team) => (team.statistics ?? []).map((stat) => ({ label: stat.type ?? "آمار", home: team.team?.name ?? "تیم میزبان", away: String(stat.value ?? "—") })));
-  const lineups = (payloads.lineups?.lineups ?? []).map((lineup) => ({ team: lineup.team?.name ?? "تیم", formation: lineup.formation, players: (lineup.startXI ?? []).map(({ player }) => ({ name: player?.name ?? "بازیکن", position: player?.pos ?? "—", number: player?.number })) }));
-  const events = (payloads.events?.events ?? []).map((event) => ({ minute: `${toFaDigits(event.time?.elapsed ?? 0)}′`, team: event.team?.name ?? "—", player: event.player?.name ?? "—", type: event.type ?? "رویداد", detail: event.detail }));
+export function mapSportsDetails(
+  fixtureId: string,
+  payloads: {
+    statistics?: SportsApiDetailPayload;
+    lineups?: SportsApiDetailPayload;
+    events?: SportsApiDetailPayload;
+  }
+): MatchDetailData {
+  const statistics = (payloads.statistics?.statistics ?? []).flatMap(team =>
+    (team.statistics ?? []).map(stat => ({
+      label: stat.type ?? "آمار",
+      home: team.team?.name ?? "تیم میزبان",
+      away: String(stat.value ?? "—"),
+    }))
+  );
+  const lineups = (payloads.lineups?.lineups ?? []).map(lineup => ({
+    team: lineup.team?.name ?? "تیم",
+    formation: lineup.formation,
+    players: (lineup.startXI ?? []).map(({ player }) => ({
+      name: player?.name ?? "بازیکن",
+      position: player?.pos ?? "—",
+      number: player?.number,
+    })),
+  }));
+  const events = (payloads.events?.events ?? []).map(event => ({
+    minute: `${toFaDigits(event.time?.elapsed ?? 0)}′`,
+    team: event.team?.name ?? "—",
+    player: event.player?.name ?? "—",
+    type: event.type ?? "رویداد",
+    detail: event.detail,
+  }));
   return { fixtureId, source: "api", error: null, statistics, lineups, events };
 }
-

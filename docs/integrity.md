@@ -23,13 +23,13 @@ at odds 1000.
 
 A selection is refused when:
 
-| Reason | Meaning |
-|---|---|
-| `MARKET_UNAVAILABLE` | No snapshot for that fixture/outcome, or a price ≤ 1 |
-| `MARKET_CLOSED` | Kickoff passed, status is live/finished, or the row came from preview data |
-| `ODDS_STALE` | Snapshot older than 15 minutes |
-| `ODDS_CHANGED` | Submitted price differs from the server price by more than 5% |
-| `ODDS_LIMIT_EXCEEDED` | Single price or combined odds above 1000 |
+| Reason                | Meaning                                                                    |
+| --------------------- | -------------------------------------------------------------------------- |
+| `MARKET_UNAVAILABLE`  | No snapshot for that fixture/outcome, or a price ≤ 1                       |
+| `MARKET_CLOSED`       | Kickoff passed, status is live/finished, or the row came from preview data |
+| `ODDS_STALE`          | Snapshot older than 15 minutes                                             |
+| `ODDS_CHANGED`        | Submitted price differs from the server price by more than 5%              |
+| `ODDS_LIMIT_EXCEEDED` | Single price or combined odds above 1000                                   |
 
 ### The sync job is mandatory
 
@@ -54,14 +54,14 @@ read `{ fixtures, markets, upserted }` to confirm it populated.
 Fixed-window counters in MySQL (`rateLimits`), one row per bucket, so limits hold
 across serverless instances and cold starts.
 
-| Scope | Key | Budget |
-|---|---|---|
-| `login` | ip + username | 5 / 5 min |
-| `signup` | ip | 3 / hour |
-| `reset-request` | ip | 3 / hour |
-| `reset-submit` | ip | 5 / 15 min |
-| `support-user` | ip + user id | 60 / hour |
-| `support-guest` | ip | 5 / hour |
+| Scope           | Key           | Budget     |
+| --------------- | ------------- | ---------- |
+| `login`         | ip + username | 5 / 5 min  |
+| `signup`        | ip            | 3 / hour   |
+| `reset-request` | ip            | 3 / hour   |
+| `reset-submit`  | ip            | 5 / 15 min |
+| `support-user`  | ip + user id  | 60 / hour  |
+| `support-guest` | ip            | 5 / hour   |
 
 Reset codes got their own hardening on top:
 

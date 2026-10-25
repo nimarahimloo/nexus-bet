@@ -22,9 +22,25 @@ export function getVipProgress(points: number) {
 
   const current = VIP_TIERS[tierIndex];
   const next = VIP_TIERS[tierIndex + 1];
-  if (!next) return { current, next: null, points: safePoints, progress: 100, pointsToNext: 0 };
+  if (!next)
+    return {
+      current,
+      next: null,
+      points: safePoints,
+      progress: 100,
+      pointsToNext: 0,
+    };
 
   const span = next.minPoints - current.minPoints;
-  const progress = Math.min(100, Math.max(0, Math.round(((safePoints - current.minPoints) / span) * 100)));
-  return { current, next, points: safePoints, progress, pointsToNext: Math.max(0, next.minPoints - safePoints) };
+  const progress = Math.min(
+    100,
+    Math.max(0, Math.round(((safePoints - current.minPoints) / span) * 100))
+  );
+  return {
+    current,
+    next,
+    points: safePoints,
+    progress,
+    pointsToNext: Math.max(0, next.minPoints - safePoints),
+  };
 }

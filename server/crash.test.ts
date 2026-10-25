@@ -7,7 +7,8 @@ import {
   verifyCrashSeed,
 } from "./crash";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 /** Aggregate db layer after modular split under server/db/*. */
 const readDbLayer = () =>
@@ -38,14 +39,22 @@ describe("Crash backend integration contract", () => {
     expect(seed.serverSeed).toHaveLength(64);
     expect(seed.serverSeedHash).toHaveLength(64);
     expect(verifyCrashSeed(seed.serverSeed, seed.serverSeedHash)).toBe(true);
-    expect(verifyCrashSeed(`${seed.serverSeed}tampered`, seed.serverSeedHash)).toBe(false);
+    expect(
+      verifyCrashSeed(`${seed.serverSeed}tampered`, seed.serverSeedHash)
+    ).toBe(false);
 
     const mult = crashMultiplierFromSeed(seed.serverSeed);
     expect(Number(mult)).toBeGreaterThanOrEqual(1.05);
     expect(Number(mult)).toBeLessThanOrEqual(12.99);
-    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, mult)).toBe(true);
-    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, "9.99")).toBe(false);
-    expect(verifyCrashProof(`${seed.serverSeed}x`, seed.serverSeedHash, mult)).toBe(false);
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, mult)).toBe(
+      true
+    );
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, "9.99")).toBe(
+      false
+    );
+    expect(
+      verifyCrashProof(`${seed.serverSeed}x`, seed.serverSeedHash, mult)
+    ).toBe(false);
 
     // Same seed always yields same multiplier (determinism).
     expect(crashMultiplierFromSeed(seed.serverSeed)).toBe(mult);

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { calculatePotentialReturn, combinedOdds, isValidUsdtStake } from "./betting";
+import {
+  calculatePotentialReturn,
+  combinedOdds,
+  isValidUsdtStake,
+} from "./betting";
 
 describe("محاسبات بت‌اسلیپ", () => {
   it("ضریب ترکیبی چند انتخاب را با دقت دو رقم محاسبه می‌کند", () => {

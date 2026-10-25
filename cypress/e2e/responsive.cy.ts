@@ -44,7 +44,7 @@ describe("Responsive shell", () => {
       it(`topbar is present and within viewport @ ${vp.width}`, () => {
         visitReady("/");
         cy.get(".topbar").should("be.visible");
-        cy.get(".topbar").then(($el) => {
+        cy.get(".topbar").then($el => {
           const rect = $el[0].getBoundingClientRect();
           expect(rect.left).to.be.gte(-1);
           expect(rect.right).to.be.lte(vp.width + 1);
@@ -72,7 +72,7 @@ describe("Touch targets (mobile)", () => {
 
   it("bottom nav links meet ~44px height", () => {
     visitReady("/");
-    cy.get(".mobile-bottom-nav a").each(($a) => {
+    cy.get(".mobile-bottom-nav a").each($a => {
       const h = $a[0].getBoundingClientRect().height;
       expect(h, $a.text()).to.be.gte(44);
     });
@@ -80,11 +80,13 @@ describe("Touch targets (mobile)", () => {
 
   it("login / primary header control is tappable", () => {
     visitReady("/");
-    cy.get(".login-button, .header-actions button").first().then(($btn) => {
-      const rect = $btn[0].getBoundingClientRect();
-      expect(rect.height).to.be.gte(40);
-      expect(rect.width).to.be.gte(40);
-    });
+    cy.get(".login-button, .header-actions button")
+      .first()
+      .then($btn => {
+        const rect = $btn[0].getBoundingClientRect();
+        expect(rect.height).to.be.gte(40);
+        expect(rect.width).to.be.gte(40);
+      });
   });
 });
 
@@ -93,11 +95,13 @@ describe("Matches filters scroll container", () => {
     cy.viewport(320, 568);
     visitReady("/matches");
     cy.assertNoHorizontalOverflow();
-    cy.get("body").then(($body) => {
+    cy.get("body").then($body => {
       if ($body.find(".filter-row, .league-filter-pills").length) {
-        cy.get(".filter-row, .league-filter-pills").first().should(($el) => {
-          expect($el[0].scrollWidth).to.be.gte($el[0].clientWidth - 1);
-        });
+        cy.get(".filter-row, .league-filter-pills")
+          .first()
+          .should($el => {
+            expect($el[0].scrollWidth).to.be.gte($el[0].clientWidth - 1);
+          });
       }
     });
   });
@@ -108,7 +112,9 @@ describe("Auth modal opens on mobile", () => {
     cy.viewport(390, 844);
     visitReady("/");
     cy.get(".login-button").first().click({ force: true });
-    cy.get(".auth-modal, [role='dialog']", { timeout: 10_000 }).should("be.visible");
+    cy.get(".auth-modal, [role='dialog']", { timeout: 10_000 }).should(
+      "be.visible"
+    );
     cy.assertNoHorizontalOverflow();
   });
 });

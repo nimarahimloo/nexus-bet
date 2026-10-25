@@ -1,6 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { attachWalletProviderTransaction, requestWalletTransaction } from "./db";
+import {
+  attachWalletProviderTransaction,
+  requestWalletTransaction,
+} from "./db";
 import {
   NOWPAYMENTS_NETWORK,
   NOWPAYMENTS_PROVIDER,
@@ -23,7 +26,8 @@ function paymentIpnUrl() {
   if (!base) {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
-      message: "آدرس عمومی سرور (APP_PUBLIC_URL) برای callback پرداخت تنظیم نشده است.",
+      message:
+        "آدرس عمومی سرور (APP_PUBLIC_URL) برای callback پرداخت تنظیم نشده است.",
     });
   }
   return `${base}/api/payments/nowpayments/ipn`;
@@ -43,7 +47,10 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
   const config = paymentProviderConfig();
   const readiness = nowPaymentsReadiness(config);
   if (!readiness.enabled) {
-    throw new TRPCError({ code: "SERVICE_UNAVAILABLE", message: "provider پرداخت هنوز تنظیم نشده است." });
+    throw new TRPCError({
+      code: "SERVICE_UNAVAILABLE",
+      message: "provider پرداخت هنوز تنظیم نشده است.",
+    });
   }
   if (input.type === "withdrawal" && !readiness.payoutEnabled) {
     throw new TRPCError({
@@ -52,7 +59,10 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
     });
   }
   if (input.type === "withdrawal" && !input.address?.trim()) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "آدرس کیف پول مقصد برای برداشت الزامی است." });
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "آدرس کیف پول مقصد برای برداشت الزامی است.",
+    });
   }
 
   let ledger: Awaited<ReturnType<typeof requestWalletTransaction>>;
@@ -67,11 +77,30 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
     });
   } catch (error) {
     const code = String(error);
-    if (code.includes("INSUFFICIENT_BALANCE")) throw new TRPCError({ code: "BAD_REQUEST", message: "موجودی قابل‌استفاده کافی نیست." });
-    if (code.includes("UNSUPPORTED_CURRENCY")) throw new TRPCError({ code: "BAD_REQUEST", message: "این دارایی پشتیبانی نمی‌شود." });
-    if (code.includes("WITHDRAWAL_ADDRESS_REQUIRED")) throw new TRPCError({ code: "BAD_REQUEST", message: "آدرس کیف پول مقصد برای برداشت الزامی است." });
-    if (code.includes("DATABASE_UNAVAILABLE")) throw new TRPCError({ code: "SERVICE_UNAVAILABLE", message: "دیتابیس موقتاً در دسترس نیست." });
-    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ثبت درخواست کیف پول ممکن نشد." });
+    if (code.includes("INSUFFICIENT_BALANCE"))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "موجودی قابل‌استفاده کافی نیست.",
+      });
+    if (code.includes("UNSUPPORTED_CURRENCY"))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "این دارایی پشتیبانی نمی‌شود.",
+      });
+    if (code.includes("WITHDRAWAL_ADDRESS_REQUIRED"))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "آدرس کیف پول مقصد برای برداشت الزامی است.",
+      });
+    if (code.includes("DATABASE_UNAVAILABLE"))
+      throw new TRPCError({
+        code: "SERVICE_UNAVAILABLE",
+        message: "دیتابیس موقتاً در دسترس نیست.",
+      });
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "ثبت درخواست کیف پول ممکن نشد.",
+    });
   }
 
   const ipnCallbackUrl = paymentIpnUrl();
@@ -98,7 +127,8 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
         provider: NOWPAYMENTS_PROVIDER,
         providerEventId,
         payAddress: payment.pay_address ?? null,
-        payAmount: payment.pay_amount != null ? Number(payment.pay_amount) : null,
+        payAmount:
+          payment.pay_amount != null ? Number(payment.pay_amount) : null,
         payCurrency: payment.pay_currency ?? null,
         network: NOWPAYMENTS_NETWORK,
       };
@@ -109,13 +139,20 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
       amount: input.amount,
       ipnCallbackUrl,
     });
-    const providerEventId = String(payout.withdrawals?.[0]?.id ?? payout.id ?? payout.batch_withdrawal_id ?? "").trim();
+    const providerEventId = String(
+      payout.withdrawals?.[0]?.id ??
+        payout.id ??
+        payout.batch_withdrawal_id ??
+        ""
+    ).trim();
     if (!providerEventId) throw new Error("PAYMENT_PROVIDER_ID_MISSING");
     await attachWalletProviderTransaction({
       transactionId: ledger.id,
       provider: NOWPAYMENTS_PROVIDER,
       providerEventId,
-      providerStatus: String(payout.withdrawals?.[0]?.status ?? payout.status ?? "pending"),
+      providerStatus: String(
+        payout.withdrawals?.[0]?.status ?? payout.status ?? "pending"
+      ),
       payloadJson: JSON.stringify(payout),
     });
     return {
@@ -131,7 +168,8 @@ export async function executeWalletProviderRequest(input: WalletRequestInput) {
     console.error("[wallet.request] provider call failed", error);
     throw new TRPCError({
       code: "BAD_GATEWAY",
-      message: "ارتباط با provider پرداخت برقرار نشد. درخواست در وضعیت pending باقی ماند؛ پشتیبانی را مطلع کن.",
+      message:
+        "ارتباط با provider پرداخت برقرار نشد. درخواست در وضعیت pending باقی ماند؛ پشتیبانی را مطلع کن.",
     });
   }
 }

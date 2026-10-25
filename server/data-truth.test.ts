@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getDataSourceLabel, isOperationalDataSource } from "../shared/dataTruth";
+import {
+  getDataSourceLabel,
+  isOperationalDataSource,
+} from "../shared/dataTruth";
 
 describe("data truth labels", () => {
   it("distinguishes operational sources from preview and fallback", () => {

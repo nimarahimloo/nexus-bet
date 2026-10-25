@@ -26,9 +26,10 @@ export function createApp(): Express {
       // kilobytes, and the IPN body is signed and re-verified from raw bytes.
       limit: "2mb",
       verify: (req, _res, buffer) => {
-        (req as unknown as Request & { rawBody?: string }).rawBody = buffer.toString("utf8");
+        (req as unknown as Request & { rawBody?: string }).rawBody =
+          buffer.toString("utf8");
       },
-    }),
+    })
   );
 
   // CSRF layer two: cross-origin state-changing requests are rejected before
@@ -46,7 +47,7 @@ export function createApp(): Express {
     createExpressMiddleware({
       router: appRouter,
       createContext,
-    }),
+    })
   );
 
   app.get("/api/health", async (_req, res) => {

@@ -98,7 +98,13 @@ canvas {
 }
 
 /* ------------------------------------------------------------------- focus */
-:where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+:where(
+  a,
+  button,
+  summary,
+  [role="button"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
   outline: 2px solid var(--nx-yellow, #f2de1a) !important;
   outline-offset: 2px !important;
 }

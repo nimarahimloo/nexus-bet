@@ -1,9 +1,18 @@
-export function formatFaNumber(value: number, options?: Intl.NumberFormatOptions): string {
+export function formatFaNumber(
+  value: number,
+  options?: Intl.NumberFormatOptions
+): string {
   return new Intl.NumberFormat("fa-IR", options).format(value);
 }
 
-export function formatFaDecimal(value: number, minimumFractionDigits = 2): string {
-  return formatFaNumber(value, { minimumFractionDigits, maximumFractionDigits: minimumFractionDigits });
+export function formatFaDecimal(
+  value: number,
+  minimumFractionDigits = 2
+): string {
+  return formatFaNumber(value, {
+    minimumFractionDigits,
+    maximumFractionDigits: minimumFractionDigits,
+  });
 }
 
 export function formatFaTime(hour: number, minute: number): string {

@@ -3,9 +3,15 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const page = readFileSync(resolve(root, "client/src/pages/TrustCenter.tsx"), "utf8");
+const page = readFileSync(
+  resolve(root, "client/src/pages/TrustCenter.tsx"),
+  "utf8"
+);
 const app = readFileSync(resolve(root, "client/src/App.tsx"), "utf8");
-const shell = readFileSync(resolve(root, "client/src/components/PageShell.tsx"), "utf8");
+const shell = readFileSync(
+  resolve(root, "client/src/components/PageShell.tsx"),
+  "utf8"
+);
 
 describe("Trust Center contracts", () => {
   it("uses real provider readiness and states disabled-safe boundaries", () => {

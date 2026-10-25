@@ -32,7 +32,7 @@ export function hostFromOrigin(origin: string): string | null {
 export function isSameOrigin(
   origin: string | undefined,
   requestHost: string | undefined,
-  allowedHosts: string[] = [],
+  allowedHosts: string[] = []
 ): boolean {
   // No Origin header: not a browser-initiated cross-site request.
   if (!origin) return true;
@@ -44,7 +44,7 @@ export function isSameOrigin(
   if (!host) return false;
   if (originHost === host) return true;
 
-  return allowedHosts.some((allowed) => normalizeHost(allowed) === originHost);
+  return allowedHosts.some(allowed => normalizeHost(allowed) === originHost);
 }
 
 function firstHeader(value: string | string[] | undefined) {
@@ -56,7 +56,9 @@ export function originGuard(allowedHosts: string[] = []) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (SAFE_METHODS.has(req.method.toUpperCase())) return next();
 
-    const requestHost = firstHeader(req.headers["x-forwarded-host"]) ?? firstHeader(req.headers.host);
+    const requestHost =
+      firstHeader(req.headers["x-forwarded-host"]) ??
+      firstHeader(req.headers.host);
     const origin = firstHeader(req.headers.origin);
 
     if (!isSameOrigin(origin, requestHost, allowedHosts)) {
@@ -68,7 +70,9 @@ export function originGuard(allowedHosts: string[] = []) {
 }
 
 /** Host list derived from the configured public URL, for proxy/absolute-URL setups. */
-export function allowedHostsFromPublicUrl(publicUrl: string | undefined): string[] {
+export function allowedHostsFromPublicUrl(
+  publicUrl: string | undefined
+): string[] {
   if (!publicUrl?.trim()) return [];
   const host = hostFromOrigin(publicUrl.trim());
   return host ? [host] : [];

@@ -1,5 +1,10 @@
 import { and, asc, eq, gte, sql } from "drizzle-orm";
-import { bets, notifications, walletTransactions, wallets } from "../../drizzle/schema";
+import {
+  bets,
+  notifications,
+  walletTransactions,
+  wallets,
+} from "../../drizzle/schema";
 import { ENV } from "../_core/env";
 import { fetchFixtureResult, unknownFixtureResult } from "../fixtureResults";
 import {
@@ -56,24 +61,33 @@ export function parseSelections(json: string): SettleableSelection[] {
   try {
     const parsed: unknown = JSON.parse(json);
     if (!Array.isArray(parsed)) return [];
-    return parsed.flatMap((item) => {
+    return parsed.flatMap(item => {
       if (!item || typeof item !== "object") return [];
       const record = item as Record<string, unknown>;
-      if (typeof record.id !== "string" || typeof record.market !== "string") return [];
+      if (typeof record.id !== "string" || typeof record.market !== "string")
+        return [];
       const odds = Number(record.odds);
-      return [{
-        id: record.id,
-        match: typeof record.match === "string" ? record.match : "",
-        market: record.market,
-        odds: Number.isFinite(odds) ? odds : 0,
-      }];
+      return [
+        {
+          id: record.id,
+          match: typeof record.match === "string" ? record.match : "",
+          market: record.market,
+          odds: Number.isFinite(odds) ? odds : 0,
+        },
+      ];
     });
   } catch {
     return [];
   }
 }
 
-function notificationFor(input: { outcome: Exclude<BetOutcome, "pending">; ticketCode: string; stake: number; currency: string; money: SettlementMoney }) {
+function notificationFor(input: {
+  outcome: Exclude<BetOutcome, "pending">;
+  ticketCode: string;
+  stake: number;
+  currency: string;
+  money: SettlementMoney;
+}) {
   if (input.outcome === "won") {
     return {
       type: "bet" as const,
@@ -110,7 +124,7 @@ async function applySettlement(input: {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     // Claim the ticket first: if another worker already settled it, this is a
     // no-op and no money moves. This is the idempotency guard for overlapping
     // cron runs and manual triggers.
@@ -127,14 +141,17 @@ async function applySettlement(input: {
         lockedBalance: sql`${wallets.lockedBalance} + ${input.money.lockedDelta.toFixed(6)}`,
         updatedAt: new Date(),
       })
-      .where(and(
-        eq(wallets.userId, input.userId),
-        eq(wallets.currency, input.currency),
-        gte(wallets.lockedBalance, input.stake.toFixed(6)),
-      ));
+      .where(
+        and(
+          eq(wallets.userId, input.userId),
+          eq(wallets.currency, input.currency),
+          gte(wallets.lockedBalance, input.stake.toFixed(6))
+        )
+      );
     // Guarded update: a locked balance smaller than the stake means the ledger
     // already disagrees with the ticket, so roll the whole thing back.
-    if (!Number(updated[0]?.affectedRows)) throw new Error("LOCKED_BALANCE_MISMATCH");
+    if (!Number(updated[0]?.affectedRows))
+      throw new Error("LOCKED_BALANCE_MISMATCH");
 
     await tx.insert(walletTransactions).values({
       userId: input.userId,
@@ -169,13 +186,17 @@ async function applySettlement(input: {
  * - the ledger transition is claimed inside a transaction, so repeated runs
  *   and concurrent workers cannot pay a ticket twice
  */
-export async function settlePendingSportsBets(options: SettlePendingOptions = {}): Promise<SettlementSummary> {
+export async function settlePendingSportsBets(
+  options: SettlePendingOptions = {}
+): Promise<SettlementSummary> {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
   const limit = clampLimit(options.limit);
   const dryRun = options.dryRun ?? false;
-  const resolveFixture = options.resolveFixture ?? ((fixtureId: string) => fetchFixtureResult(fixtureId, ENV.sportsApiKey));
+  const resolveFixture =
+    options.resolveFixture ??
+    ((fixtureId: string) => fetchFixtureResult(fixtureId, ENV.sportsApiKey));
 
   const summary: SettlementSummary = {
     dryRun,
@@ -209,23 +230,44 @@ export async function settlePendingSportsBets(options: SettlePendingOptions = {}
   summary.scanned = rows.length;
   if (!rows.length) return summary;
 
-  const tickets = rows.map((row) => ({ row, selections: parseSelections(row.selectionsJson) }));
+  const tickets = rows.map(row => ({
+    row,
+    selections: parseSelections(row.selectionsJson),
+  }));
 
-  const fixtureIds = Array.from(new Set(
-    tickets
-      .flatMap((ticket) => ticket.selections.map((selection) => fixtureIdFromSelectionId(selection.id)))
-      .filter((fixtureId) => Boolean(fixtureId) && isSettleableFixtureId(fixtureId)),
-  )).slice(0, MAX_FIXTURES_PER_RUN);
+  const fixtureIds = Array.from(
+    new Set(
+      tickets
+        .flatMap(ticket =>
+          ticket.selections.map(selection =>
+            fixtureIdFromSelectionId(selection.id)
+          )
+        )
+        .filter(
+          fixtureId => Boolean(fixtureId) && isSettleableFixtureId(fixtureId)
+        )
+    )
+  ).slice(0, MAX_FIXTURES_PER_RUN);
 
   const results = new Map<string, FixtureResult>();
-  await Promise.all(fixtureIds.map(async (fixtureId) => {
-    try {
-      results.set(fixtureId, await resolveFixture(fixtureId));
-    } catch (error) {
-      results.set(fixtureId, unknownFixtureResult(fixtureId, error instanceof Error ? error.message : "RESOLVER_FAILED"));
-    }
-  }));
-  summary.unresolvedFixtures = Array.from(results.values()).filter((result) => result.state === "unknown").length;
+  await Promise.all(
+    fixtureIds.map(async fixtureId => {
+      try {
+        results.set(fixtureId, await resolveFixture(fixtureId));
+      } catch (error) {
+        results.set(
+          fixtureId,
+          unknownFixtureResult(
+            fixtureId,
+            error instanceof Error ? error.message : "RESOLVER_FAILED"
+          )
+        );
+      }
+    })
+  );
+  summary.unresolvedFixtures = Array.from(results.values()).filter(
+    result => result.state === "unknown"
+  ).length;
 
   for (const { row, selections } of tickets) {
     const outcome = settleBetOutcome(selections, results);
@@ -236,14 +278,22 @@ export async function settlePendingSportsBets(options: SettlePendingOptions = {}
 
     const stake = Number(row.stake);
     const potentialReturn = Number(row.potentialReturn);
-    if (!Number.isFinite(stake) || !Number.isFinite(potentialReturn) || stake <= 0) {
+    if (
+      !Number.isFinite(stake) ||
+      !Number.isFinite(potentialReturn) ||
+      stake <= 0
+    ) {
       summary.failed += 1;
       continue;
     }
 
     const money = settlementMoney(outcome, stake, potentialReturn);
     if (summary.decisions.length < MAX_DECISIONS_IN_RESPONSE) {
-      summary.decisions.push({ ticketCode: row.ticketCode, status: outcome, ledgerAmount: money.ledgerAmount });
+      summary.decisions.push({
+        ticketCode: row.ticketCode,
+        status: outcome,
+        ledgerAmount: money.ledgerAmount,
+      });
     }
 
     if (outcome === "won") summary.settledWon += 1;

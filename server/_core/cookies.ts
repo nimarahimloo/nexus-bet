@@ -23,7 +23,8 @@ function isSecureRequest(req: Request) {
 function isLocalHost(req: Request) {
   const hostname = (req.hostname || "").toLowerCase();
   if (LOCAL_HOSTS.has(hostname)) return true;
-  if (isIpAddress(hostname) && (hostname === "127.0.0.1" || hostname === "::1")) return true;
+  if (isIpAddress(hostname) && (hostname === "127.0.0.1" || hostname === "::1"))
+    return true;
   return false;
 }
 

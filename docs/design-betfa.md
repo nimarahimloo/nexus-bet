@@ -1,6 +1,6 @@
 # Visual language — betfa.com reference
 
-Target: the app should read as the same *product language* as `betfa.com` — dark canvas,
+Target: the app should read as the same _product language_ as `betfa.com` — dark canvas,
 flat panels, one electric accent, dense betting rows. This documents what was measured,
 what was applied, and what is still structurally different.
 
@@ -20,18 +20,18 @@ card radius in px, font size ramp — are marked "not measured".
 
 ## Extracted palette
 
-| Token | Value | Source |
-|---|---|---|
-| Canvas | `#0b0b0c` | banner background |
-| Surface | `#141416` | banner panel area |
-| Elevated surface | `#1b1b1e` | — |
-| Border | `rgba(255,255,255,0.08)` | — |
-| Primary accent | `#f2de1a` | logo wordmark, banner headline |
-| Primary hover | `#ffe94d` | — |
-| Secondary accent | `#a3e635` | banner lime glow / chips |
-| Live / danger | `#ef3e3e` | live-badge convention on the reference |
-| Text | `#ffffff` | banner copy |
-| Muted text | `#a7a7ae` | — |
+| Token            | Value                    | Source                                 |
+| ---------------- | ------------------------ | -------------------------------------- |
+| Canvas           | `#0b0b0c`                | banner background                      |
+| Surface          | `#141416`                | banner panel area                      |
+| Elevated surface | `#1b1b1e`                | —                                      |
+| Border           | `rgba(255,255,255,0.08)` | —                                      |
+| Primary accent   | `#f2de1a`                | logo wordmark, banner headline         |
+| Primary hover    | `#ffe94d`                | —                                      |
+| Secondary accent | `#a3e635`                | banner lime glow / chips               |
+| Live / danger    | `#ef3e3e`                | live-badge convention on the reference |
+| Text             | `#ffffff`                | banner copy                            |
+| Muted text       | `#a7a7ae`                | —                                      |
 
 Typography: the reference sets Persian display type for headings and tabular figures for
 odds. This app keeps **Peyda** (body) and **Kalameh** (headings/buttons) — already tuned for
@@ -73,7 +73,7 @@ in the CSS.
 2. **Over/under markets.** The reference shows `بیشتر از (3.5)` / `کمتر از (3.5)` under 1X2.
    Our odds mapper only produces match-winner markets, so this needs a feed change, not CSS.
 3. **Header density.** Reference has a utility row (rules/news/promotions/tournaments/telegram
-   + register/login + 5-language switcher) above the logo row.
+   - register/login + 5-language switcher) above the logo row.
 4. **Card radius / header height** — not measured, so not asserted.
 
 ## Verification limit

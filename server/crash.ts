@@ -11,11 +11,16 @@ const pendingServerSeeds = new Map<number, string>();
 
 export function createCrashSeed() {
   const serverSeed = randomBytes(32).toString("hex");
-  return { serverSeed, serverSeedHash: createHash("sha256").update(serverSeed).digest("hex") };
+  return {
+    serverSeed,
+    serverSeedHash: createHash("sha256").update(serverSeed).digest("hex"),
+  };
 }
 
 export function verifyCrashSeed(serverSeed: string, serverSeedHash: string) {
-  return createHash("sha256").update(serverSeed).digest("hex") === serverSeedHash;
+  return (
+    createHash("sha256").update(serverSeed).digest("hex") === serverSeedHash
+  );
 }
 
 /**
@@ -26,14 +31,21 @@ export function crashMultiplierFromSeed(serverSeed: string): string {
   const hash = createHash("sha256").update(serverSeed).digest("hex");
   const n = parseInt(hash.slice(0, 8), 16);
   const unit = n / 0xffffffff;
-  const mult = CRASH_MULTIPLIER_MIN + unit * (CRASH_MULTIPLIER_MAX - CRASH_MULTIPLIER_MIN);
+  const mult =
+    CRASH_MULTIPLIER_MIN + unit * (CRASH_MULTIPLIER_MAX - CRASH_MULTIPLIER_MIN);
   return mult.toFixed(2);
 }
 
 /** True when seed, hash, and published multiplier are consistent. */
-export function verifyCrashProof(serverSeed: string, serverSeedHash: string, crashMultiplier: string | number) {
+export function verifyCrashProof(
+  serverSeed: string,
+  serverSeedHash: string,
+  crashMultiplier: string | number
+) {
   if (!verifyCrashSeed(serverSeed, serverSeedHash)) return false;
-  return crashMultiplierFromSeed(serverSeed) === Number(crashMultiplier).toFixed(2);
+  return (
+    crashMultiplierFromSeed(serverSeed) === Number(crashMultiplier).toFixed(2)
+  );
 }
 
 export function rememberPendingSeed(roundId: number, serverSeed: string) {
@@ -47,7 +59,10 @@ export function takePendingSeed(roundId: number): string | undefined {
 }
 
 export function multiplierAt(startedAt: Date, now = new Date()): number {
-  const elapsedSeconds = Math.max(0, (now.getTime() - startedAt.getTime()) / 1000);
+  const elapsedSeconds = Math.max(
+    0,
+    (now.getTime() - startedAt.getTime()) / 1000
+  );
   return Number((1 + elapsedSeconds * CRASH_RATE_PER_SECOND).toFixed(2));
 }
 
@@ -55,6 +70,10 @@ export function secondsUntilCrash(crashMultiplier: number): number {
   return Math.max(0, (crashMultiplier - 1) / CRASH_RATE_PER_SECOND);
 }
 
-export function isCrashed(crashMultiplier: number, startedAt: Date, now = new Date()): boolean {
+export function isCrashed(
+  crashMultiplier: number,
+  startedAt: Date,
+  now = new Date()
+): boolean {
   return multiplierAt(startedAt, now) >= crashMultiplier;
 }

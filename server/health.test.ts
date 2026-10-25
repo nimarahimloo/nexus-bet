@@ -6,18 +6,37 @@ import { isSecureRequest, securityHeadersFor } from "./_core/securityHeaders";
 
 describe("health payload", () => {
   it("is not ok when the database is down", () => {
-    const payload = buildHealthPayload({ dbOk: false, sportsConfigured: true, uptimeSeconds: 12 });
+    const payload = buildHealthPayload({
+      dbOk: false,
+      sportsConfigured: true,
+      uptimeSeconds: 12,
+    });
     expect(payload.ok).toBe(false);
     expect(payload.database).toBe("down");
   });
 
   it("is ok only when a query actually round-tripped", () => {
-    const payload = buildHealthPayload({ dbOk: true, sportsConfigured: false, uptimeSeconds: 12.6 });
-    expect(payload).toEqual({ ok: true, database: "up", sports: "missing", uptimeSeconds: 13 });
+    const payload = buildHealthPayload({
+      dbOk: true,
+      sportsConfigured: false,
+      uptimeSeconds: 12.6,
+    });
+    expect(payload).toEqual({
+      ok: true,
+      database: "up",
+      sports: "missing",
+      uptimeSeconds: 13,
+    });
   });
 
   it("never rounds uptime below zero", () => {
-    expect(buildHealthPayload({ dbOk: true, sportsConfigured: true, uptimeSeconds: -5 }).uptimeSeconds).toBe(0);
+    expect(
+      buildHealthPayload({
+        dbOk: true,
+        sportsConfigured: true,
+        uptimeSeconds: -5,
+      }).uptimeSeconds
+    ).toBe(0);
   });
 });
 
@@ -31,12 +50,24 @@ describe("security headers", () => {
   });
 
   it("adds HSTS only over TLS", () => {
-    expect(securityHeadersFor({ secure: true })["Strict-Transport-Security"]).toContain("max-age=31536000");
+    expect(
+      securityHeadersFor({ secure: true })["Strict-Transport-Security"]
+    ).toContain("max-age=31536000");
   });
 
   it("recognises a proxied https request", () => {
-    expect(isSecureRequest({ secure: false, headers: { "x-forwarded-proto": "https" } } as never)).toBe(true);
-    expect(isSecureRequest({ secure: false, headers: { "x-forwarded-proto": "http" } } as never)).toBe(false);
+    expect(
+      isSecureRequest({
+        secure: false,
+        headers: { "x-forwarded-proto": "https" },
+      } as never)
+    ).toBe(true);
+    expect(
+      isSecureRequest({
+        secure: false,
+        headers: { "x-forwarded-proto": "http" },
+      } as never)
+    ).toBe(false);
     expect(isSecureRequest({ secure: true, headers: {} } as never)).toBe(true);
   });
 });
@@ -48,19 +79,21 @@ describe("GET /api/health over HTTP", () => {
   beforeAll(async () => {
     const app = createApp();
     server = app.listen(0);
-    await new Promise<void>((resolve) => server.once("listening", () => resolve()));
+    await new Promise<void>(resolve =>
+      server.once("listening", () => resolve())
+    );
     const address = server.address();
     const port = typeof address === "object" && address ? address.port : 0;
     base = `http://127.0.0.1:${port}`;
   });
 
   afterAll(async () => {
-    await new Promise<void>((resolve) => server.close(() => resolve()));
+    await new Promise<void>(resolve => server.close(() => resolve()));
   });
 
   it("reports database truthfully and does not leak provider config", async () => {
     const response = await fetch(`${base}/api/health`);
-    const body = await response.json() as Record<string, unknown>;
+    const body = (await response.json()) as Record<string, unknown>;
 
     expect([200, 503]).toContain(response.status);
     expect(body.ok).toBe(response.status === 200);

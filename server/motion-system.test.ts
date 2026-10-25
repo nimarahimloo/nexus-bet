@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("Nexus live motion system", () => {
   it("uses Framer Motion for route-level entry without forcing motion preferences", () => {

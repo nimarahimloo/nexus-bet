@@ -22,9 +22,11 @@
 - [x] بازبینی واکنش‌گرایی بخش Nexus AI و ثبت checkpoint ارتقایافته.
 
 ## Design decision
+
 Nexus AI در این نسخه به‌صورت یک موتور پیشنهاددهی قابل‌اعتنا در سمت محصول پیاده می‌شود: پیشنهادها از دادهٔ رویداد/ضریب و سیگنال‌های قابل توضیح ساخته می‌شوند و UI با قرارداد آمادهٔ اتصال به مدل زبانی داخلی توسعه می‌یابد. این کار از نمایش ادعاهای مبهم یا تضمین سود جلوگیری می‌کند و مسیر اتصال به دادهٔ ورزشی زنده را برای مرحلهٔ بعد باز می‌گذارد.
 
 ## Nexus AI acceptance criteria
+
 - هر پیشنهاد باید شامل رویداد، بازار، ضریب، سطح ریسک، سیگنال‌های توضیح‌پذیر و وضعیت محبوبیت باشد.
 - پیشنهادها نباید با زبان تضمین سود یا توصیهٔ قطعی نمایش داده شوند.
 - کاربر باید بتواند پیشنهاد را به‌صورت یک کلیک به بت‌اسلیپ اضافه یا حذف کند.
@@ -33,6 +35,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - منطق امتیازدهی باید تست واحد داشته باشد.
 
 ## Data note
+
 دادهٔ واقعی زندهٔ مسابقات و ضرایب در این پروژه هنوز به ارائه‌دهندهٔ ورزشی متصل نیست؛ بنابراین پیشنهادهای رابط فعلی در این مرحله به‌عنوان پیشنهادهای نمونهٔ قابل‌توضیح و غیرتضمینی ارائه می‌شوند، نه سیگنال مالی واقعی.
 
 - [x] افزودن انیمیشن ورود و بازخورد بصری هنگام اضافه‌شدن پیشنهاد Nexus AI به بت‌اسلیپ.
@@ -43,6 +46,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ثبت checkpoint جدید پس از اعتبارسنجی نهایی.
 
 ## Interaction decision
+
 با هر تغییر در انتخاب‌ها یا مبلغ شرط، سود احتمالی و بازگشت کل بدون تأخیر قابل مشاهده به‌روزرسانی می‌شوند. انیمیشن‌ها کوتاه، مبتنی بر transform/opacity و قابل خاموش‌شدن با prefers-reduced-motion خواهند بود تا بازخورد جذاب باشد اما مزاحم تصمیم‌گیری نشود.
 
 - [x] افزودن مدل کاربرمحور موجودی USDT در دیتابیس با موجودی قابل‌استفاده و قفل‌شده.
@@ -53,6 +57,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازبینی حالت مهمان، loading/error و موبایل و ثبت checkpoint جدید.
 
 ## Wallet balance decision
+
 موجودی واقعی در این مرحله به‌معنای موجودی پایدار و کاربرمحور در backend است، نه مقدار ثابت در React. واریز/برداشت بلاکچینی هنوز به provider و تسویهٔ واقعی متصل نشده؛ بنابراین endpoint کیف پول تنها منبع اعتبارسنجی UI و آمادهٔ اتصال به ledger واقعی خواهد بود. برای کاربر مهمان، بت‌اسلیپ فقط به‌صورت نمایشی قابل مشاهده است و ثبت شرط نیازمند ورود و موجودی کافی خواهد بود.
 
 - [x] استخراج و آماده‌سازی وزن‌های فونت Peyda و Kalameh از فایل‌های ارسالی.
@@ -145,6 +150,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن assertion مستقیم open/close/backdrop برای contract مودال.
 
 ## Bet303 redesign audit
+
 - [x] بررسی مرجع bet303.bet روی موبایل و استخراج قابلیت‌ها، الگوهای ناوبری و مسیرهای اصلی sportsbook.
 - [x] ممیزی UI/UX فعلی Nexus Bet و ثبت مشکلات قابل‌مشاهده در hierarchy، خوانایی، تعامل و discoverability.
 - [x] طراحی نقشهٔ قابلیت‌های جدید و اولویت اجرای mobile-first برای Nexus Bet.
@@ -153,6 +159,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای ممیزی responsive، تست و ثبت checkpoint جدید.
 
 ## Bonus and tournament interaction pass
+
 - [x] غنی‌سازی دادهٔ نمونهٔ بونوس با دسته، وضعیت، مهلت، شرایط و progress قابل‌مشاهده.
 - [x] غنی‌سازی دادهٔ نمونهٔ تورنمنت با رتبه‌بندی، امتیاز، زمان، جایزهٔ نمایشی و قوانین.
 - [x] افزودن تعامل نمایش جزئیات، انتخاب دسته و تغییر وضعیت کارت‌ها.
@@ -160,12 +167,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای تست، بازبینی موبایل و ثبت checkpoint جدید.
 
 ## Typography and Apple-inspired design system pass
+
 - [x] ممیزی منبع و وزن‌های واقعی Peyda/Kalameh و اعمال font-family مشترک روی همهٔ عناصر متنی و کنترل‌ها.
 - [x] تعریف سلسله‌مراتب typography، line-height، letter-spacing نرمال و tokenهای spacing/radius/shadow.
 - [x] بازطراحی glass surfaceها، border، blur، focus/hover/pressed state و کاهش ظاهر کارت‌های تکراری.
 - [x] اجرای ممیزی responsive، تست و ثبت checkpoint جدید.
 
 ## Real data and mobile material pass
+
 - [x] ممیزی endpointها و حذف/برچسب‌گذاری داده‌های تزئینی در مسیرهای اصلی.
 - [x] اتصال وضعیت‌های feed، wallet، offers و tournaments به قراردادهای دادهٔ قابل‌ردیابی با source/error.
 - [x] بازطراحی mobile shell با bottom dock، drawer، safe-area و hierarchy قابل اسکن.
@@ -173,12 +182,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست contract برای source/error و مسیرهای mobile و ثبت checkpoint جدید.
 
 ## Mobile matches bottom-sheet pass
+
 - [x] بازطراحی صفحهٔ Matches برای فیلترهای sticky با safe-area و وضعیت active واضح.
 - [x] تبدیل bet slip موبایل به bottom sheet با handle، خلاصهٔ انتخاب‌ها، مبلغ USDT و بازگشت احتمالی.
 - [x] افزودن تعامل باز/بسته‌شدن، backdrop، Escape، focus و motion قابل‌کنترل.
 - [x] اجرای تست، بازبینی موبایل/دسکتاپ و ثبت checkpoint جدید.
 
 ## Real bet placement pass
+
 - [x] ممیزی schema و helperهای wallet برای طراحی ثبت اتمیک بلیت و قفل‌کردن موجودی.
 - [x] افزودن جدول/قرارداد bet slip و procedure protected برای validate مبلغ، موجودی و odds.
 - [x] اتصال CTA bottom sheet به mutation و نمایش confirmation/error واقعی.
@@ -186,6 +197,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست‌های backend و UI، بازبینی موبایل و ثبت checkpoint جدید.
 
 ## Platform truth and UI consolidation pass
+
 - [x] ممیزی همهٔ صفحات و مشخص‌کردن هر منبع داده: API واقعی، backend واقعی، نمونهٔ موقت یا متن تزئینی.
 - [x] حذف دادهٔ نمونه از مسیرهای عملیاتی یا نمایش برچسب شفاف demo در جاهایی که منبع واقعی نداریم.
 - [x] تعریف قرارداد source of truth برای مسابقات، odds، wallet، bets، bonuses و tournaments.
@@ -196,11 +208,13 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای تست و بازبینی responsive پیش از checkpoint مرحلهٔ اول.
 
 ## Operational feed cleanup
+
 - [x] افزودن واکشی odds رسمی API-Football و نگاشت عددی بدون مقدار پیش‌فرض.
 - [x] حذف seedها و fallbackهای مسابقه از runtime و تبدیل جزئیات ناموجود به empty state.
 - [x] افزودن تست audit برای یک header، یک BetSheet و نبود catalog ساختگی.
 
 ## Operational lucky wheel
+
 - [x] ممیزی UI و قرارداد فعلی گردونهٔ شانس و تعیین مدل جایزه/شرایط spin.
 - [x] افزودن schema و migration برای spin history و reward ledger اتمیک.
 - [x] افزودن procedure امن برای spin، محدودیت دفعات و اعطای جایزه به wallet.
@@ -208,6 +222,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست‌های backend/UI و بازبینی responsive گردونه.
 
 ## Full real-data migration
+
 - [x] ممیزی همهٔ mock/demo/fallbackهای باقی‌مانده و تعیین منبع حقیقت هر route.
 - [x] تبدیل Promotions به campaign و activation واقعی از backend.
 - [x] تبدیل Tournaments به leaderboard و event ledger واقعی از backend.
@@ -220,6 +235,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازبینی responsive و ثبت checkpoint مهاجرت دادهٔ واقعی.
 
 ## iOS-inspired mobile UX redesign
+
 - [x] ممیزی بصری صفحات موبایل و ثبت تصمیم‌های طراحی برگرفته از نمونه‌های معتبر.
 - [x] بازتعریف tokenهای glass، surface، border، typography و safe-area مطابق زبان بصری iOS.
 - [x] اعمال تضمین‌شدهٔ Peyda و Kalameh روی همهٔ کنترل‌ها، فرم‌ها، اعداد و routeها.
@@ -229,6 +245,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن/به‌روزرسانی تست‌های قرارداد UI و بازبینی screenshot موبایل/دسکتاپ.
 
 ## In-platform auth and AI support
+
 - [x] ممیزی triggerهای ورود، خروج و پشتیبانی فعلی در تمام routeها.
 - [x] ساخت Auth modal شامل login، signup، forgot password و validation سمت رابط.
 - [x] افزودن دکمه‌های Google، Discord، Facebook و Apple بدون redirect در نسخهٔ preview.
@@ -238,12 +255,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست flowهای Auth/Support و بازبینی responsive موبایل و دسکتاپ.
 
 ## Auth modal glass and motion pass
+
 - [x] ممیزی حالت‌های ورود، ثبت‌نام و بازیابی رمز برای motion و glass material.
 - [x] افزودن ambient glass layers، refractive highlight و depth به backdrop و modal.
 - [x] افزودن transitionهای باز/بسته، تغییر mode و تعامل providerها با رعایت reduced-motion.
 - [x] افزودن تست قرارداد motion/material و بازبینی موبایل و دسکتاپ.
 
 ## Local authentication backend
+
 - [x] طراحی مدل credential، session و بازیابی رمز برای Auth داخلی.
 - [x] افزودن schema و migration برای credentialهای رمزنگاری‌شده و reset token.
 - [x] پیاده‌سازی ثبت‌نام، ورود، logout و بازیابی/تغییر رمز با tRPC و cookie امن.
@@ -252,6 +271,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست‌های credential، session، validation و بازبینی responsive flow کامل.
 
 ## Navigation and spacing reliability pass
+
 - [x] ممیزی trigger و state منوی همبرگری در mobile shell.
 - [x] رفع باز/بسته‌شدن drawer و افزودن backdrop، Escape و focusهای قابل‌دسترسی.
 - [x] تعریف حداقل padding لمسی دکمه‌ها و gapهای سراسری برای کنترل‌ها و گروه‌ها.
@@ -259,6 +279,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست قرارداد hamburger/spacing و بازبینی موبایل و دسکتاپ.
 
 ## Hero asset and font recovery pass
+
 - [x] ممیزی همهٔ ارجاع‌های تصویری، heroهای routeها و نشانی‌های asset شکسته.
 - [x] بازیابی یا جایگزینی hero یکتا برای هر route دارای صفحهٔ مستقل.
 - [x] تولید و اتصال تصاویر مکمل برای بخش‌های کلیدی بدون حذف دارایی‌های سالم.
@@ -267,6 +288,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست قرارداد asset/font و بازبینی موبایل و دسکتاپ.
 
 ## Full spacing and mobile regression audit
+
 - [x] ممیزی grid/flexهای routeها برای gap، padding، margin و min-width صفر.
 - [x] تعریف guardrailهای CSS برای عدم overlap، overflow-x و safe-area موبایل.
 - [x] اصلاح تراکم کارت‌ها، toolbarها، فرم‌ها و CTAها در routeهای پرریسک.
@@ -274,6 +296,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازبینی همهٔ routeهای کلیدی در viewportهای موبایل و ثبت checkpoint.
 
 ## Global live motion system
+
 - [x] ممیزی نقاط تعامل و تدوین الگوی motion سراسری با محدودیت زمان و performance.
 - [x] افزودن زیرساخت motion مشترک برای ورود، hover، press، skeleton و state transition.
 - [x] افزودن motionهای اختصاصی hero، کارت‌های odds، feature hub، گردونه و Crash.
@@ -282,6 +305,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست قرارداد motion و بازبینی routeهای موبایل/دسکتاپ.
 
 ## Custom in-app notifications
+
 - [x] تعریف مدل notification کاربرمحور شامل عنوان، متن، نوع، لینک، خوانده‌شدن و زمان ایجاد.
 - [x] افزودن migration و procedureهای امن برای فهرست اعلان‌ها، شمارندهٔ خوانده‌نشده و mark-as-read.
 - [x] افزودن پنل اعلان glass در header و حالت موبایل با empty/loading/error states.
@@ -289,12 +313,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست‌های backend/UI و بازبینی responsive پیش از checkpoint.
 
 ## Spacing audit and mobile layout refinement
+
 - [x] ممیزی فاصله‌های padding، margin و gap در shell، routeها، کارت‌ها و فرم‌ها.
 - [x] افزایش و یکدست‌سازی spacingهای کم یا صفر با حفظ design tokens موجود.
 - [x] اصلاح overflow، safe-area و touch targetها در viewportهای موبایل.
 - [x] افزودن تست regression برای spacing و بازبینی responsive پیش از checkpoint.
 
 ## Standard spacing token system
+
 - [x] ممیزی tokenهای spacing فعلی و الگوهای پراکندهٔ padding، margin و gap.
 - [x] تعریف مقیاس spacing استاندارد با tokenهای semantic و responsive.
 - [x] جایگزینی نقاط کلیدی پروژه با tokenهای مشترک بدون تغییر ناخواسته در layout.
@@ -302,6 +328,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست regression، بازبینی responsive و ثبت checkpoint.
 
 ## Crash bet backend incident
+
 - [x] ردیابی خطای «عملیات انجام نشد» از Crash UI تا موجودی، round فعال و ثبت bet.
 - [x] ممیزی اینکه wallet، round lifecycle و bet status در مسیر عملیاتی از backend واقعی استفاده می‌کنند.
 - [x] اصلاح قرارداد یا تراکنش Crash بدون افزودن mock/fake operational data.
@@ -309,6 +336,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] بازبینی UI error/loading states و ثبت checkpoint پس از اعتبارسنجی.
 
 ## Betting history profile page
+
 - [x] ممیزی مدل bets، selections و query فعلی کاربر.
 - [x] افزودن query جزئیات‌دار و امن برای تاریخچهٔ شرط‌بندی کاربر.
 - [x] ساخت صفحهٔ تاریخچه با تب‌های pending، won و lost و empty states واقعی.
@@ -316,6 +344,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اتصال صفحه به پروفایل، تست backend/UI و بازبینی responsive پیش از checkpoint.
 
 ## Nexus AI support response incident
+
 - [x] ممیزی AIChatBox، support.chat و helper داخلی LLM.
 - [x] اصلاح mapping مدل‌های GPT-5 از max_tokens به max_completion_tokens.
 - [x] افزایش ظرفیت conversation، حفظ context آخرین پیام‌ها و مدیریت پاسخ content خالی.
@@ -323,6 +352,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست contract، اجرای smoke request واقعی provider و اعتبارسنجی UI flow.
 
 ## Account-aware Nexus AI
+
 - [x] ممیزی مسیر auth و queryهای wallet، bets و account overview.
 - [x] ساخت context read-only محدود به کاربر جاری بدون افشای credential یا اطلاعات کاربر دیگر.
 - [x] اتصال snapshot موجودی و وضعیت bet به support.chat و prompt مدل.
@@ -330,6 +360,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست امنیت/قرارداد، smoke واقعی و ثبت checkpoint.
 
 ## Product trust, rewards and AI redesign
+
 - [x] جمع‌آوری نمونه‌های واقعی rewards/gamification و guardrailهای responsible gambling.
 - [x] ممیزی بصری و responsive همهٔ routeهای کلیدی و ثبت مشکلات اعتمادپذیری.
 - [x] طراحی گردونهٔ شفاف با جوایز random قابل‌مشاهده، odds، سقف روزانه و ledger.
@@ -339,18 +370,21 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای تست‌های کامل، بازبینی بصری و ثبت checkpoint مرحله‌ای.
 
 ## Internal padding refinement
+
 - [x] ممیزی padding داخلی دکمه‌ها، کارت‌ها، باکس‌ها، تب‌ها و فرم‌ها.
 - [x] افزایش padding عناصر فشرده با استفاده از spacing tokenهای استاندارد.
 - [x] اصلاح touch target و فاصلهٔ داخلی در breakpointهای موبایل.
 - [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.
 
 ## Synced preview padding and responsive pass
+
 - [x] ممیزی نسخهٔ همگام‌شده برای دکمه‌ها، کارت‌ها، باکس‌ها و layoutهای موبایل.
 - [x] افزایش padding داخلی عناصر فشرده با spacing tokenهای مشترک.
 - [x] اصلاح breakpointهای موبایل، safe-area، grid و جلوگیری از overflow.
 - [x] اجرای تست regression، بازبینی بصری و ثبت checkpoint.
 
 ## Interactive surfaces spacing pass
+
 - [x] ممیزی ساختار Auth modal، BetSheet و NotificationsPopover.
 - [x] افزایش padding داخلی و فاصلهٔ field/button در مودال ورود.
 - [x] اصلاح padding، safe-area و scroll در BetSheet موبایل.
@@ -358,6 +392,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست regression، بازبینی بصری و ثبت checkpoint.
 
 ## Quick-choice and wheel clarity pass
+
 - [x] inventory کردن متن‌های تکراری، نوارهای توضیحی و بخش‌های کم‌ارزش در routeهای اصلی.
 - [x] کوتاه‌سازی copy و ساخت hierarchy برای انتخاب سریع در Home، Matches و Rewards.
 - [x] ادغام یا حذف بخش‌های تکراری بدون حذف اطلاعات ضروری اعتماد و ریسک.
@@ -365,12 +400,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست copy/UI و بازبینی responsive پیش از checkpoint.
 
 ## Alert-to-toast cleanup
+
 - [x] ممیزی همهٔ alert، notice، responsible-inline و پیام‌های باکس‌محور در routeها.
 - [x] انتقال پیام‌های success/error/action به toast استاندارد با متن کوتاه.
 - [x] حذف باکس‌های سبز پیام‌محور و حفظ فقط empty/loading ضروری.
 - [x] افزودن تست contract، بازبینی موبایل و ثبت checkpoint.
 
 ## Reference-inspired responsive refresh
+
 - [x] بررسی سایت مرجع bettime90vip.com/fa و ثبت الگوهای layout و responsive.
 - [x] حذف همهٔ label، eyebrow و متن‌های سبز بالای title در صفحات بدون حذف assetهای تصویری.
 - [x] افزودن چند fixture تستی صریح و موقت برای preview هنگام rate limit API.
@@ -378,6 +415,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست truth/preview، بازبینی موبایل و ثبت checkpoint.
 
 ## Deep reference-led redesign
+
 - [x] بازطراحی shell مشترک، navigation و hierarchy صفحهٔ خانه بر اساس الگوی ساده و مرتب reference.
 - [x] یکدست‌سازی typography، font loading، رنگ‌های برند، radius، border و glass surfaces بدون حذف تصاویر اختصاصی.
 - [x] تبدیل دسته‌بندی‌ها و feature cards به سطوح تصویری منظم و قابل اسکن با متن کوتاه.
@@ -386,6 +424,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن تست regression برای design contracts و اجرای تست، TypeScript، screenshot audit و checkpoint.
 
 ## Online support widget
+
 - [x] افزودن ویجت شناور پشتیبانی/Nexus AI به shell مشترک در همهٔ routeها.
 - [x] اتصال پنل چت به support.chat موجود با حفظ context حساب authenticated و حالت مهمان.
 - [x] طراحی پنل شیشه‌ای responsive با پیام خوش‌آمد، promptهای کوتاه، loading/error و ارسال امن.
@@ -393,6 +432,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن regression test برای mount شدن ویجت و اجرای تست، TypeScript و screenshot audit.
 
 ## Cleanup promotions, casino and wheel
+
 - [x] ممیزی و حذف trust copyهای غیرضروری از صفحهٔ پیشنهادها؛ فقط داده و اقدام معتبر باقی بماند.
 - [x] ممیزی صفحهٔ catalog بازی‌ها؛ اگر backend catalog خالی است، state کوتاه و صادقانه جایگزین صفحهٔ تزئینی شود.
 - [x] تکمیل render گردونهٔ شانس با segmentهای backend، نتیجه، انیمیشن، محدودیت روزانه و حالت‌های loading/error.
@@ -400,6 +440,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای تست، TypeScript، screenshot audit موبایل و ثبت checkpoint.
 
 ## Multi-asset wallet, data coverage and admin controls
+
 - [x] ممیزی notificationهای فعلی و افزودن مسیر ایجاد اعلان سفارشی با scope کاربر/سیستم و ثبت backend.
 - [x] طراحی مدل asset/currency قابل‌گسترش با USDT به‌عنوان ارز پایه و موجودی جداگانه برای هر دارایی.
 - [x] افزودن endpointها و UI کیف پول چندارزی با انتخاب دارایی، وضعیت اتصال شبکه و عدم نمایش موجودی ساختگی.
@@ -409,6 +450,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح count واقعی کاربران در overview ادمین و enforce کردن rollback امن برداشت‌های ردشده.
 
 ## Real BEP20 payment provider
+
 - [x] تحقیق و ثبت قرارداد NOWPayments برای USDT روی BNB Smart Chain/BEP20 و محدودیت‌های production.
 - [ ] افزودن secrets لازم برای provider و webhook با مقداردهی امن، بدون commit کردن credential.
 - [x] افزودن schema و ledger idempotent برای provider invoice/payment/withdrawal و وضعیت‌های on-chain.
@@ -417,13 +459,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [ ] افزودن تست‌های امنیتی و integration contract، sandbox smoke، TypeScript، screenshot و checkpoint.
 
 ## Provider scaffold without credentials
+
 - [x] ساخت adapter server-only برای NOWPayments با حالت disabled امن تا زمان ورود secrets.
 - [x] افزودن قرارداد idempotency، status transition و webhook بدون اعتباردهی ساختگی.
 - [x] نمایش provider readiness در wallet/admin و نگه‌داشتن deposit/withdrawal در حالت unavailable تا تنظیم secrets.
 - [x] افزودن تست قرارداد disabled mode و فعال‌سازی بعدی با sandbox credentials.
 
-
 ## Nexus Bet Ultimate Differentiation Blueprint
+
 - [x] استخراج کامل قابلیت‌ها، جریان‌ها و اولویت‌های اجرایی از PDF Blueprint.
 - [x] تطبیق Blueprint با routeها، schema، routerها و providerهای فعلی و حذف هم‌پوشانی‌های معماری.
 - [x] پیاده‌سازی Smart Stake Assistant و Risk Profile با wallet و دیتابیس backend واقعی، بدون mock عملیاتی.
@@ -431,11 +474,12 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] ثبت checkpoint پیشرفت `e579e461` و مستندسازی قابلیت‌های تکمیل‌شده، وابستگی‌ها و موارد نیازمند credential یا تصمیم محصول.
 
 ## NOWPayments activation follow-up
+
 - [ ] تکمیل invoice/payout واقعی پس از پذیرش و ورود secrets امن NOWPayments.
 - [ ] اجرای sandbox smoke و فعال‌سازی settlement فقط پس از تأیید پاسخ provider.
 
-
 ## Blueprint Watchlist and Smart Alerts
+
 - [x] ممیزی schema و قراردادهای فعلی sports، notifications و user settings برای Watchlist و Alert.
 - [x] طراحی و اعمال schema واقعی برای watchlist و alert preferences با authorization کاربر.
 - [x] افزودن procedureهای backend برای ایجاد، حذف، فهرست‌کردن و فعال/غیرفعال‌کردن alertها.
@@ -445,8 +489,8 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 
 - [x] ایجاد و تأیید Heartbeat پنج‌دقیقه‌ای `nexus-sport-alerts` برای `/api/scheduled/processSportAlerts` با task UID ثبت‌شده در blueprint_execution.md.
 
-
 ## GO Readiness execution — 2026-10-06
+
 - [x] ثبت baseline و بررسی وضعیت فعلی deployment/API
 - [x] رفع routing و health endpoint در source و preview deployment
 - [x] تحلیل و بهبود latency و پاسخ‌های ناقص با lazy-load کردن AIChatBox و smoke checks
@@ -457,12 +501,13 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اجرای validation نهایی و ثبت تصمیم GO/NO-GO
 
 ### GO Readiness verdict
+
 - **Source/preview:** سبز — `pnpm check`، ۳۲ فایل تست و ۹۱ تست، build production و `/api/health` همگی پاس شدند؛ assetهای hero/logo و فونت‌ها اکنون local و قابل‌دسترسی‌اند.
 - **Public domain:** هنوز **NO-GO** — دامنهٔ `nexusbet-bhrhzrdw.manus.space` در زمان تست هنوز نسخهٔ قدیمی را سرو می‌کند و `/api/health` را به HTML fallback تبدیل می‌کند؛ checkpoint جدید باید توسط deployment/publish دامنه اعمال شود.
 - **Payments:** عمداً **disabled-safe / NO-GO برای پول واقعی** — secrets و sandbox smoke واقعی NOWPayments هنوز ارائه نشده‌اند؛ هیچ موجودی یا settlement جعلی فعال نشده است.
 
-
 ## Brand identity and multi-device responsive pass — 2026-10-06
+
 - [x] تقویت wordmark مشترک NEXUS BET در header و footer با لوگوی واقعی و trust line یکپارچه.
 - [x] بازگردانی برچسب‌های ظریف route و hierarchy برند بدون بازگرداندن پیام‌های سبز تزئینی قدیمی.
 - [x] تعریف tokenهای هویت بصری violet/ink/teal و max-width مشترک برای صفحات.
@@ -470,8 +515,8 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن micro-interaction کنترل‌شده برای mark برند، hero و CTAها با پشتیبانی prefers-reduced-motion.
 - [x] افزودن تست contract برای برندینگ header/footer و breakpointهای responsive.
 
-
 ## Betfa competitive audit and catalog slice — 2026-10-07
+
 - [x] ممیزی عمومی صفحات، لابی‌ها، دسته‌بندی بازی‌ها، providerها، promotionها، tournamentها، Poker، trust و responsible-gambling links.
 - [x] ثبت گزارش اجرایی با تفکیک مشاهده مستقیم، استنتاج، محدودیت شواهد و backlog P0/P1/P2.
 - [x] افزودن metadata واقعی Game Catalog v2: vertical، category، mode، thumbnail، featured/new و min/max stake.
@@ -479,13 +524,14 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن filter contract به tRPC و lobby UI برای category/provider و Demo/Real؛ بازی‌های غیرفعال همچنان نمایش داده نمی‌شوند.
 - [x] افزودن contract tests و اجرای TypeScript، ۳۵ فایل تست / ۹۸ تست، build و screenshot در دسکتاپ و موبایل.
 
-
 ## Trust Center slice — 2026-10-07
+
 - [x] افزودن صفحهٔ عمومی Trust Center با وضعیت واقعی provider، backend-first data، Crash proof و مرزهای disabled-safe.
 - [x] اتصال Trust Center به navigation، footer و route مستقل بدون ادعای مجوز یا فعال‌بودن پرداخت.
 - [x] افزودن تست contract و اجرای screenshot دسکتاپ/موبایل برای Trust Center.
 
 ## Sports bet settlement worker — 2026-10-25
+
 - [x] پیاده‌سازی قواعد تسویهٔ ۱X۲ (برد میزبان/مساوی/برد مهمان) از روی نتیجهٔ نهایی API-Football.
 - [x] انتقال اتمیک بلیت به won/lost/void همراه با آزادسازی موجودی قفل‌شده، ردیف ledger و اعلان کاربر.
 - [x] گارد idempotency روی claim بلیت و شرط `lockedBalance >= stake` برای جلوگیری از پرداخت دوباره یا منفی‌شدن ledger.
@@ -494,6 +540,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [ ] ثبت Heartbeat پنج‌دقیقه‌ای `nexus-sports-settlement` در محیط عملیاتی و اجرای dry-run اولیه.
 
 ## P0 integrity pass — 2026-10-25
+
 - [x] قیمت‌گذاری سمت سرور: جدول `sportsMarkets`، سینک از فید و محاسبهٔ ضریب/بازده فقط از قیمت سرور (بدون اعتماد به ورودی کلاینت).
 - [x] رد کردن شرط در حالت‌های MARKET_UNAVAILABLE / MARKET_CLOSED / ODDS_STALE / ODDS_CHANGED با پیام فارسی.
 - [x] محدودیت نرخ در دیتابیس برای login، signup، درخواست و ثبت کد بازیابی و سهمیهٔ support.chat.
@@ -503,6 +550,7 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [ ] اجرای migration 0017 و ثبت کرون `nexus-sports-markets` در محیط عملیاتی.
 
 ## Release readiness pass — 2026-10-25
+
 - [x] حذف پلاگین توسعهٔ jsx-loc و وابستگی‌های مرده از package.json؛ نصب سادهٔ `npm install` و `npm ci` بدون `--legacy-peer-deps` کار می‌کند و lockfile اضافه شد.
 - [x] بازگرداندن merge conflictهای کامیت‌شده در main و حذف فایل‌های زائد `=` و `}`.
 - [x] `/api/health` حالا واقعاً دیتابیس را probe می‌کند، در قطعی 503 می‌دهد و اطلاعات پرداخت را عمومی منتشر نمی‌کند.

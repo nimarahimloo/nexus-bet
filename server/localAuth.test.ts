@@ -1,12 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { createResetCode, hashPassword, hashResetCode, normalizeUsername, validateLocalCredentials, verifyPassword } from "./localAuth";
+import {
+  createResetCode,
+  hashPassword,
+  hashResetCode,
+  normalizeUsername,
+  validateLocalCredentials,
+  verifyPassword,
+} from "./localAuth";
 
 describe("local authentication primitives", () => {
   it("normalizes usernames and rejects invalid credential pairs", () => {
     expect(normalizeUsername("  Nexus.User  ")).toBe("nexus.user");
-    expect(validateLocalCredentials("Nexus.User", "safe-password-8")).toBe("nexus.user");
-    expect(() => validateLocalCredentials("بدون-نام", "safe-password-8")).toThrow("INVALID_USERNAME");
-    expect(() => validateLocalCredentials("nexus", "short")).toThrow("INVALID_PASSWORD");
+    expect(validateLocalCredentials("Nexus.User", "safe-password-8")).toBe(
+      "nexus.user"
+    );
+    expect(() =>
+      validateLocalCredentials("بدون-نام", "safe-password-8")
+    ).toThrow("INVALID_USERNAME");
+    expect(() => validateLocalCredentials("nexus", "short")).toThrow(
+      "INVALID_PASSWORD"
+    );
   });
 
   it("stores a salted password derivation and verifies it without exposing the password", async () => {

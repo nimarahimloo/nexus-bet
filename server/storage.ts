@@ -11,7 +11,7 @@ function requireStorageConfig() {
   const forgeKey = ENV.forgeApiKey?.trim();
   if (!forgeUrl || !forgeKey) {
     throw new Error(
-      "Object storage is not configured. Place public assets in client/public or set storage ENV credentials.",
+      "Object storage is not configured. Place public assets in client/public or set storage ENV credentials."
     );
   }
   return { forgeUrl: forgeUrl.replace(/\/+$/, ""), forgeKey };
@@ -32,12 +32,12 @@ function appendHashSuffix(relKey: string): string {
 export async function storagePut(
   relKey: string,
   _data: Buffer | Uint8Array | string,
-  _contentType = "application/octet-stream",
+  _contentType = "application/octet-stream"
 ): Promise<{ key: string; url: string }> {
   requireStorageConfig();
   const key = appendHashSuffix(normalizeKey(relKey));
   throw new Error(
-    `Remote storagePut is disabled without project-owned backend. Key would be: ${key}`,
+    `Remote storagePut is disabled without project-owned backend. Key would be: ${key}`
   );
 }
 

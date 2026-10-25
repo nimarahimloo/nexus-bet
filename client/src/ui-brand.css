@@ -29,13 +29,19 @@
   --nx-glow-cyan: 0 0 0 1px rgba(163, 230, 53, 0.25);
 }
 
-html, body, #root {
+html,
+body,
+#root {
   background: var(--nx-void) !important;
   color: var(--nx-text);
 }
 
 body {
-  background-image: radial-gradient(ellipse 70% 40% at 50% -12%, rgba(242, 222, 26, 0.05), transparent 60%);
+  background-image: radial-gradient(
+    ellipse 70% 40% at 50% -12%,
+    rgba(242, 222, 26, 0.05),
+    transparent 60%
+  );
   background-attachment: fixed;
 }
 
@@ -125,7 +131,12 @@ body {
 .subpage-art .art-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, rgba(11, 11, 12, 0.65) 0%, rgba(11, 11, 12, 0.15) 55%, transparent 75%);
+  background: linear-gradient(
+    115deg,
+    rgba(11, 11, 12, 0.65) 0%,
+    rgba(11, 11, 12, 0.15) 55%,
+    transparent 75%
+  );
   pointer-events: none;
 }
 
@@ -138,7 +149,8 @@ body {
   color: var(--nx-text);
 }
 
-.eyebrow, .section-kicker {
+.eyebrow,
+.section-kicker {
   color: var(--nx-yellow) !important;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -190,7 +202,12 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, rgba(11, 11, 12, 0.82) 0%, rgba(11, 11, 12, 0.45) 45%, rgba(11, 11, 12, 0.15) 100%);
+  background: linear-gradient(
+    105deg,
+    rgba(11, 11, 12, 0.82) 0%,
+    rgba(11, 11, 12, 0.45) 45%,
+    rgba(11, 11, 12, 0.15) 100%
+  );
   z-index: 1;
   pointer-events: none;
 }
@@ -221,7 +238,8 @@ body {
   z-index: 0;
 }
 
-.ai-picks, .balance-overview {
+.ai-picks,
+.balance-overview {
   position: relative;
   overflow: hidden;
 }
@@ -248,7 +266,9 @@ body {
 }
 
 /* Primary CTA: solid yellow, black label (matches the reference's action colour) */
-.primary-cta, .sheet-submit, button.primary-cta {
+.primary-cta,
+.sheet-submit,
+button.primary-cta {
   background: var(--nx-yellow) !important;
   border: 1px solid var(--nx-yellow) !important;
   color: var(--nx-ink) !important;
@@ -257,30 +277,36 @@ body {
   border-radius: 10px;
 }
 
-.primary-cta:hover, .sheet-submit:hover {
+.primary-cta:hover,
+.sheet-submit:hover {
   filter: none;
   background: var(--nx-yellow-bright) !important;
   box-shadow: none;
 }
 
-.primary-cta:disabled, .sheet-submit:disabled {
+.primary-cta:disabled,
+.sheet-submit:disabled {
   opacity: 0.45;
 }
 
-.outline-cta, .text-cta {
+.outline-cta,
+.text-cta {
   color: var(--nx-yellow) !important;
   border-color: var(--nx-border-strong) !important;
 }
 
 /* Live chips & dots — red reads as "live" on the reference, not teal */
-.live-chip, .status-live {
+.live-chip,
+.status-live {
   color: var(--nx-red) !important;
   background: rgba(239, 62, 62, 0.12) !important;
   border: 1px solid rgba(239, 62, 62, 0.35) !important;
   box-shadow: none;
 }
 
-.live-dot, .status-live i, .support-status-dot {
+.live-dot,
+.status-live i,
+.support-status-dot {
   background: var(--nx-red) !important;
   box-shadow: none;
 }
@@ -307,18 +333,25 @@ body {
 }
 
 /* Feature cards on home */
-.feature-hub-card, .standalone-card, .ai-pick-card {
-  transition: border-color 0.15s, background-color 0.15s;
+.feature-hub-card,
+.standalone-card,
+.ai-pick-card {
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
 }
 
-.feature-hub-card:hover, .standalone-card:hover, .match-card:hover {
+.feature-hub-card:hover,
+.standalone-card:hover,
+.match-card:hover {
   border-color: var(--nx-border-strong) !important;
   box-shadow: none;
   transform: none;
 }
 
 /* Filter pills */
-.filter-pill.selected, .matches-filter-pills button.selected {
+.filter-pill.selected,
+.matches-filter-pills button.selected {
   background: var(--nx-yellow) !important;
   border-color: var(--nx-yellow) !important;
   color: var(--nx-ink) !important;
@@ -346,19 +379,24 @@ body {
 }
 
 /* Scoreboard on hero */
-.scoreboard b, .score-center strong {
+.scoreboard b,
+.score-center strong {
   text-shadow: none;
   font-variant-numeric: tabular-nums;
 }
 
 /* Inputs */
-input, select, textarea {
+input,
+select,
+textarea {
   background: var(--nx-panel) !important;
   border-color: var(--nx-border) !important;
   color: var(--nx-text) !important;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: var(--nx-yellow) !important;
   box-shadow: 0 0 0 2px rgba(242, 222, 26, 0.25) !important;
 }

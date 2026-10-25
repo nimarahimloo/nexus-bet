@@ -32,7 +32,7 @@ input,
 textarea,
 select {
   touch-action: manipulation;
-  -webkit-tap-highlight-color: rgba(242,222,26, 0.15);
+  -webkit-tap-highlight-color: rgba(242, 222, 26, 0.15);
   font-size: 16px; /* iOS: avoid auto-zoom on focus */
 }
 

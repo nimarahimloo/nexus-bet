@@ -2,7 +2,12 @@ import { ArrowLeft, Check, Info, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useEffect } from "react";
 import { formatFaDecimal } from "@shared/format";
 
-export type BetSheetSelection = { id: string; match: string; market: string; odds: number };
+export type BetSheetSelection = {
+  id: string;
+  match: string;
+  market: string;
+  odds: number;
+};
 
 type BetSheetProps = {
   selections: BetSheetSelection[];
@@ -18,8 +23,17 @@ type BetSheetProps = {
   successCode?: string | null;
   currency?: string;
   onCurrencyChange?: (value: string) => void;
-  currencyOptions?: Array<{ code: string; symbol: string; availableBalance: number }>;
-  stakeSuggestion?: { suggestedStake: number; maxStake: number; profileLabel: string; reason: string } | null;
+  currencyOptions?: Array<{
+    code: string;
+    symbol: string;
+    availableBalance: number;
+  }>;
+  stakeSuggestion?: {
+    suggestedStake: number;
+    maxStake: number;
+    profileLabel: string;
+    reason: string;
+  } | null;
   onApplyStakeSuggestion?: (value: string) => void;
 };
 
@@ -76,8 +90,8 @@ export function BetSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="bet-sheet-title"
-        onClick={(event) => event.stopPropagation()}
-        onPointerDown={(event) => event.stopPropagation()}
+        onClick={event => event.stopPropagation()}
+        onPointerDown={event => event.stopPropagation()}
       >
         <div className="sheet-handle" aria-hidden="true" />
         <div className="prediction-sheet-head">
@@ -85,13 +99,18 @@ export function BetSheet({
             <span className="section-kicker">بلیت پیش‌بینی</span>
             <h2 id="bet-sheet-title">انتخاب‌های تو</h2>
           </div>
-          <button type="button" className="modal-close" onClick={onClose} aria-label="بستن بلیت">
+          <button
+            type="button"
+            className="modal-close"
+            onClick={onClose}
+            aria-label="بستن بلیت"
+          >
             <X size={18} />
           </button>
         </div>
         <div className="sheet-selections">
           {selections.length ? (
-            selections.map((selection) => (
+            selections.map(selection => (
               <div className="sheet-selection" key={selection.id}>
                 <div>
                   <b>{selection.market}</b>
@@ -101,7 +120,9 @@ export function BetSheet({
               </div>
             ))
           ) : (
-            <div className="sheet-empty">هنوز انتخابی نداری؛ یک بازار را از مسابقات انتخاب کن.</div>
+            <div className="sheet-empty">
+              هنوز انتخابی نداری؛ یک بازار را از مسابقات انتخاب کن.
+            </div>
           )}
         </div>
         <div className="sheet-summary">
@@ -114,13 +135,13 @@ export function BetSheet({
             <label className="sheet-currency-control">
               <select
                 value={currency}
-                onChange={(event) => onCurrencyChange?.(event.target.value)}
+                onChange={event => onCurrencyChange?.(event.target.value)}
                 aria-label="دارایی شرط"
               >
                 <option value={currency}>{currency}</option>
                 {currencyOptions
-                  .filter((item) => item.code !== currency)
-                  .map((item) => (
+                  .filter(item => item.code !== currency)
+                  .map(item => (
                     <option value={item.code} key={item.code}>
                       {item.symbol}
                     </option>
@@ -128,7 +149,7 @@ export function BetSheet({
               </select>
               <input
                 value={stake}
-                onChange={(event) => setStake(event.target.value)}
+                onChange={event => setStake(event.target.value)}
                 inputMode="decimal"
                 enterKeyHint="done"
                 autoComplete="off"
@@ -145,27 +166,74 @@ export function BetSheet({
           </div>
         </div>
         {stakeSuggestion && selections.length > 0 && (
-          <section className="stake-assistant glass-panel" aria-label="دستیار مبلغ شرط">
+          <section
+            className="stake-assistant glass-panel"
+            aria-label="دستیار مبلغ شرط"
+          >
             <div className="stake-assistant-head">
-              <span className="stake-assistant-icon"><Sparkles size={15} /></span>
-              <div><b>پیشنهاد مبلغ هوشمند</b><small>بر اساس موجودی قابل‌استفاده</small></div>
-              <span className="stake-profile-chip"><ShieldCheck size={12} /> {stakeSuggestion.profileLabel}</span>
+              <span className="stake-assistant-icon">
+                <Sparkles size={15} />
+              </span>
+              <div>
+                <b>پیشنهاد مبلغ هوشمند</b>
+                <small>بر اساس موجودی قابل‌استفاده</small>
+              </div>
+              <span className="stake-profile-chip">
+                <ShieldCheck size={12} /> {stakeSuggestion.profileLabel}
+              </span>
             </div>
-            {stakeSuggestion.suggestedStake > 0 ? <>
-              <div className="stake-assistant-value"><strong>{formatFaDecimal(stakeSuggestion.suggestedStake)}</strong><span>{currency}</span><small>مبلغ پیشنهادی</small></div>
-              <button type="button" className="stake-assistant-apply" onClick={() => onApplyStakeSuggestion?.(String(stakeSuggestion.suggestedStake))}><Check size={14} /> اعمال مبلغ</button>
-              <div className="stake-assistant-meta"><span>سقف این پروفایل</span><b>{formatFaDecimal(stakeSuggestion.maxStake)} {currency}</b></div>
-            </> : <div className="stake-assistant-empty"><Info size={15} /><span>برای این دارایی موجودی قابل‌استفاده‌ای برای پیشنهاد مبلغ وجود ندارد.</span></div>}
-            <small className="stake-assistant-note">{stakeSuggestion.reason}</small>
+            {stakeSuggestion.suggestedStake > 0 ? (
+              <>
+                <div className="stake-assistant-value">
+                  <strong>
+                    {formatFaDecimal(stakeSuggestion.suggestedStake)}
+                  </strong>
+                  <span>{currency}</span>
+                  <small>مبلغ پیشنهادی</small>
+                </div>
+                <button
+                  type="button"
+                  className="stake-assistant-apply"
+                  onClick={() =>
+                    onApplyStakeSuggestion?.(
+                      String(stakeSuggestion.suggestedStake)
+                    )
+                  }
+                >
+                  <Check size={14} /> اعمال مبلغ
+                </button>
+                <div className="stake-assistant-meta">
+                  <span>سقف این پروفایل</span>
+                  <b>
+                    {formatFaDecimal(stakeSuggestion.maxStake)} {currency}
+                  </b>
+                </div>
+              </>
+            ) : (
+              <div className="stake-assistant-empty">
+                <Info size={15} />
+                <span>
+                  برای این دارایی موجودی قابل‌استفاده‌ای برای پیشنهاد مبلغ وجود
+                  ندارد.
+                </span>
+              </div>
+            )}
+            <small className="stake-assistant-note">
+              {stakeSuggestion.reason}
+            </small>
           </section>
         )}
         {statusMessage && (
-          <p className={`sheet-status ${successCode ? "sheet-status-success" : "sheet-status-error"}`}>
+          <p
+            className={`sheet-status ${successCode ? "sheet-status-success" : "sheet-status-error"}`}
+          >
             {statusMessage}
           </p>
         )}
         {successCode && (
-          <p className="sheet-status sheet-status-success">بلیت با موفقیت ثبت شد · {successCode}</p>
+          <p className="sheet-status sheet-status-success">
+            بلیت با موفقیت ثبت شد · {successCode}
+          </p>
         )}
         <button
           type="button"
@@ -173,11 +241,16 @@ export function BetSheet({
           onClick={onSubmit}
           disabled={!canSubmit || isSubmitting}
         >
-          {isSubmitting ? "در حال ثبت بلیت…" : successCode ? "بلیت ثبت شد" : "ادامه و بررسی بلیت"}
+          {isSubmitting
+            ? "در حال ثبت بلیت…"
+            : successCode
+              ? "بلیت ثبت شد"
+              : "ادامه و بررسی بلیت"}
           {!isSubmitting && !successCode && <ArrowLeft size={16} />}
         </button>
         <p className="sheet-note">
-          مبلغ و ضریب را پیش از ثبت بررسی کن. موجودی {currency} بررسی می‌شود؛ نتیجهٔ شرط تضمین‌شده نیست.
+          مبلغ و ضریب را پیش از ثبت بررسی کن. موجودی {currency} بررسی می‌شود؛
+          نتیجهٔ شرط تضمین‌شده نیست.
         </p>
       </section>
     </div>

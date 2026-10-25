@@ -96,12 +96,8 @@
           "name": "bets_userId_users_id_fk",
           "tableFrom": "bets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -109,17 +105,13 @@
       "compositePrimaryKeys": {
         "bets_id": {
           "name": "bets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "bets_ticketCode_unique": {
           "name": "bets_ticketCode_unique",
-          "columns": [
-            "ticketCode"
-          ]
+          "columns": ["ticketCode"]
         }
       },
       "checkConstraint": {}
@@ -193,17 +185,13 @@
       "compositePrimaryKeys": {
         "gameCatalog_id": {
           "name": "gameCatalog_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "gameCatalog_slug_unique": {
           "name": "gameCatalog_slug_unique",
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "checkConstraint": {}
@@ -259,10 +247,7 @@
       "indexes": {
         "promotionClaims_promotion_user_unique": {
           "name": "promotionClaims_promotion_user_unique",
-          "columns": [
-            "promotionId",
-            "userId"
-          ],
+          "columns": ["promotionId", "userId"],
           "isUnique": true
         }
       },
@@ -271,12 +256,8 @@
           "name": "promotionClaims_promotionId_promotions_id_fk",
           "tableFrom": "promotionClaims",
           "tableTo": "promotions",
-          "columnsFrom": [
-            "promotionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["promotionId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -284,12 +265,8 @@
           "name": "promotionClaims_userId_users_id_fk",
           "tableFrom": "promotionClaims",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -297,9 +274,7 @@
       "compositePrimaryKeys": {
         "promotionClaims_id": {
           "name": "promotionClaims_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -402,17 +377,13 @@
       "compositePrimaryKeys": {
         "promotions_id": {
           "name": "promotions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "promotions_code_unique": {
           "name": "promotions_code_unique",
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "checkConstraint": {}
@@ -478,12 +449,8 @@
           "name": "rewardLedger_userId_users_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -491,12 +458,8 @@
           "name": "rewardLedger_spinId_wheelSpins_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "wheelSpins",
-          "columnsFrom": [
-            "spinId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["spinId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -504,17 +467,13 @@
       "compositePrimaryKeys": {
         "rewardLedger_id": {
           "name": "rewardLedger_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "rewardLedger_spinId_unique": {
           "name": "rewardLedger_spinId_unique",
-          "columns": [
-            "spinId"
-          ]
+          "columns": ["spinId"]
         }
       },
       "checkConstraint": {}
@@ -579,10 +538,7 @@
       "indexes": {
         "tournamentEntries_tournament_user_unique": {
           "name": "tournamentEntries_tournament_user_unique",
-          "columns": [
-            "tournamentId",
-            "userId"
-          ],
+          "columns": ["tournamentId", "userId"],
           "isUnique": true
         }
       },
@@ -591,12 +547,8 @@
           "name": "tournamentEntries_tournamentId_tournaments_id_fk",
           "tableFrom": "tournamentEntries",
           "tableTo": "tournaments",
-          "columnsFrom": [
-            "tournamentId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tournamentId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -604,12 +556,8 @@
           "name": "tournamentEntries_userId_users_id_fk",
           "tableFrom": "tournamentEntries",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -617,9 +565,7 @@
       "compositePrimaryKeys": {
         "tournamentEntries_id": {
           "name": "tournamentEntries_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -723,17 +669,13 @@
       "compositePrimaryKeys": {
         "tournaments_id": {
           "name": "tournaments_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "tournaments_slug_unique": {
           "name": "tournaments_slug_unique",
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "checkConstraint": {}
@@ -815,17 +757,13 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ]
+          "columns": ["openId"]
         }
       },
       "checkConstraint": {}
@@ -883,12 +821,8 @@
           "name": "vipActivity_userId_users_id_fk",
           "tableFrom": "vipActivity",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -896,9 +830,7 @@
       "compositePrimaryKeys": {
         "vipActivity_id": {
           "name": "vipActivity_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1003,12 +935,8 @@
           "name": "walletTransactions_userId_users_id_fk",
           "tableFrom": "walletTransactions",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1016,9 +944,7 @@
       "compositePrimaryKeys": {
         "walletTransactions_id": {
           "name": "walletTransactions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1089,12 +1015,8 @@
           "name": "wallets_userId_users_id_fk",
           "tableFrom": "wallets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1102,17 +1024,13 @@
       "compositePrimaryKeys": {
         "wallets_id": {
           "name": "wallets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "wallets_userId_unique": {
           "name": "wallets_userId_unique",
-          "columns": [
-            "userId"
-          ]
+          "columns": ["userId"]
         }
       },
       "checkConstraint": {}
@@ -1182,10 +1100,7 @@
       "indexes": {
         "wheelSpins_user_day_unique": {
           "name": "wheelSpins_user_day_unique",
-          "columns": [
-            "userId",
-            "spinDate"
-          ],
+          "columns": ["userId", "spinDate"],
           "isUnique": true
         }
       },
@@ -1194,12 +1109,8 @@
           "name": "wheelSpins_userId_users_id_fk",
           "tableFrom": "wheelSpins",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1207,9 +1118,7 @@
       "compositePrimaryKeys": {
         "wheelSpins_id": {
           "name": "wheelSpins_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

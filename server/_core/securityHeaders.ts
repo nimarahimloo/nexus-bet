@@ -12,7 +12,9 @@ import type { NextFunction, Request, Response } from "express";
 
 export type SecurityHeaderInput = { secure: boolean };
 
-export function securityHeadersFor(input: SecurityHeaderInput): Record<string, string> {
+export function securityHeadersFor(
+  input: SecurityHeaderInput
+): Record<string, string> {
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
@@ -21,12 +23,15 @@ export function securityHeadersFor(input: SecurityHeaderInput): Record<string, s
     "Cross-Origin-Opener-Policy": "same-origin",
   };
   if (input.secure) {
-    headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+    headers["Strict-Transport-Security"] =
+      "max-age=31536000; includeSubDomains";
   }
   return headers;
 }
 
-export function isSecureRequest(req: Pick<Request, "secure" | "headers">): boolean {
+export function isSecureRequest(
+  req: Pick<Request, "secure" | "headers">
+): boolean {
   if (req.secure) return true;
   const proto = req.headers["x-forwarded-proto"];
   const value = Array.isArray(proto) ? proto[0] : proto;

@@ -5,13 +5,13 @@ Drizzle/MySQL ledger.
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| Client | React 19, Vite 7, Tailwind 4, wouter routing, tRPC client |
-| Server | Express 4, tRPC 11, Drizzle ORM, MySQL |
-| Money | `decimal(20,6)` columns, atomic conditional updates, one ledger row per movement |
-| Tests | Vitest (unit + contract), Cypress (e2e) |
-| Deploy | Long-running Node process behind HTTPS, or serverless via `api/index.ts` |
+| Layer  | Choice                                                                           |
+| ------ | -------------------------------------------------------------------------------- |
+| Client | React 19, Vite 7, Tailwind 4, wouter routing, tRPC client                        |
+| Server | Express 4, tRPC 11, Drizzle ORM, MySQL                                           |
+| Money  | `decimal(20,6)` columns, atomic conditional updates, one ledger row per movement |
+| Tests  | Vitest (unit + contract), Cypress (e2e)                                          |
+| Deploy | Long-running Node process behind HTTPS, or serverless via `api/index.ts`         |
 
 ## Quickstart
 
@@ -30,17 +30,17 @@ npm run admin:promote -- your-username
 
 ## Scripts
 
-| Script | Purpose |
-|---|---|
-| `npm run dev` | Vite + API with hot reload |
-| `npm run build` | Client bundle + server bundle into `dist/` |
-| `npm start` | Production server from `dist/index.js` |
-| `npm run check` | `tsc --noEmit` |
-| `npm test` | Vitest suite |
-| `npm run test:e2e` | Cypress |
-| `npm run db:push` / `db:migrate` | Apply schema / pending migrations |
-| `npm run admin:promote -- <username>` | Grant the admin role to an existing user |
-| `npm ci` | Reproducible install from the committed lockfile (used by CI) |
+| Script                                | Purpose                                                       |
+| ------------------------------------- | ------------------------------------------------------------- |
+| `npm run dev`                         | Vite + API with hot reload                                    |
+| `npm run build`                       | Client bundle + server bundle into `dist/`                    |
+| `npm start`                           | Production server from `dist/index.js`                        |
+| `npm run check`                       | `tsc --noEmit`                                                |
+| `npm test`                            | Vitest suite                                                  |
+| `npm run test:e2e`                    | Cypress                                                       |
+| `npm run db:push` / `db:migrate`      | Apply schema / pending migrations                             |
+| `npm run admin:promote -- <username>` | Grant the admin role to an existing user                      |
+| `npm ci`                              | Reproducible install from the committed lockfile (used by CI) |
 
 ## Environment
 
@@ -55,10 +55,10 @@ Production boot refuses empty `JWT_SECRET` / `DATABASE_URL`.
 
 Two cron jobs are required. Both are `POST`, cron-authenticated, and safe to re-run.
 
-| Job | Path | Schedule | Without it |
-|---|---|---|---|
-| Market sync | `/api/scheduled/syncSportsMarkets` | every 5 min | price book stays empty → every bet refused with `MARKET_UNAVAILABLE` |
-| Bet settlement | `/api/scheduled/settleSportsBets` | every 5 min | tickets sit `pending` forever and stake stays locked |
+| Job            | Path                               | Schedule    | Without it                                                           |
+| -------------- | ---------------------------------- | ----------- | -------------------------------------------------------------------- |
+| Market sync    | `/api/scheduled/syncSportsMarkets` | every 5 min | price book stays empty → every bet refused with `MARKET_UNAVAILABLE` |
+| Bet settlement | `/api/scheduled/settleSportsBets`  | every 5 min | tickets sit `pending` forever and stake stays locked                 |
 
 `settleSportsBets` supports `?dryRun=1` to report decisions without moving money, and
 `?limit=` (max 500). Details: [`docs/settlement.md`](docs/settlement.md).

@@ -1,8 +1,25 @@
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
-import { bets, notifications, sportsMarkets, supportedAssets, walletTransactions, wallets } from "../../drizzle/schema";
-import { checkMarketPrice, marketKey, priceTicket, type MarketCode, type MarketSnapshot } from "../markets";
-import { fixtureIdFromSelectionId, isSettleableFixtureId, outcomeSide } from "../settlement";
+import {
+  bets,
+  notifications,
+  sportsMarkets,
+  supportedAssets,
+  walletTransactions,
+  wallets,
+} from "../../drizzle/schema";
+import {
+  checkMarketPrice,
+  marketKey,
+  priceTicket,
+  type MarketCode,
+  type MarketSnapshot,
+} from "../markets";
+import {
+  fixtureIdFromSelectionId,
+  isSettleableFixtureId,
+  outcomeSide,
+} from "../settlement";
 import { getDb } from "./core";
 
 export type PlaceBetSelection = {
@@ -38,31 +55,55 @@ function marketSideCode(selection: PlaceBetSelection): MarketCode | null {
  * A failure at any point aborts before a single unit leaves the wallet.
  */
 export async function placeBet(input: PlaceBetInput) {
-  if (!Number.isFinite(input.stake) || input.stake < 1) throw new Error("INVALID_STAKE");
+  if (!Number.isFinite(input.stake) || input.stake < 1)
+    throw new Error("INVALID_STAKE");
   if (!input.selections.length) throw new Error("EMPTY_SELECTIONS");
-  if (input.selections.length > MAX_SELECTIONS) throw new Error("TOO_MANY_SELECTIONS");
+  if (input.selections.length > MAX_SELECTIONS)
+    throw new Error("TOO_MANY_SELECTIONS");
 
-  const resolved = input.selections.map((selection) => {
+  const resolved = input.selections.map(selection => {
     const fixtureId = fixtureIdFromSelectionId(selection.id);
     const code = marketSideCode(selection);
-    if (!code || !fixtureId || !isSettleableFixtureId(fixtureId)) throw new Error("MARKET_UNAVAILABLE");
+    if (!code || !fixtureId || !isSettleableFixtureId(fixtureId))
+      throw new Error("MARKET_UNAVAILABLE");
     return { selection, fixtureId, code };
   });
 
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const currency = input.currency?.trim().toUpperCase() || "USDT";
-    const assetRows = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, currency), eq(supportedAssets.status, "active"))).limit(1);
+    const assetRows = await tx
+      .select({ code: supportedAssets.code })
+      .from(supportedAssets)
+      .where(
+        and(
+          eq(supportedAssets.code, currency),
+          eq(supportedAssets.status, "active")
+        )
+      )
+      .limit(1);
     if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
 
-    const walletRows = await tx.select().from(wallets).where(and(eq(wallets.userId, input.userId), eq(wallets.currency, currency))).limit(1);
+    const walletRows = await tx
+      .select()
+      .from(wallets)
+      .where(
+        and(eq(wallets.userId, input.userId), eq(wallets.currency, currency))
+      )
+      .limit(1);
     const wallet = walletRows[0];
-    if (!wallet || Number(wallet.availableBalance) < input.stake) throw new Error("INSUFFICIENT_BALANCE");
+    if (!wallet || Number(wallet.availableBalance) < input.stake)
+      throw new Error("INSUFFICIENT_BALANCE");
 
-    const fixtureIds = Array.from(new Set(resolved.map((item) => item.fixtureId)));
-    const marketRows = await tx.select().from(sportsMarkets).where(inArray(sportsMarkets.fixtureId, fixtureIds));
+    const fixtureIds = Array.from(
+      new Set(resolved.map(item => item.fixtureId))
+    );
+    const marketRows = await tx
+      .select()
+      .from(sportsMarkets)
+      .where(inArray(sportsMarkets.fixtureId, fixtureIds));
     const book = new Map<string, MarketSnapshot>();
     for (const row of marketRows) {
       const code = row.code as MarketCode;
@@ -93,12 +134,21 @@ export async function placeBet(input: PlaceBetInput) {
     const pricing = priceTicket({ stake: input.stake, prices });
     if (!pricing.ok) throw new Error(pricing.reason);
 
-    const updated = await tx.update(wallets).set({
-      availableBalance: sql`${wallets.availableBalance} - ${input.stake}`,
-      lockedBalance: sql`${wallets.lockedBalance} + ${input.stake}`,
-      updatedAt: new Date(),
-    }).where(and(eq(wallets.userId, input.userId), gte(wallets.availableBalance, input.stake.toFixed(6))));
-    if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
+    const updated = await tx
+      .update(wallets)
+      .set({
+        availableBalance: sql`${wallets.availableBalance} - ${input.stake}`,
+        lockedBalance: sql`${wallets.lockedBalance} + ${input.stake}`,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(wallets.userId, input.userId),
+          gte(wallets.availableBalance, input.stake.toFixed(6))
+        )
+      );
+    if (!Number(updated[0]?.affectedRows))
+      throw new Error("INSUFFICIENT_BALANCE");
 
     const ticketCode = `NX-${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
     const inserted = await tx.insert(bets).values({
@@ -111,8 +161,25 @@ export async function placeBet(input: PlaceBetInput) {
       selectionsJson: JSON.stringify(pricedSelections),
       status: "pending",
     });
-    await tx.insert(walletTransactions).values({ userId: input.userId, type: "bet_lock", status: "confirmed", currency, amount: input.stake.toFixed(6), referenceId: ticketCode });
-    await tx.insert(notifications).values({ userId: input.userId, type: "bet", title: "بلیتت ثبت شد", message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} ${currency} در وضعیت بررسی قرار گرفت.`, href: "/account" });
+    await tx
+      .insert(walletTransactions)
+      .values({
+        userId: input.userId,
+        type: "bet_lock",
+        status: "confirmed",
+        currency,
+        amount: input.stake.toFixed(6),
+        referenceId: ticketCode,
+      });
+    await tx
+      .insert(notifications)
+      .values({
+        userId: input.userId,
+        type: "bet",
+        title: "بلیتت ثبت شد",
+        message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} ${currency} در وضعیت بررسی قرار گرفت.`,
+        href: "/account",
+      });
     return {
       id: Number(inserted[0].insertId),
       ticketCode,
@@ -127,6 +194,22 @@ export async function placeBet(input: PlaceBetInput) {
 export async function getUserBets(userId: number) {
   const db = await getDb();
   if (!db) return [];
-  const rows = await db.select().from(bets).where(eq(bets.userId, userId)).orderBy(desc(bets.createdAt)).limit(20);
-  return rows.map((bet) => ({ ...bet, stake: Number(bet.stake), combinedOdds: Number(bet.combinedOdds), potentialReturn: Number(bet.potentialReturn), selections: JSON.parse(bet.selectionsJson) as Array<{ id: string; match: string; market: string; odds: number }> }));
+  const rows = await db
+    .select()
+    .from(bets)
+    .where(eq(bets.userId, userId))
+    .orderBy(desc(bets.createdAt))
+    .limit(20);
+  return rows.map(bet => ({
+    ...bet,
+    stake: Number(bet.stake),
+    combinedOdds: Number(bet.combinedOdds),
+    potentialReturn: Number(bet.potentialReturn),
+    selections: JSON.parse(bet.selectionsJson) as Array<{
+      id: string;
+      match: string;
+      market: string;
+      odds: number;
+    }>,
+  }));
 }

@@ -6,7 +6,10 @@ const root = resolve(import.meta.dirname, "..");
 const schema = readFileSync(resolve(root, "drizzle/schema.ts"), "utf8");
 const db = readFileSync(resolve(root, "server/db/misc.ts"), "utf8");
 const routers = readFileSync(resolve(root, "server/routers.ts"), "utf8");
-const page = readFileSync(resolve(root, "client/src/pages/FeaturePages.tsx"), "utf8");
+const page = readFileSync(
+  resolve(root, "client/src/pages/FeaturePages.tsx"),
+  "utf8"
+);
 
 describe("Game Catalog v2 contracts", () => {
   it("keeps lobby metadata server-owned", () => {
@@ -22,7 +25,7 @@ describe("Game Catalog v2 contracts", () => {
 
   it("exposes typed lobby filters and distinguishes demo from real launch copy", () => {
     expect(routers).toContain("games: router");
-    expect(routers).toContain("mode: z.enum([\"demo\", \"real\"]).optional()");
+    expect(routers).toContain('mode: z.enum(["demo", "real"]).optional()');
     expect(routers).toContain("featured: z.boolean().optional()");
     expect(page).toContain("مشاهدهٔ دمو");
     expect(page).toContain("ورود به بازی");

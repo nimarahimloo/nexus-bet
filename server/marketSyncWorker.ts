@@ -18,10 +18,13 @@ import { fetchSportsUniverse } from "./multiSportsFeed";
 export async function runMarketSync(req: Request, res: Response) {
   try {
     const user = await sdk.authenticateRequest(req);
-    if (!user.isCron || !user.taskUid) return res.status(403).json({ error: "cron-only" });
+    if (!user.isCron || !user.taskUid)
+      return res.status(403).json({ error: "cron-only" });
 
     if (!ENV.sportsApiKey.trim()) {
-      return res.status(503).json({ ok: false, error: "SPORTS_API_KEY_MISSING" });
+      return res
+        .status(503)
+        .json({ ok: false, error: "SPORTS_API_KEY_MISSING" });
     }
 
     const feed = await fetchSportsUniverse(ENV.sportsApiKey, 30, false);
@@ -34,7 +37,8 @@ export async function runMarketSync(req: Request, res: Response) {
       ...summary,
     });
   } catch (error) {
-    if (error instanceof HttpError) return res.status(error.statusCode).json({ error: "CRON_AUTH_REQUIRED" });
+    if (error instanceof HttpError)
+      return res.status(error.statusCode).json({ error: "CRON_AUTH_REQUIRED" });
     const message = error instanceof Error ? error.message : String(error);
     console.warn("[MarketSync] run failed:", message);
     return res.status(500).json({ error: "MARKET_SYNC_FAILED", message });

@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("in-platform auth and support contracts", () => {
   it("keeps complete preview auth flow inside a modal without external login redirects", () => {

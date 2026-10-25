@@ -5,16 +5,24 @@ import { PageShell } from "@/components/PageShell";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { openAuthModal } from "@/lib/platformOverlay";
-import { formatCrashAmount, formatCrashCashoutLabel, formatCrashStakeLabel } from "@shared/sportsDisplay";
+import {
+  formatCrashAmount,
+  formatCrashCashoutLabel,
+  formatCrashStakeLabel,
+} from "@shared/sportsDisplay";
 
 const fa = (value: number) => formatCrashAmount(value);
 
 function crashErrorMessage(error: { message?: string } | null | undefined) {
   const message = error?.message ?? "";
-  if (message.includes("INSUFFICIENT_BALANCE")) return "موجودی قابل‌استفادهٔ کیف پول برای این bet کافی نیست.";
-  if (message.includes("ROUND_CLOSED") || message.includes("ROUND_CRASHED")) return "این round دیگر قابل‌شرط‌بندی یا cashout نیست؛ round بعدی را بررسی کن.";
-  if (message.includes("BET_CLOSED")) return "این bet قبلاً تسویه شده یا دیگر قابل cashout نیست.";
-  if (message.includes("DATABASE_UNAVAILABLE")) return "اتصال backend موقتاً در دسترس نیست؛ دوباره تلاش کن.";
+  if (message.includes("INSUFFICIENT_BALANCE"))
+    return "موجودی قابل‌استفادهٔ کیف پول برای این bet کافی نیست.";
+  if (message.includes("ROUND_CLOSED") || message.includes("ROUND_CRASHED"))
+    return "این round دیگر قابل‌شرط‌بندی یا cashout نیست؛ round بعدی را بررسی کن.";
+  if (message.includes("BET_CLOSED"))
+    return "این bet قبلاً تسویه شده یا دیگر قابل cashout نیست.";
+  if (message.includes("DATABASE_UNAVAILABLE"))
+    return "اتصال backend موقتاً در دسترس نیست؛ دوباره تلاش کن.";
   return "عملیات انجام نشد؛ جزئیات round، bet و موجودی را بررسی کن.";
 }
 
@@ -22,7 +30,7 @@ async function sha256Hex(input: string): Promise<string> {
   const data = new TextEncoder().encode(input);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
+    .map(b => b.toString(16).padStart(2, "0"))
     .join("");
 }
 
@@ -47,13 +55,22 @@ export default function Crash() {
   const [stake, setStake] = useState("10");
   const [currency, setCurrency] = useState("USDT");
   const [betId, setBetId] = useState<number | null>(null);
-  const [verifyState, setVerifyState] = useState<Record<number, "idle" | "checking" | "pass" | "fail">>({});
-  const roundQuery = trpc.crash.current.useQuery(undefined, { refetchInterval: 1000 });
-  const historyQuery = trpc.crash.history.useQuery(undefined, { refetchInterval: 5000 });
-  const portfolioQuery = trpc.wallet.portfolio.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: 3000 });
+  const [verifyState, setVerifyState] = useState<
+    Record<number, "idle" | "checking" | "pass" | "fail">
+  >({});
+  const roundQuery = trpc.crash.current.useQuery(undefined, {
+    refetchInterval: 1000,
+  });
+  const historyQuery = trpc.crash.history.useQuery(undefined, {
+    refetchInterval: 5000,
+  });
+  const portfolioQuery = trpc.wallet.portfolio.useQuery(undefined, {
+    enabled: isAuthenticated,
+    refetchInterval: 3000,
+  });
   const utils = trpc.useUtils();
   const placeMutation = trpc.crash.place.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setBetId(data.id);
       void utils.wallet.me.invalidate();
       void utils.wallet.portfolio.invalidate();
@@ -70,7 +87,9 @@ export default function Crash() {
   const round = roundQuery.data;
   const multiplier = round?.currentMultiplier ?? 1;
   const currentStake = Number(stake) || 0;
-  const selectedAsset = portfolioQuery.data?.find((asset) => asset.code === currency) ?? portfolioQuery.data?.[0];
+  const selectedAsset =
+    portfolioQuery.data?.find(asset => asset.code === currency) ??
+    portfolioQuery.data?.[0];
   const activeCurrency = selectedAsset?.code ?? currency;
   const availableBalance = selectedAsset?.availableBalance ?? 0;
   const hasEnoughBalance = !isAuthenticated || currentStake <= availableBalance;
@@ -78,7 +97,11 @@ export default function Crash() {
   const submitBet = () => {
     if (!isAuthenticated) return openAuthModal();
     if (!round || currentStake < 1 || !hasEnoughBalance) return;
-    placeMutation.mutate({ roundId: round.id, currency: activeCurrency, stake: currentStake });
+    placeMutation.mutate({
+      roundId: round.id,
+      currency: activeCurrency,
+      stake: currentStake,
+    });
   };
   const submitCashout = () => {
     if (betId) cashoutMutation.mutate({ betId });
@@ -88,17 +111,24 @@ export default function Crash() {
 
   const runVerify = async (item: {
     id: number;
-    proof: { serverSeed: string; serverSeedHash: string; crashMultiplier: string };
+    proof: {
+      serverSeed: string;
+      serverSeedHash: string;
+      crashMultiplier: string;
+    };
   }) => {
-    setVerifyState((s) => ({ ...s, [item.id]: "checking" }));
+    setVerifyState(s => ({ ...s, [item.id]: "checking" }));
     try {
       const result = await verifyCrashProofClient(item.proof);
       const ok = result.hashOk && result.multiplierOk;
-      setVerifyState((s) => ({ ...s, [item.id]: ok ? "pass" : "fail" }));
-      if (ok) toast.success("اثبات round معتبر است: hash و ضریب با seed هم‌خوان‌اند.");
+      setVerifyState(s => ({ ...s, [item.id]: ok ? "pass" : "fail" }));
+      if (ok)
+        toast.success(
+          "اثبات round معتبر است: hash و ضریب با seed هم‌خوان‌اند."
+        );
       else toast.error("اثبات نامعتبر: seed با hash یا ضریب هم‌خوان نیست.");
     } catch {
-      setVerifyState((s) => ({ ...s, [item.id]: "fail" }));
+      setVerifyState(s => ({ ...s, [item.id]: "fail" }));
       toast.error("بررسی اثبات انجام نشد.");
     }
   };
@@ -107,11 +137,14 @@ export default function Crash() {
     if (mutationError) toast.error(crashErrorMessage(mutationError));
   }, [mutationError]);
   useEffect(() => {
-    if (roundQuery.error) toast.error("دریافت round از backend انجام نشد؛ دوباره تلاش کن.");
+    if (roundQuery.error)
+      toast.error("دریافت round از backend انجام نشد؛ دوباره تلاش کن.");
   }, [roundQuery.error]);
   useEffect(() => {
     if (isAuthenticated && !portfolioQuery.isLoading && !hasEnoughBalance)
-      toast.error("موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا کیف پول را شارژ کن.");
+      toast.error(
+        "موجودی برای این مبلغ کافی نیست؛ مبلغ را کاهش بده یا کیف پول را شارژ کن."
+      );
   }, [hasEnoughBalance, isAuthenticated, portfolioQuery.isLoading]);
 
   return (
@@ -130,27 +163,48 @@ export default function Crash() {
                 ? "دور در حال اجرا"
                 : "دور متوقف شد"}
           </span>
-          <span className="sample-chip">{round?.roundCode ?? "بدون round"}</span>
+          <span className="sample-chip">
+            {round?.roundCode ?? "بدون round"}
+          </span>
         </div>
         {round?.serverSeedHash && (
-          <p className="data-state" style={{ fontSize: "0.75rem", wordBreak: "break-all" }}>
+          <p
+            className="data-state"
+            style={{ fontSize: "0.75rem", wordBreak: "break-all" }}
+          >
             commit hash: {round.serverSeedHash}
           </p>
         )}
-        <div className={`crash-multiplier ${round?.status === "running" ? "pulse" : ""}`}>
+        <div
+          className={`crash-multiplier ${round?.status === "running" ? "pulse" : ""}`}
+        >
           {fa(multiplier)}
           <small>×</small>
         </div>
         <div className="crash-rail">
-          <span style={{ width: `${Math.min(92, Math.max(0, (multiplier - 1) * 38))}%` }} />
+          <span
+            style={{
+              width: `${Math.min(92, Math.max(0, (multiplier - 1) * 38))}%`,
+            }}
+          />
         </div>
         <div className="crash-actions">
           <button
             className="solid-cta"
-            disabled={pending || !round || round.status !== "running" || Boolean(betId) || !hasEnoughBalance}
+            disabled={
+              pending ||
+              !round ||
+              round.status !== "running" ||
+              Boolean(betId) ||
+              !hasEnoughBalance
+            }
             onClick={submitBet}
           >
-            {!isAuthenticated ? "ورود برای بازی" : betId ? "bet ثبت شد" : "ثبت bet"}{" "}
+            {!isAuthenticated
+              ? "ورود برای بازی"
+              : betId
+                ? "bet ثبت شد"
+                : "ثبت bet"}{" "}
             {betId ? <ShieldCheck size={16} /> : <Play size={16} />}
           </button>
           <label>
@@ -158,16 +212,20 @@ export default function Crash() {
             <div className="crash-currency-control">
               <select
                 value={activeCurrency}
-                onChange={(event) => setCurrency(event.target.value)}
+                onChange={event => setCurrency(event.target.value)}
                 aria-label="دارایی بازی انفجار"
               >
-                {(portfolioQuery.data ?? []).map((asset) => (
+                {(portfolioQuery.data ?? []).map(asset => (
                   <option value={asset.code} key={asset.code}>
                     {asset.symbol}
                   </option>
                 ))}
               </select>
-              <input value={stake} onChange={(event) => setStake(event.target.value)} inputMode="decimal" />
+              <input
+                value={stake}
+                onChange={event => setStake(event.target.value)}
+                inputMode="decimal"
+              />
             </div>
           </label>
           {isAuthenticated && (
@@ -176,7 +234,11 @@ export default function Crash() {
             </span>
           )}
           {betId && (
-            <button className="outline-cta" disabled={pending || round?.status !== "running"} onClick={submitCashout}>
+            <button
+              className="outline-cta"
+              disabled={pending || round?.status !== "running"}
+              onClick={submitCashout}
+            >
               cashout {formatCrashCashoutLabel(payout)} <Zap size={15} />
             </button>
           )}
@@ -190,17 +252,24 @@ export default function Crash() {
             <p className="data-state">در حال دریافت…</p>
           ) : historyQuery.data?.length ? (
             <div className="rounds">
-              {historyQuery.data.map((item) =>
+              {historyQuery.data.map(item =>
                 item.proof ? (
                   <details className="round-proof-details" key={item.id}>
                     <summary>
-                      {fa(item.multiplier)}× <small className="round-proof">public seed</small>
-                      {verifyState[item.id] === "pass" && <small className="round-proof"> ✓ معتبر</small>}
-                      {verifyState[item.id] === "fail" && <small className="round-proof"> ✗ نامعتبر</small>}
+                      {fa(item.multiplier)}×{" "}
+                      <small className="round-proof">public seed</small>
+                      {verifyState[item.id] === "pass" && (
+                        <small className="round-proof"> ✓ معتبر</small>
+                      )}
+                      {verifyState[item.id] === "fail" && (
+                        <small className="round-proof"> ✗ نامعتبر</small>
+                      )}
                     </summary>
                     <small>hash: {item.proof.serverSeedHash}</small>
                     <small>seed: {item.proof.serverSeed}</small>
-                    <small>ضریب commit‌شده: {item.proof.crashMultiplier}×</small>
+                    <small>
+                      ضریب commit‌شده: {item.proof.crashMultiplier}×
+                    </small>
                     <button
                       type="button"
                       className="outline-cta"
@@ -217,22 +286,25 @@ export default function Crash() {
                         })
                       }
                     >
-                      {verifyState[item.id] === "checking" ? "در حال بررسی…" : "بررسی اثبات"}
+                      {verifyState[item.id] === "checking"
+                        ? "در حال بررسی…"
+                        : "بررسی اثبات"}
                     </button>
                   </details>
                 ) : (
                   <span key={item.id} title="round قدیمی بدون public seed">
                     {fa(item.multiplier)}×
                   </span>
-                ),
+                )
               )}
             </div>
           ) : (
             <p className="data-state">هنوز round تسویه‌شده‌ای وجود ندارد.</p>
           )}
           <p>
-            هر round جدید با hash قبل از شروع commit می‌شود؛ seed و ضریب مشتق‌شده پس از پایان reveal می‌شوند. دکمهٔ «بررسی
-            اثبات» همان منطق backend را در مرورگر اجرا می‌کند.
+            هر round جدید با hash قبل از شروع commit می‌شود؛ seed و ضریب
+            مشتق‌شده پس از پایان reveal می‌شوند. دکمهٔ «بررسی اثبات» همان منطق
+            backend را در مرورگر اجرا می‌کند.
           </p>
         </article>
         <article className="standalone-card glass-panel">
@@ -248,8 +320,14 @@ export default function Crash() {
             <span>برداشت در ضریب فعلی</span>
             <b className="mint-text">{formatCrashCashoutLabel(payout)}</b>
           </div>
-          <p className="data-state">پس از ثبت، وضعیت bet و payout در backend ذخیره می‌شود.</p>
-          <button className="outline-cta" disabled={!betId || pending} onClick={submitCashout}>
+          <p className="data-state">
+            پس از ثبت، وضعیت bet و payout در backend ذخیره می‌شود.
+          </p>
+          <button
+            className="outline-cta"
+            disabled={!betId || pending}
+            onClick={submitCashout}
+          >
             ثبت برداشت <ArrowLeft size={15} />
           </button>
         </article>

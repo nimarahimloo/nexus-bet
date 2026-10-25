@@ -27,7 +27,11 @@ export type MarketSnapshot = {
 
 export type PriceCheck =
   | { ok: true; price: number }
-  | { ok: false; reason: "MARKET_UNAVAILABLE" | "MARKET_CLOSED" | "ODDS_STALE" | "ODDS_CHANGED" };
+  | {
+      ok: false;
+      reason:
+        "MARKET_UNAVAILABLE" | "MARKET_CLOSED" | "ODDS_STALE" | "ODDS_CHANGED";
+    };
 
 const HOME_TOKENS = ["۱", "1", "home", "host"];
 const DRAW_TOKENS = ["x", "draw", "مساوی"];
@@ -37,7 +41,9 @@ const AWAY_TOKENS = ["۲", "2", "away", "guest"];
  * Normalises every label the product uses (Persian digit, latin digit, market
  * name) to one canonical code. Returns null for markets we do not settle.
  */
-export function canonicalMarketCode(input: string | undefined | null): MarketCode | null {
+export function canonicalMarketCode(
+  input: string | undefined | null
+): MarketCode | null {
   const value = (input ?? "").trim().toLowerCase();
   if (!value) return null;
   if (HOME_TOKENS.includes(value)) return "1";
@@ -54,15 +60,21 @@ export function marketKey(fixtureId: string, code: MarketCode) {
 }
 
 /** A match we must not accept bets on any more. */
-export function isMarketClosed(market: Pick<MarketSnapshot, "startsAt" | "matchStatus">, now = new Date()) {
+export function isMarketClosed(
+  market: Pick<MarketSnapshot, "startsAt" | "matchStatus">,
+  now = new Date()
+) {
   const status = (market.matchStatus ?? "").trim().toLowerCase();
-  if (!status) return market.startsAt ? market.startsAt.getTime() <= now.getTime() : false;
+  if (!status)
+    return market.startsAt ? market.startsAt.getTime() <= now.getTime() : false;
   if (status === "زنده" || status === "live") return true;
-  if (status === "نمونه" || status === "preview" || status === "demo") return true;
+  if (status === "نمونه" || status === "preview" || status === "demo")
+    return true;
   if (/(finished|ended|ft|aet|pen|canc|postp)/.test(status)) return true;
   // Scheduled matches close at kickoff; a missing kickoff is treated as still open
   // only while the feed says the match has not started.
-  if (market.startsAt && market.startsAt.getTime() <= now.getTime()) return true;
+  if (market.startsAt && market.startsAt.getTime() <= now.getTime())
+    return true;
   return false;
 }
 
@@ -74,13 +86,21 @@ export function checkMarketPrice(input: {
   const now = input.now ?? new Date();
   const { market } = input;
   if (!market) return { ok: false, reason: "MARKET_UNAVAILABLE" };
-  if (!Number.isFinite(market.price) || market.price <= 1) return { ok: false, reason: "MARKET_UNAVAILABLE" };
-  if (isMarketClosed(market, now)) return { ok: false, reason: "MARKET_CLOSED" };
-  if (now.getTime() - market.capturedAt.getTime() > MARKET_MAX_AGE_MS) return { ok: false, reason: "ODDS_STALE" };
+  if (!Number.isFinite(market.price) || market.price <= 1)
+    return { ok: false, reason: "MARKET_UNAVAILABLE" };
+  if (isMarketClosed(market, now))
+    return { ok: false, reason: "MARKET_CLOSED" };
+  if (now.getTime() - market.capturedAt.getTime() > MARKET_MAX_AGE_MS)
+    return { ok: false, reason: "ODDS_STALE" };
 
   const submitted = input.submittedOdds;
-  if (typeof submitted === "number" && Number.isFinite(submitted) && submitted > 0) {
-    if (Math.abs(submitted - market.price) > market.price * ODDS_TOLERANCE) return { ok: false, reason: "ODDS_CHANGED" };
+  if (
+    typeof submitted === "number" &&
+    Number.isFinite(submitted) &&
+    submitted > 0
+  ) {
+    if (Math.abs(submitted - market.price) > market.price * ODDS_TOLERANCE)
+      return { ok: false, reason: "ODDS_CHANGED" };
   }
 
   return { ok: true, price: market.price };
@@ -95,17 +115,32 @@ export type TicketPricing =
  * existing storage contract (2dp odds, 2dp return) so historic tickets stay
  * comparable.
  */
-export function priceTicket(input: { stake: number; prices: number[] }): TicketPricing {
-  if (!Number.isFinite(input.stake) || input.stake <= 0) return { ok: false, reason: "INVALID_STAKE" };
+export function priceTicket(input: {
+  stake: number;
+  prices: number[];
+}): TicketPricing {
+  if (!Number.isFinite(input.stake) || input.stake <= 0)
+    return { ok: false, reason: "INVALID_STAKE" };
   if (!input.prices.length) return { ok: false, reason: "INVALID_STAKE" };
-  if (input.prices.some((price) => !Number.isFinite(price) || price <= 1 || price > MAX_ODDS)) {
+  if (
+    input.prices.some(
+      price => !Number.isFinite(price) || price <= 1 || price > MAX_ODDS
+    )
+  ) {
     return { ok: false, reason: "ODDS_LIMIT_EXCEEDED" };
   }
-  const combinedOdds = Number(input.prices.reduce((total, price) => total * price, 1).toFixed(2));
-  if (!Number.isFinite(combinedOdds) || combinedOdds <= 1 || combinedOdds > MAX_ODDS) {
+  const combinedOdds = Number(
+    input.prices.reduce((total, price) => total * price, 1).toFixed(2)
+  );
+  if (
+    !Number.isFinite(combinedOdds) ||
+    combinedOdds <= 1 ||
+    combinedOdds > MAX_ODDS
+  ) {
     return { ok: false, reason: "ODDS_LIMIT_EXCEEDED" };
   }
   const potentialReturn = Number((input.stake * combinedOdds).toFixed(2));
-  if (!Number.isFinite(potentialReturn) || potentialReturn <= 0) return { ok: false, reason: "INVALID_STAKE" };
+  if (!Number.isFinite(potentialReturn) || potentialReturn <= 0)
+    return { ok: false, reason: "INVALID_STAKE" };
   return { ok: true, combinedOdds, potentialReturn };
 }

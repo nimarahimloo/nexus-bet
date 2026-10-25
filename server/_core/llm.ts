@@ -19,7 +19,12 @@ export type FileContent = {
   type: "file_url";
   file_url: {
     url: string;
-    mime_type?: "audio/mpeg" | "audio/wav" | "application/pdf" | "audio/mp4" | "video/mp4" ;
+    mime_type?:
+      | "audio/mpeg"
+      | "audio/wav"
+      | "application/pdf"
+      | "audio/mp4"
+      | "video/mp4";
   };
 };
 
@@ -51,9 +56,7 @@ export type ToolChoiceExplicit = {
 };
 
 export type ToolChoice =
-  | ToolChoicePrimitive
-  | ToolChoiceByName
-  | ToolChoiceExplicit;
+  ToolChoicePrimitive | ToolChoiceByName | ToolChoiceExplicit;
 
 export type InvokeParams = {
   messages: Message[];
@@ -314,9 +317,7 @@ const fetchWithBackoff = async (
         return response;
       }
 
-      const retryAfterMs = parseRetryAfter(
-        response.headers.get("retry-after")
-      );
+      const retryAfterMs = parseRetryAfter(response.headers.get("retry-after"));
       try {
         await response.body?.cancel();
       } catch {
@@ -388,7 +389,8 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.max_completion_tokens = explicitCompletionTokens;
   } else if (typeof resolvedMaxTokens === "number") {
     // GPT-5 models require max_completion_tokens; legacy models use max_tokens.
-    if (model?.startsWith("gpt-5")) payload.max_completion_tokens = resolvedMaxTokens;
+    if (model?.startsWith("gpt-5"))
+      payload.max_completion_tokens = resolvedMaxTokens;
     else payload.max_tokens = resolvedMaxTokens;
   }
 
@@ -444,9 +446,10 @@ export type ModelsResponse = {
 export async function listLLMModels(): Promise<ModelsResponse> {
   assertApiKey();
 
-  const url = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
-    ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/models`
-    : "https://forge.manus.im/v1/models";
+  const url =
+    ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
+      ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/models`
+      : "https://forge.manus.im/v1/models";
 
   const response = await fetchWithBackoff(url, {
     headers: { authorization: `Bearer ${ENV.forgeApiKey}` },

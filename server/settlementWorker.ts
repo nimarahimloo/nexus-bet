@@ -18,7 +18,8 @@ import { settlePendingSportsBets } from "./db";
 export async function runSportsSettlement(req: Request, res: Response) {
   try {
     const user = await sdk.authenticateRequest(req);
-    if (!user.isCron || !user.taskUid) return res.status(403).json({ error: "cron-only" });
+    if (!user.isCron || !user.taskUid)
+      return res.status(403).json({ error: "cron-only" });
 
     const dryRun = req.query.dryRun === "1" || req.query.dryRun === "true";
     const requestedLimit = Number(req.query.limit);

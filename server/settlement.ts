@@ -10,7 +10,8 @@
  * wrongly settled one is not.
  */
 
-export type FixtureState = "finished" | "live" | "scheduled" | "void" | "unknown";
+export type FixtureState =
+  "finished" | "live" | "scheduled" | "void" | "unknown";
 
 export type FixtureResult = {
   fixtureId: string;
@@ -68,7 +69,9 @@ export function fixtureIdFromSelectionId(selectionId: string) {
 export function selectionCode(selectionId: string) {
   const trimmed = selectionId.trim();
   const separator = trimmed.lastIndexOf("-");
-  return (separator >= 0 ? trimmed.slice(separator + 1) : "").trim().toLowerCase();
+  return (separator >= 0 ? trimmed.slice(separator + 1) : "")
+    .trim()
+    .toLowerCase();
 }
 
 /**
@@ -76,7 +79,9 @@ export function selectionCode(selectionId: string) {
  * when the id carries no usable code, and returns null when we genuinely do
  * not know — callers must treat null as "not settleable".
  */
-export function outcomeSide(selection: Pick<SettleableSelection, "id" | "market">): "home" | "draw" | "away" | null {
+export function outcomeSide(
+  selection: Pick<SettleableSelection, "id" | "market">
+): "home" | "draw" | "away" | null {
   const code = selectionCode(selection.id);
   if (HOME_CODES.has(code)) return "home";
   if (DRAW_CODES.has(code)) return "draw";
@@ -89,7 +94,10 @@ export function outcomeSide(selection: Pick<SettleableSelection, "id" | "market"
   return null;
 }
 
-export function selectionOutcome(selection: Pick<SettleableSelection, "id" | "market">, result: FixtureResult | undefined | null): SelectionOutcome {
+export function selectionOutcome(
+  selection: Pick<SettleableSelection, "id" | "market">,
+  result: FixtureResult | undefined | null
+): SelectionOutcome {
   if (!result) return "pending";
   if (result.state === "void") return "void";
   if (result.state !== "finished") return "pending";
@@ -99,7 +107,12 @@ export function selectionOutcome(selection: Pick<SettleableSelection, "id" | "ma
   const side = outcomeSide(selection);
   if (!side) return "pending";
 
-  const actual = result.homeGoals > result.awayGoals ? "home" : result.homeGoals === result.awayGoals ? "draw" : "away";
+  const actual =
+    result.homeGoals > result.awayGoals
+      ? "home"
+      : result.homeGoals === result.awayGoals
+        ? "draw"
+        : "away";
   return side === actual ? "won" : "lost";
 }
 
@@ -112,13 +125,18 @@ export function selectionOutcome(selection: Pick<SettleableSelection, "id" | "ma
  */
 export function settleBetOutcome(
   selections: SettleableSelection[],
-  results: Map<string, FixtureResult>,
+  results: Map<string, FixtureResult>
 ): BetOutcome {
   if (!selections.length) return "pending";
-  const outcomes = selections.map((selection) => selectionOutcome(selection, results.get(fixtureIdFromSelectionId(selection.id))));
+  const outcomes = selections.map(selection =>
+    selectionOutcome(
+      selection,
+      results.get(fixtureIdFromSelectionId(selection.id))
+    )
+  );
   if (outcomes.includes("lost")) return "lost";
   if (outcomes.includes("void")) return "void";
-  if (outcomes.every((outcome) => outcome === "won")) return "won";
+  if (outcomes.every(outcome => outcome === "won")) return "won";
   return "pending";
 }
 
@@ -128,14 +146,26 @@ export function settleBetOutcome(
  * - lost: locked is consumed, nothing returns
  * - void: the full stake goes back to available
  */
-export function settlementMoney(outcome: Exclude<BetOutcome, "pending">, stake: number, potentialReturn: number): SettlementMoney {
+export function settlementMoney(
+  outcome: Exclude<BetOutcome, "pending">,
+  stake: number,
+  potentialReturn: number
+): SettlementMoney {
   const lockedStake = round6(Math.abs(stake));
   if (outcome === "won") {
     const payout = round6(potentialReturn);
-    return { availableDelta: payout, lockedDelta: -lockedStake, ledgerAmount: payout };
+    return {
+      availableDelta: payout,
+      lockedDelta: -lockedStake,
+      ledgerAmount: payout,
+    };
   }
   if (outcome === "void") {
-    return { availableDelta: lockedStake, lockedDelta: -lockedStake, ledgerAmount: lockedStake };
+    return {
+      availableDelta: lockedStake,
+      lockedDelta: -lockedStake,
+      ledgerAmount: lockedStake,
+    };
   }
   return { availableDelta: 0, lockedDelta: -lockedStake, ledgerAmount: 0 };
 }

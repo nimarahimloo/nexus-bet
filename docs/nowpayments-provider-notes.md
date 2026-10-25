@@ -1,6 +1,7 @@
 # NOWPayments provider decision
 
 ## Scope
+
 Nexus Bet will use NOWPayments as the candidate payment provider for the first production integration, with USDT on BNB Smart Chain represented by the provider currency code `USDTBSC`. USDT remains the product base asset, while the existing asset catalog remains extensible.
 
 ## Verified provider capabilities

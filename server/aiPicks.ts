@@ -1,21 +1,43 @@
 import type { AiCandidate, AiPick } from "../shared/ai";
 
 /** Deterministic, non-guaranteed ranking from live feed candidates (no fabricated odds). */
-export function rankSmartPicks(candidates: AiCandidate[], limit = 6): { picks: AiPick[]; source: "ai" | "empty" } {
+export function rankSmartPicks(
+  candidates: AiCandidate[],
+  limit = 6
+): { picks: AiPick[]; source: "ai" | "empty" } {
   if (!candidates.length) return { picks: [], source: "empty" };
 
   const scored = candidates
-    .filter((c) => Number.isFinite(c.odds) && c.odds > 1)
-    .map((c) => {
+    .filter(c => Number.isFinite(c.odds) && c.odds > 1)
+    .map(c => {
       const popularity = Math.max(0, Math.min(100, c.popularity ?? 50));
       const odds = c.odds;
       // Prefer moderate odds; high popularity boosts confidence without claiming edge.
       const oddsFit = odds >= 1.4 && odds <= 2.6 ? 18 : odds < 1.4 ? 8 : 6;
-      const confidence = Math.round(Math.max(42, Math.min(88, popularity * 0.55 + oddsFit + (c.status === "امروز" || c.status === "زنده" ? 6 : 0))));
-      const risk: AiPick["risk"] = odds >= 3 ? "بالا" : odds >= 1.85 ? "متوسط" : "کم";
+      const confidence = Math.round(
+        Math.max(
+          42,
+          Math.min(
+            88,
+            popularity * 0.55 +
+              oddsFit +
+              (c.status === "امروز" || c.status === "زنده" ? 6 : 0)
+          )
+        )
+      );
+      const risk: AiPick["risk"] =
+        odds >= 3 ? "بالا" : odds >= 1.85 ? "متوسط" : "کم";
       const tags = [
-        popularity >= 75 ? "پرطرفدار" : popularity >= 55 ? "قابل‌توجه" : "حاشیه‌ای",
-        risk === "کم" ? "ریسک پایین‌تر" : risk === "متوسط" ? "ریسک متوسط" : "ریسک بالاتر",
+        popularity >= 75
+          ? "پرطرفدار"
+          : popularity >= 55
+            ? "قابل‌توجه"
+            : "حاشیه‌ای",
+        risk === "کم"
+          ? "ریسک پایین‌تر"
+          : risk === "متوسط"
+            ? "ریسک متوسط"
+            : "ریسک بالاتر",
       ];
       const rationale =
         risk === "کم"

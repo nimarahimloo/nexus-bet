@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("multi-sport feed contracts", () => {
   it("covers the provider sports directory and real identity fields", () => {
@@ -16,7 +17,7 @@ describe("multi-sport feed contracts", () => {
     expect(feed).toContain("away.logo");
     expect(feed).toContain("return []");
     expect(feed).toContain("previewMatches.slice");
-    expect(feed).toContain("source: \"preview\"");
+    expect(feed).toContain('source: "preview"');
     expect(sports).toContain("homeLogo");
     expect(sports).toContain("awayLogo");
     const matches = read("../client/src/components/SportsbookMatchCard.tsx");

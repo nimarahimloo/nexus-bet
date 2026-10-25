@@ -7,8 +7,18 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Matches from "./pages/Matches";
 import Crash from "./pages/Crash";
-import { AccountPage, AiPage, VipPage, WalletPage } from "./pages/SupportingPages";
-import { CasinoPage, PromotionsPage, RewardsPage, TournamentsPage } from "./pages/FeaturePages";
+import {
+  AccountPage,
+  AiPage,
+  VipPage,
+  WalletPage,
+} from "./pages/SupportingPages";
+import {
+  CasinoPage,
+  PromotionsPage,
+  RewardsPage,
+  TournamentsPage,
+} from "./pages/FeaturePages";
 import { TrustCenterPage } from "./pages/TrustCenter";
 import AdminPage from "./pages/AdminPage";
 import { appRoutePaths } from "@shared/routes";

@@ -3,7 +3,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const pageShell = readFileSync(resolve(root, "client/src/components/PageShell.tsx"), "utf8");
+const pageShell = readFileSync(
+  resolve(root, "client/src/components/PageShell.tsx"),
+  "utf8"
+);
 const home = readFileSync(resolve(root, "client/src/pages/Home.tsx"), "utf8");
 const css = readFileSync(resolve(root, "client/src/index.css"), "utf8");
 
@@ -12,7 +15,7 @@ describe("Nexus Bet brand and responsive contracts", () => {
     expect(pageShell).toContain("NEXUS");
     expect(pageShell).toContain("TRUSTED PLAY");
     expect(pageShell).toContain("nexus-bet-logo_92fe8c09.png");
-    expect(home).toContain("className=\"footer-brand\"");
+    expect(home).toContain('className="footer-brand"');
     expect(home).toContain("تجربهٔ شفاف پیش‌بینی ورزشی");
   });
 

@@ -1,7 +1,12 @@
 import { inArray } from "drizzle-orm";
 import type { MatchCardData } from "../../shared/sports";
 import { sportsMarkets } from "../../drizzle/schema";
-import { canonicalMarketCode, marketKey, type MarketCode, type MarketSnapshot } from "../markets";
+import {
+  canonicalMarketCode,
+  marketKey,
+  type MarketCode,
+  type MarketSnapshot,
+} from "../markets";
 import { isSettleableFixtureId } from "../settlement";
 import { getDb } from "./core";
 
@@ -24,7 +29,10 @@ function kickoffOf(match: MatchCardData): Date | null {
  * Only real fixtures with a settleable 1X2 market are stored; preview and demo
  * rows are dropped so they can never be bet on.
  */
-export async function syncSportsMarkets(matches: MatchCardData[], now = new Date()): Promise<SyncSummary> {
+export async function syncSportsMarkets(
+  matches: MatchCardData[],
+  now = new Date()
+): Promise<SyncSummary> {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
@@ -52,7 +60,8 @@ export async function syncSportsMarkets(matches: MatchCardData[], now = new Date
     }
     const startsAt = kickoffOf(match);
     for (const market of match.markets ?? []) {
-      const code = canonicalMarketCode(market.label) ?? canonicalMarketCode(market.name);
+      const code =
+        canonicalMarketCode(market.label) ?? canonicalMarketCode(market.name);
       const price = Number(market.odds);
       if (!code || !Number.isFinite(price) || price <= 1) {
         skipped += 1;
@@ -102,7 +111,9 @@ export async function syncSportsMarkets(matches: MatchCardData[], now = new Date
 }
 
 /** Snapshot lookup keyed as `fixtureId:code`. Missing fixtures are simply absent. */
-export async function getMarketSnapshots(fixtureIds: string[]): Promise<Map<string, MarketSnapshot>> {
+export async function getMarketSnapshots(
+  fixtureIds: string[]
+): Promise<Map<string, MarketSnapshot>> {
   const snapshots = new Map<string, MarketSnapshot>();
   const unique = Array.from(new Set(fixtureIds.filter(Boolean)));
   if (!unique.length) return snapshots;
@@ -110,7 +121,10 @@ export async function getMarketSnapshots(fixtureIds: string[]): Promise<Map<stri
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
 
-  const rows = await db.select().from(sportsMarkets).where(inArray(sportsMarkets.fixtureId, unique));
+  const rows = await db
+    .select()
+    .from(sportsMarkets)
+    .where(inArray(sportsMarkets.fixtureId, unique));
   for (const row of rows) {
     const code = row.code as MarketCode;
     snapshots.set(marketKey(row.fixtureId, code), {
@@ -129,6 +143,14 @@ export async function getMarketSnapshots(fixtureIds: string[]): Promise<Map<stri
 export async function getFixtureMarkets(fixtureId: string) {
   const db = await getDb();
   if (!db) return [];
-  const rows = await db.select().from(sportsMarkets).where(inArray(sportsMarkets.fixtureId, [fixtureId]));
-  return rows.map((row) => ({ code: row.code, name: row.name, price: Number(row.price), capturedAt: row.capturedAt }));
+  const rows = await db
+    .select()
+    .from(sportsMarkets)
+    .where(inArray(sportsMarkets.fixtureId, [fixtureId]));
+  return rows.map(row => ({
+    code: row.code,
+    name: row.name,
+    price: Number(row.price),
+    capturedAt: row.capturedAt,
+  }));
 }

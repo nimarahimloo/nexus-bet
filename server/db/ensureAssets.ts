@@ -6,7 +6,11 @@ import { getDb } from "./core";
 export async function ensureBaseAssets() {
   const db = await getDb();
   if (!db) return;
-  const existing = await db.select({ id: supportedAssets.id }).from(supportedAssets).where(eq(supportedAssets.code, "USDT")).limit(1);
+  const existing = await db
+    .select({ id: supportedAssets.id })
+    .from(supportedAssets)
+    .where(eq(supportedAssets.code, "USDT"))
+    .limit(1);
   if (existing[0]) {
     await db
       .update(supportedAssets)

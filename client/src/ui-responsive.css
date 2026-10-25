@@ -5,11 +5,15 @@
  */
 
 /* ---- Global overflow & fluid type ---- */
-html, body {
+html,
+body {
   overflow-x: clip;
   max-width: 100%;
 }
-img, svg, video, canvas {
+img,
+svg,
+video,
+canvas {
   max-width: 100%;
   height: auto;
 }
@@ -73,7 +77,10 @@ h2 {
 .game-grid,
 .standalone-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)) !important;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, 220px), 1fr)
+  ) !important;
   gap: var(--space-3, 12px) !important;
 }
 .match-list {
@@ -235,7 +242,9 @@ h2 {
 
   .slip-card.mobile-open,
   .bet-sheet {
-    max-height: calc(100dvh - 100px - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(
+      100dvh - 100px - env(safe-area-inset-bottom, 0px)
+    ) !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
   }

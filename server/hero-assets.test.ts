@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("hero asset and font recovery", () => {
   it("assigns unique route hero assets for promotions, tournaments, rewards, casino and account", () => {
@@ -16,11 +17,15 @@ describe("hero asset and font recovery", () => {
 
   it("keeps image overlays readable yet bright and prevents font fallback in the product shell", () => {
     const css = read("../client/src/index.css");
-    expect(css).toContain(".subpage-art img { opacity: .9 !important; filter: brightness(1.12) saturate(1.05); }");
+    expect(css).toContain(
+      ".subpage-art img { opacity: .9 !important; filter: brightness(1.12) saturate(1.05); }"
+    );
     // Behaviour, not an exact hex: the overlay must stay a dark, semi-opaque
     // scrim so hero art stays readable without washing it out.
     const brand = read("../client/src/ui-brand.css");
-    const overlay = `${css}\n${brand}`.match(/\.art-overlay\s*\{[^}]*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/);
+    const overlay = `${css}\n${brand}`.match(
+      /\.art-overlay\s*\{[^}]*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/
+    );
     expect(overlay).not.toBeNull();
     const [, r, g, b, alpha] = overlay as unknown as string[];
     expect(Math.max(Number(r), Number(g), Number(b))).toBeLessThanOrEqual(40);
@@ -39,7 +44,18 @@ describe("hero asset and font recovery", () => {
     expect(css).toContain("/fonts/Kalameh-Regular.woff2");
     expect(home).not.toContain("/manus-storage/");
     expect(shell).not.toContain("/manus-storage/");
-    expect(existsSync(new URL("../client/public/brand/nexus-bet-hero_64d33d2f.jpg", import.meta.url))).toBe(true);
-    expect(existsSync(new URL("../client/public/fonts/Kalameh-Regular.woff2", import.meta.url))).toBe(true);
+    expect(
+      existsSync(
+        new URL(
+          "../client/public/brand/nexus-bet-hero_64d33d2f.jpg",
+          import.meta.url
+        )
+      )
+    ).toBe(true);
+    expect(
+      existsSync(
+        new URL("../client/public/fonts/Kalameh-Regular.woff2", import.meta.url)
+      )
+    ).toBe(true);
   });
 });

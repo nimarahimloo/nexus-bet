@@ -22,10 +22,14 @@ export function assertProductionEnv() {
   // On Vercel serverless, allow boot without DB so /api/health can report status.
   if (process.env.VERCEL === "1") {
     if (!ENV.cookieSecret.trim()) {
-      console.warn("[env] JWT_SECRET missing on Vercel — auth cookies will not work");
+      console.warn(
+        "[env] JWT_SECRET missing on Vercel — auth cookies will not work"
+      );
     }
     if (!ENV.databaseUrl.trim()) {
-      console.warn("[env] DATABASE_URL missing on Vercel — database features unavailable");
+      console.warn(
+        "[env] DATABASE_URL missing on Vercel — database features unavailable"
+      );
     }
     return;
   }
@@ -33,6 +37,8 @@ export function assertProductionEnv() {
   if (!ENV.cookieSecret.trim()) missing.push("JWT_SECRET");
   if (!ENV.databaseUrl.trim()) missing.push("DATABASE_URL");
   if (missing.length) {
-    throw new Error(`Production boot blocked: missing required env: ${missing.join(", ")}`);
+    throw new Error(
+      `Production boot blocked: missing required env: ${missing.join(", ")}`
+    );
   }
 }

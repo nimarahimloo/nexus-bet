@@ -1,9 +1,39 @@
 import { and, desc, eq, gte, isNull, lte, sql, sum } from "drizzle-orm";
-import { InsertUser, activityRewardLedger, bets, crashBets, crashRounds, gameCatalog, localCredentials, notifications, passwordResetTokens, promotionClaims, promotions, rewardLedger, sportAlertPreferences, sportWatchlist, supportedAssets, tournamentEntries, tournaments, users, vipActivity, walletTransactions, wallets, wheelSpins } from "../../drizzle/schema";
+import {
+  InsertUser,
+  activityRewardLedger,
+  bets,
+  crashBets,
+  crashRounds,
+  gameCatalog,
+  localCredentials,
+  notifications,
+  passwordResetTokens,
+  promotionClaims,
+  promotions,
+  rewardLedger,
+  sportAlertPreferences,
+  sportWatchlist,
+  supportedAssets,
+  tournamentEntries,
+  tournaments,
+  users,
+  vipActivity,
+  walletTransactions,
+  wallets,
+  wheelSpins,
+} from "../../drizzle/schema";
 import { getUtcDateKey, selectWheelReward } from "../wheel";
 import { randomUUID } from "node:crypto";
-import { createCrashSeed, crashMultiplierFromSeed, isCrashed, multiplierAt, rememberPendingSeed, takePendingSeed } from "../crash";
-import { ENV } from '../_core/env';
+import {
+  createCrashSeed,
+  crashMultiplierFromSeed,
+  isCrashed,
+  multiplierAt,
+  rememberPendingSeed,
+  takePendingSeed,
+} from "../crash";
+import { ENV } from "../_core/env";
 import { getDb } from "./core";
 
 /**
@@ -14,20 +44,38 @@ import { getDb } from "./core";
  * concurrent polls of `crash.current`, a retried request, or a process restart
  * can never release the same stake twice.
  */
-export async function settleCrashedRound(roundId: number, revealedSeed: string | null, crashedAt = new Date()) {
+export async function settleCrashedRound(
+  roundId: number,
+  revealedSeed: string | null,
+  crashedAt = new Date()
+) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const claimed = await tx
       .update(crashRounds)
-      .set({ status: "crashed", crashedAt, ...(revealedSeed ? { serverSeed: revealedSeed } : {}) })
-      .where(and(eq(crashRounds.id, roundId), eq(crashRounds.status, "running")));
-    if (!Number(claimed[0]?.affectedRows)) return { settled: false, lostBets: 0 };
+      .set({
+        status: "crashed",
+        crashedAt,
+        ...(revealedSeed ? { serverSeed: revealedSeed } : {}),
+      })
+      .where(
+        and(eq(crashRounds.id, roundId), eq(crashRounds.status, "running"))
+      );
+    if (!Number(claimed[0]?.affectedRows))
+      return { settled: false, lostBets: 0 };
 
     const pending = await tx
-      .select({ id: crashBets.id, userId: crashBets.userId, currency: crashBets.currency, stake: crashBets.stake })
+      .select({
+        id: crashBets.id,
+        userId: crashBets.userId,
+        currency: crashBets.currency,
+        stake: crashBets.stake,
+      })
       .from(crashBets)
-      .where(and(eq(crashBets.roundId, roundId), eq(crashBets.status, "pending")));
+      .where(
+        and(eq(crashBets.roundId, roundId), eq(crashBets.status, "pending"))
+      );
 
     for (const bet of pending) {
       const stake = Number(bet.stake);
@@ -43,15 +91,21 @@ export async function settleCrashedRound(roundId: number, revealedSeed: string |
 
       const released = await tx
         .update(wallets)
-        .set({ lockedBalance: sql`${wallets.lockedBalance} - ${stake.toFixed(6)}`, updatedAt: crashedAt })
-        .where(and(
-          eq(wallets.userId, bet.userId),
-          eq(wallets.currency, bet.currency),
-          gte(wallets.lockedBalance, stake.toFixed(6)),
-        ));
+        .set({
+          lockedBalance: sql`${wallets.lockedBalance} - ${stake.toFixed(6)}`,
+          updatedAt: crashedAt,
+        })
+        .where(
+          and(
+            eq(wallets.userId, bet.userId),
+            eq(wallets.currency, bet.currency),
+            gte(wallets.lockedBalance, stake.toFixed(6))
+          )
+        );
       // Guarded: a locked balance below the stake means the ledger already
       // disagrees with the ticket, so roll the round back instead of going negative.
-      if (!Number(released[0]?.affectedRows)) throw new Error("LOCKED_BALANCE_MISMATCH");
+      if (!Number(released[0]?.affectedRows))
+        throw new Error("LOCKED_BALANCE_MISMATCH");
 
       await tx.insert(walletTransactions).values({
         userId: bet.userId,
@@ -70,7 +124,12 @@ export async function settleCrashedRound(roundId: number, revealedSeed: string |
 export async function getActiveCrashRound(now = new Date()) {
   const db = await getDb();
   if (!db) return null;
-  const rows = await db.select().from(crashRounds).where(eq(crashRounds.status, "running")).orderBy(desc(crashRounds.createdAt)).limit(1);
+  const rows = await db
+    .select()
+    .from(crashRounds)
+    .where(eq(crashRounds.status, "running"))
+    .orderBy(desc(crashRounds.createdAt))
+    .limit(1);
   const round = rows[0];
   if (!round) return null;
   const target = Number(round.crashMultiplier);
@@ -117,13 +176,17 @@ export async function createCrashRound() {
   });
   const id = Number(inserted[0].insertId);
   rememberPendingSeed(id, serverSeed);
-  const rows = await db.select({
-    id: crashRounds.id,
-    roundCode: crashRounds.roundCode,
-    status: crashRounds.status,
-    startedAt: crashRounds.startedAt,
-    serverSeedHash: crashRounds.serverSeedHash,
-  }).from(crashRounds).where(eq(crashRounds.id, id)).limit(1);
+  const rows = await db
+    .select({
+      id: crashRounds.id,
+      roundCode: crashRounds.roundCode,
+      status: crashRounds.status,
+      startedAt: crashRounds.startedAt,
+      serverSeedHash: crashRounds.serverSeedHash,
+    })
+    .from(crashRounds)
+    .where(eq(crashRounds.id, id))
+    .limit(1);
   const row = rows[0];
   if (!row) return null;
   // Public running payload: never crashMultiplier target or serverSeed
@@ -141,8 +204,13 @@ export async function createCrashRound() {
 export async function getCrashHistory() {
   const db = await getDb();
   if (!db) return [];
-  const rows = await db.select().from(crashRounds).where(eq(crashRounds.status, "crashed")).orderBy(desc(crashRounds.crashedAt)).limit(20);
-  return rows.map((round) => {
+  const rows = await db
+    .select()
+    .from(crashRounds)
+    .where(eq(crashRounds.status, "crashed"))
+    .orderBy(desc(crashRounds.crashedAt))
+    .limit(20);
+  return rows.map(round => {
     const multiplier = Number(round.crashMultiplier);
     const hasProof = Boolean(round.serverSeed && round.serverSeedHash);
     return {
@@ -161,28 +229,78 @@ export async function getCrashHistory() {
   });
 }
 
-export async function placeCrashBet(userId: number, roundId: number, stake: number, currency = "USDT") {
+export async function placeCrashBet(
+  userId: number,
+  roundId: number,
+  stake: number,
+  currency = "USDT"
+) {
   if (!Number.isFinite(stake) || stake < 1) throw new Error("INVALID_STAKE");
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   const normalizedCurrency = currency.trim().toUpperCase();
-  return db.transaction(async (tx) => {
-    const assetRows = await tx.select({ code: supportedAssets.code }).from(supportedAssets).where(and(eq(supportedAssets.code, normalizedCurrency), eq(supportedAssets.status, "active"))).limit(1);
+  return db.transaction(async tx => {
+    const assetRows = await tx
+      .select({ code: supportedAssets.code })
+      .from(supportedAssets)
+      .where(
+        and(
+          eq(supportedAssets.code, normalizedCurrency),
+          eq(supportedAssets.status, "active")
+        )
+      )
+      .limit(1);
     if (!assetRows[0]) throw new Error("UNSUPPORTED_CURRENCY");
-    const rounds = await tx.select().from(crashRounds).where(eq(crashRounds.id, roundId)).limit(1);
+    const rounds = await tx
+      .select()
+      .from(crashRounds)
+      .where(eq(crashRounds.id, roundId))
+      .limit(1);
     const round = rounds[0];
-    if (!round || round.status !== "running" || isCrashed(Number(round.crashMultiplier), round.startedAt)) throw new Error("ROUND_CLOSED");
-    const updated = await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} - ${stake}`, lockedBalance: sql`${wallets.lockedBalance} + ${stake}`, updatedAt: new Date() }).where(and(eq(wallets.userId, userId), eq(wallets.currency, normalizedCurrency), gte(wallets.availableBalance, stake.toFixed(6))));
-    if (!Number(updated[0]?.affectedRows)) throw new Error("INSUFFICIENT_BALANCE");
-    const inserted = await tx.insert(crashBets).values({ userId, roundId, currency: normalizedCurrency, stake: stake.toFixed(6), status: "pending" });
-    return { id: Number(inserted[0].insertId), roundId, stake, status: "pending" as const };
+    if (
+      !round ||
+      round.status !== "running" ||
+      isCrashed(Number(round.crashMultiplier), round.startedAt)
+    )
+      throw new Error("ROUND_CLOSED");
+    const updated = await tx
+      .update(wallets)
+      .set({
+        availableBalance: sql`${wallets.availableBalance} - ${stake}`,
+        lockedBalance: sql`${wallets.lockedBalance} + ${stake}`,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(wallets.userId, userId),
+          eq(wallets.currency, normalizedCurrency),
+          gte(wallets.availableBalance, stake.toFixed(6))
+        )
+      );
+    if (!Number(updated[0]?.affectedRows))
+      throw new Error("INSUFFICIENT_BALANCE");
+    const inserted = await tx
+      .insert(crashBets)
+      .values({
+        userId,
+        roundId,
+        currency: normalizedCurrency,
+        stake: stake.toFixed(6),
+        status: "pending",
+      });
+    return {
+      id: Number(inserted[0].insertId),
+      roundId,
+      stake,
+      status: "pending" as const,
+    };
   });
 }
 
 export async function cashoutCrashBet(userId: number, crashBetId: number) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const rows = await tx
       .select({ bet: crashBets, round: crashRounds })
       .from(crashBets)
@@ -192,11 +310,46 @@ export async function cashoutCrashBet(userId: number, crashBetId: number) {
     const row = rows[0];
     if (!row || row.bet.status !== "pending") throw new Error("BET_CLOSED");
     const current = multiplierAt(row.round.startedAt);
-    if (row.round.status !== "running" || current >= Number(row.round.crashMultiplier)) throw new Error("ROUND_CRASHED");
+    if (
+      row.round.status !== "running" ||
+      current >= Number(row.round.crashMultiplier)
+    )
+      throw new Error("ROUND_CRASHED");
     const payout = Number((Number(row.bet.stake) * current).toFixed(6));
-    await tx.update(crashBets).set({ status: "won", cashoutMultiplier: current.toFixed(4), payout: payout.toFixed(6), updatedAt: new Date() }).where(eq(crashBets.id, crashBetId));
-    await tx.update(wallets).set({ availableBalance: sql`${wallets.availableBalance} + ${payout}`, lockedBalance: sql`${wallets.lockedBalance} - ${row.bet.stake}`, updatedAt: new Date() }).where(and(eq(wallets.userId, userId), eq(wallets.currency, row.bet.currency)));
-    await tx.insert(walletTransactions).values({ userId, type: "crash_settlement", status: "confirmed", currency: row.bet.currency, amount: payout.toFixed(6), referenceId: `crashBet:${crashBetId}` });
-    return { id: crashBetId, payout, multiplier: current, status: "won" as const };
+    await tx
+      .update(crashBets)
+      .set({
+        status: "won",
+        cashoutMultiplier: current.toFixed(4),
+        payout: payout.toFixed(6),
+        updatedAt: new Date(),
+      })
+      .where(eq(crashBets.id, crashBetId));
+    await tx
+      .update(wallets)
+      .set({
+        availableBalance: sql`${wallets.availableBalance} + ${payout}`,
+        lockedBalance: sql`${wallets.lockedBalance} - ${row.bet.stake}`,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(eq(wallets.userId, userId), eq(wallets.currency, row.bet.currency))
+      );
+    await tx
+      .insert(walletTransactions)
+      .values({
+        userId,
+        type: "crash_settlement",
+        status: "confirmed",
+        currency: row.bet.currency,
+        amount: payout.toFixed(6),
+        referenceId: `crashBet:${crashBetId}`,
+      });
+    return {
+      id: crashBetId,
+      payout,
+      multiplier: current,
+      status: "won" as const,
+    };
   });
 }

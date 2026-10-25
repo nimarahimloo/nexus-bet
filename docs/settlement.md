@@ -4,12 +4,12 @@ How a pending ticket becomes `won`, `lost` or `void`, and how the money follows 
 
 ## Pieces
 
-| File | Responsibility |
-|---|---|
-| `server/settlement.ts` | Pure rules: which side a selection backs, per-leg outcome, ticket outcome, ledger arithmetic. No I/O. |
-| `server/fixtureResults.ts` | API-Football `fixtures?id=` reader + status mapping. Every failure becomes `state: "unknown"`. |
-| `server/db/settlement.ts` | `settlePendingSportsBets()` — reads pending tickets, resolves fixtures, applies the transition in a transaction. |
-| `server/settlementWorker.ts` | `POST /api/scheduled/settleSportsBets`, cron-auth only, supports `dryRun`. |
+| File                         | Responsibility                                                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `server/settlement.ts`       | Pure rules: which side a selection backs, per-leg outcome, ticket outcome, ledger arithmetic. No I/O.            |
+| `server/fixtureResults.ts`   | API-Football `fixtures?id=` reader + status mapping. Every failure becomes `state: "unknown"`.                   |
+| `server/db/settlement.ts`    | `settlePendingSportsBets()` — reads pending tickets, resolves fixtures, applies the transition in a transaction. |
+| `server/settlementWorker.ts` | `POST /api/scheduled/settleSportsBets`, cron-auth only, supports `dryRun`.                                       |
 
 ## Rules (v1)
 
@@ -22,7 +22,7 @@ How a pending ticket becomes `won`, `lost` or `void`, and how the money follows 
   - `won` → `available += potentialReturn`, `locked -= stake`
   - `lost` → `locked -= stake`
   - `void` → `available += stake`, `locked -= stake`
-  Each transition writes a `walletTransactions` row (`type = bet_settlement`, `referenceId = ticketCode`), a user notification, and releases the ticket in the same transaction.
+    Each transition writes a `walletTransactions` row (`type = bet_settlement`, `referenceId = ticketCode`), a user notification, and releases the ticket in the same transaction.
 
 ## Idempotency
 
@@ -44,7 +44,7 @@ Record the returned `taskUid` alongside the other heartbeat jobs in `blueprint_e
 
 ## Operations
 
-Dry run — reports what *would* settle, moves nothing:
+Dry run — reports what _would_ settle, moves nothing:
 
 ```bash
 curl -X POST "https://<host>/api/scheduled/settleSportsBets?dryRun=1&limit=200" \
@@ -66,7 +66,9 @@ Response shape:
   "unresolvedFixtures": 0,
   "skipped": 0,
   "failed": 0,
-  "decisions": [{ "ticketCode": "NX-AB12CD34EF56", "status": "won", "ledgerAmount": 21.5 }]
+  "decisions": [
+    { "ticketCode": "NX-AB12CD34EF56", "status": "won", "ledgerAmount": 21.5 }
+  ]
 }
 ```
 

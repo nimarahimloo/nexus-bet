@@ -96,12 +96,8 @@
           "name": "bets_userId_users_id_fk",
           "tableFrom": "bets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -109,17 +105,13 @@
       "compositePrimaryKeys": {
         "bets_id": {
           "name": "bets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "bets_ticketCode_unique": {
           "name": "bets_ticketCode_unique",
-          "columns": [
-            "ticketCode"
-          ]
+          "columns": ["ticketCode"]
         }
       },
       "checkConstraint": {}
@@ -185,12 +177,8 @@
           "name": "rewardLedger_userId_users_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -198,12 +186,8 @@
           "name": "rewardLedger_spinId_wheelSpins_id_fk",
           "tableFrom": "rewardLedger",
           "tableTo": "wheelSpins",
-          "columnsFrom": [
-            "spinId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["spinId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -211,17 +195,13 @@
       "compositePrimaryKeys": {
         "rewardLedger_id": {
           "name": "rewardLedger_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "rewardLedger_spinId_unique": {
           "name": "rewardLedger_spinId_unique",
-          "columns": [
-            "spinId"
-          ]
+          "columns": ["spinId"]
         }
       },
       "checkConstraint": {}
@@ -303,17 +283,13 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ]
+          "columns": ["openId"]
         }
       },
       "checkConstraint": {}
@@ -383,12 +359,8 @@
           "name": "wallets_userId_users_id_fk",
           "tableFrom": "wallets",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -396,17 +368,13 @@
       "compositePrimaryKeys": {
         "wallets_id": {
           "name": "wallets_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "wallets_userId_unique": {
           "name": "wallets_userId_unique",
-          "columns": [
-            "userId"
-          ]
+          "columns": ["userId"]
         }
       },
       "checkConstraint": {}
@@ -476,10 +444,7 @@
       "indexes": {
         "wheelSpins_user_day_unique": {
           "name": "wheelSpins_user_day_unique",
-          "columns": [
-            "userId",
-            "spinDate"
-          ],
+          "columns": ["userId", "spinDate"],
           "isUnique": true
         }
       },
@@ -488,12 +453,8 @@
           "name": "wheelSpins_userId_users_id_fk",
           "tableFrom": "wheelSpins",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -501,9 +462,7 @@
       "compositePrimaryKeys": {
         "wheelSpins_id": {
           "name": "wheelSpins_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

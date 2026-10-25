@@ -4,7 +4,9 @@ import { formatMatchKickoff, formatMatchOdds } from "@shared/sportsDisplay";
 
 function apiTime(time: string) {
   const [hour, minute] = time.split(":").map(Number);
-  return Number.isFinite(hour) && Number.isFinite(minute) ? formatMatchKickoff(hour, minute) : time;
+  return Number.isFinite(hour) && Number.isFinite(minute)
+    ? formatMatchKickoff(hour, minute)
+    : time;
 }
 
 function isLiveStatus(status: string) {
@@ -22,7 +24,10 @@ export function SportsbookMatchCard({
 }: {
   match: MatchCardData;
   onSelect: (match: MatchCardData, isApi: boolean) => void;
-  onAdd: (match: MatchCardData, market: MatchCardData["markets"][number]) => void;
+  onAdd: (
+    match: MatchCardData,
+    market: MatchCardData["markets"][number]
+  ) => void;
   watched: boolean;
   onToggleWatch: (match: MatchCardData) => void;
   selectedIds?: Set<string>;
@@ -33,7 +38,7 @@ export function SportsbookMatchCard({
     <article
       className={`sb-match glass-panel match-clickable ${live ? "is-live" : ""} ${preview ? "is-preview" : ""}`}
       onClick={() => onSelect(match, true)}
-      onKeyDown={(event) => {
+      onKeyDown={event => {
         if (event.key === "Enter" || event.key === " ") onSelect(match, true);
       }}
       role="button"
@@ -46,14 +51,20 @@ export function SportsbookMatchCard({
               <span className="sb-live-dot" /> زنده
             </span>
           ) : null}
-          <span className={`sample-chip ${preview ? "preview-chip" : ""}`}>{preview ? "نمونه" : match.league}</span>
-          {!live && !preview ? <span className="sb-kickoff">{apiTime(match.time)}</span> : null}
-          {live && match.minute ? <span className="sb-minute">{match.minute}</span> : null}
+          <span className={`sample-chip ${preview ? "preview-chip" : ""}`}>
+            {preview ? "نمونه" : match.league}
+          </span>
+          {!live && !preview ? (
+            <span className="sb-kickoff">{apiTime(match.time)}</span>
+          ) : null}
+          {live && match.minute ? (
+            <span className="sb-minute">{match.minute}</span>
+          ) : null}
         </div>
         <button
           type="button"
           className={`watch-toggle ${watched ? "is-watched" : ""}`}
-          onClick={(event) => {
+          onClick={event => {
             event.stopPropagation();
             onToggleWatch(match);
           }}
@@ -66,17 +77,23 @@ export function SportsbookMatchCard({
       <div className="sb-match-body">
         <div className="sb-teams">
           <div className="sb-team">
-            <span className="sport-logo">{match.homeLogo ? <img src={match.homeLogo} alt="" /> : "⚽"}</span>
+            <span className="sport-logo">
+              {match.homeLogo ? <img src={match.homeLogo} alt="" /> : "⚽"}
+            </span>
             <b>{match.home}</b>
           </div>
           <div className="sb-team">
-            <span className="sport-logo">{match.awayLogo ? <img src={match.awayLogo} alt="" /> : "⚽"}</span>
+            <span className="sport-logo">
+              {match.awayLogo ? <img src={match.awayLogo} alt="" /> : "⚽"}
+            </span>
             <b>{match.away}</b>
           </div>
         </div>
         <div className="sb-score-col" aria-hidden={!match.score}>
           {match.score ? (
-            match.score.split(/[-:]/).map((part, i) => <strong key={i}>{part.trim()}</strong>)
+            match.score
+              .split(/[-:]/)
+              .map((part, i) => <strong key={i}>{part.trim()}</strong>)
           ) : (
             <span className="sb-vs">VS</span>
           )}
@@ -84,7 +101,7 @@ export function SportsbookMatchCard({
       </div>
       <div className="sb-odds-row" role="group" aria-label="بازارهای اصلی">
         {match.markets.length ? (
-          match.markets.slice(0, 3).map((market) => {
+          match.markets.slice(0, 3).map(market => {
             const sid = `${match.id}-${market.label}`;
             const selected = selectedIds?.has(sid);
             return (
@@ -92,7 +109,7 @@ export function SportsbookMatchCard({
                 key={market.name}
                 type="button"
                 className={`sb-odds-btn ${selected ? "is-selected" : ""}`}
-                onClick={(event) => {
+                onClick={event => {
                   event.stopPropagation();
                   onAdd(match, market);
                 }}
@@ -100,7 +117,9 @@ export function SportsbookMatchCard({
                 aria-label={`${market.label} ضریب ${formatMatchOdds(market.odds)}`}
               >
                 <span className="sb-odds-label">{market.label}</span>
-                <span className="sb-odds-value">{formatMatchOdds(market.odds)}</span>
+                <span className="sb-odds-value">
+                  {formatMatchOdds(market.odds)}
+                </span>
               </button>
             );
           })

@@ -25,10 +25,16 @@ async function main() {
     process.exit(1);
   }
 
-  const rows = await db.select({ id: users.id, name: users.name, role: users.role }).from(users).where(eq(users.name, username)).limit(1);
+  const rows = await db
+    .select({ id: users.id, name: users.name, role: users.role })
+    .from(users)
+    .where(eq(users.name, username))
+    .limit(1);
   const user = rows[0];
   if (!user) {
-    console.error(`No user named "${username}". Sign up normally first, then promote.`);
+    console.error(
+      `No user named "${username}". Sign up normally first, then promote.`
+    );
     process.exit(1);
   }
   if (user.role === "admin") {
@@ -37,10 +43,12 @@ async function main() {
   }
 
   await db.update(users).set({ role: "admin" }).where(eq(users.id, user.id));
-  console.log(`Promoted ${username} (id ${user.id}) to admin. Sign out and back in to refresh the session role.`);
+  console.log(
+    `Promoted ${username} (id ${user.id}) to admin. Sign out and back in to refresh the session role.`
+  );
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });

@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("Watchlist and Smart Alerts contract", () => {
   it("defines persistent watchlist and alert tables with user ownership", () => {
@@ -10,7 +11,9 @@ describe("Watchlist and Smart Alerts contract", () => {
     expect(schema).toContain("userEventUnique");
     expect(schema).toContain("export const sportAlertPreferences");
     expect(schema).toContain("userWatchAlertUnique");
-    expect(schema).toContain('mysqlEnum("alertType", ["kickoff", "odds_change", "result"])');
+    expect(schema).toContain(
+      'mysqlEnum("alertType", ["kickoff", "odds_change", "result"])'
+    );
   });
 
   it("keeps all watchlist mutations scoped to the authenticated user", () => {
@@ -29,7 +32,9 @@ describe("Watchlist and Smart Alerts contract", () => {
 
   it("does not fabricate background notifications before a real trigger exists", () => {
     const executionMap = read("../blueprint_execution.md");
-    expect(executionMap).toContain("Social rooms, presence, private challenges");
+    expect(executionMap).toContain(
+      "Social rooms, presence, private challenges"
+    );
     expect(executionMap).toContain("without product decision");
     expect(executionMap).toContain("Deferred");
   });

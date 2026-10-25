@@ -6,8 +6,12 @@ describe("bounded reward contracts", () => {
     const segments = getWheelSegments();
     expect(totalWeight()).toBe(100);
     expect(segments).toHaveLength(WHEEL_REWARDS.length);
-    expect(segments.reduce((sum, segment) => sum + segment.chancePercent, 0)).toBe(100);
-    expect(segments.every((segment) => segment.weight > 0 && segment.chancePercent > 0)).toBe(true);
+    expect(
+      segments.reduce((sum, segment) => sum + segment.chancePercent, 0)
+    ).toBe(100);
+    expect(
+      segments.every(segment => segment.weight > 0 && segment.chancePercent > 0)
+    ).toBe(true);
   });
 
   it("keeps the activity reward contract non-wager and bounded", () => {

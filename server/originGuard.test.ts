@@ -1,20 +1,35 @@
 import { describe, expect, it, vi } from "vitest";
 import type { NextFunction, Request, Response } from "express";
-import { allowedHostsFromPublicUrl, hostFromOrigin, isSameOrigin, originGuard } from "./_core/originGuard";
+import {
+  allowedHostsFromPublicUrl,
+  hostFromOrigin,
+  isSameOrigin,
+  originGuard,
+} from "./_core/originGuard";
 import { getSessionCookieOptions } from "./_core/cookies";
 
 function fakeRes() {
-  const calls: { status?: number; body?: unknown; next: boolean } = { next: false };
+  const calls: { status?: number; body?: unknown; next: boolean } = {
+    next: false,
+  };
   const res = {
-    status(code: number) { calls.status = code; return this; },
-    json(body: unknown) { calls.body = body; return this; },
+    status(code: number) {
+      calls.status = code;
+      return this;
+    },
+    json(body: unknown) {
+      calls.body = body;
+      return this;
+    },
   };
   return { calls, res: res as unknown as Response };
 }
 
 function run(method: string, headers: Record<string, string | undefined>) {
   const { calls, res } = fakeRes();
-  const next = (() => { calls.next = true; }) as NextFunction;
+  const next = (() => {
+    calls.next = true;
+  }) as NextFunction;
   originGuard([])({ method, headers } as unknown as Request, res, next);
   return calls;
 }
@@ -41,8 +56,14 @@ describe("origin resolution", () => {
   });
 
   it("accepts hosts declared by the public URL configuration", () => {
-    expect(isSameOrigin("https://app.example.com", "internal.proxy", ["app.example.com"])).toBe(true);
-    expect(allowedHostsFromPublicUrl("https://app.example.com/")).toEqual(["app.example.com"]);
+    expect(
+      isSameOrigin("https://app.example.com", "internal.proxy", [
+        "app.example.com",
+      ])
+    ).toBe(true);
+    expect(allowedHostsFromPublicUrl("https://app.example.com/")).toEqual([
+      "app.example.com",
+    ]);
     expect(allowedHostsFromPublicUrl("")).toEqual([]);
     expect(allowedHostsFromPublicUrl(undefined)).toEqual([]);
   });
@@ -50,21 +71,32 @@ describe("origin resolution", () => {
 
 describe("origin guard middleware", () => {
   it("blocks a cross-site POST before any route runs", () => {
-    const calls = run("POST", { origin: "https://evil.example", host: "nexus-bet.app" });
+    const calls = run("POST", {
+      origin: "https://evil.example",
+      host: "nexus-bet.app",
+    });
     expect(calls.next).toBe(false);
     expect(calls.status).toBe(403);
     expect(calls.body).toEqual({ error: "CROSS_ORIGIN_BLOCKED" });
   });
 
   it("allows a same-site POST", () => {
-    const calls = run("POST", { origin: "https://nexus-bet.app", host: "nexus-bet.app" });
+    const calls = run("POST", {
+      origin: "https://nexus-bet.app",
+      host: "nexus-bet.app",
+    });
     expect(calls.next).toBe(true);
     expect(calls.status).toBeUndefined();
   });
 
   it("ignores safe methods so reads keep working", () => {
-    expect(run("GET", { origin: "https://evil.example", host: "nexus-bet.app" }).next).toBe(true);
-    expect(run("OPTIONS", { origin: "https://evil.example", host: "nexus-bet.app" }).next).toBe(true);
+    expect(
+      run("GET", { origin: "https://evil.example", host: "nexus-bet.app" }).next
+    ).toBe(true);
+    expect(
+      run("OPTIONS", { origin: "https://evil.example", host: "nexus-bet.app" })
+        .next
+    ).toBe(true);
   });
 
   it("allows credentialled callers that send no Origin (cron, curl, webhooks)", () => {
@@ -73,21 +105,35 @@ describe("origin guard middleware", () => {
 
   it("honours the configured public host behind a proxy", () => {
     const { calls, res } = fakeRes();
-    const next = vi.fn(() => { calls.next = true; }) as unknown as NextFunction;
-    originGuard(["app.example.com"])({
-      method: "POST",
-      headers: { origin: "https://app.example.com", "x-forwarded-host": "internal-lb" },
-    } as unknown as Request, res, next);
+    const next = vi.fn(() => {
+      calls.next = true;
+    }) as unknown as NextFunction;
+    originGuard(["app.example.com"])(
+      {
+        method: "POST",
+        headers: {
+          origin: "https://app.example.com",
+          "x-forwarded-host": "internal-lb",
+        },
+      } as unknown as Request,
+      res,
+      next
+    );
     expect(next).toHaveBeenCalled();
   });
 });
 
 describe("session cookie policy", () => {
-  const request = (protocol: string, hostname: string, headers: Record<string, string> = {}) => ({
-    protocol,
-    hostname,
-    headers,
-  }) as unknown as Request;
+  const request = (
+    protocol: string,
+    hostname: string,
+    headers: Record<string, string> = {}
+  ) =>
+    ({
+      protocol,
+      hostname,
+      headers,
+    }) as unknown as Request;
 
   it("never emits SameSite=None, even on a public https host", () => {
     const options = getSessionCookieOptions(request("https", "nexus-bet.app"));
@@ -103,7 +149,9 @@ describe("session cookie policy", () => {
   });
 
   it("treats a TLS-terminating proxy as secure", () => {
-    const options = getSessionCookieOptions(request("http", "nexus-bet.app", { "x-forwarded-proto": "https" }));
+    const options = getSessionCookieOptions(
+      request("http", "nexus-bet.app", { "x-forwarded-proto": "https" })
+    );
     expect(options.secure).toBe(true);
   });
 });
