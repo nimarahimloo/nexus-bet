@@ -18,13 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The repo is pnpm-managed (pnpm-lock.yaml + packageManager field).
+      # setup-node's cache must match the package manager or the job fails fast.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Reject committed conflict markers
         run: |
@@ -34,10 +40,10 @@ jobs:
           fi
 
       - name: Typecheck
-        run: npm run check
+        run: pnpm run check
 
       - name: Unit tests
-        run: npm test
+        run: pnpm test
 
       - name: Production build
-        run: npm run build
+        run: pnpm run build
