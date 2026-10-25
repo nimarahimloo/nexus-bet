@@ -4,10 +4,7 @@ import { registerOAuthRoutes } from "./_core/oauth";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerNowPaymentsWebhook } from "./nowpaymentsWebhook";
-<<<<<<< ours
-=======
 import { registerMarketSyncRoutes } from "./marketSyncWorker";
->>>>>>> theirs
 import { registerSettlementRoutes } from "./settlementWorker";
 import { registerSportAlertRoutes } from "./sportAlerts";
 import { ENV } from "./_core/env";
@@ -36,10 +33,7 @@ export function createApp(): Express {
   registerNowPaymentsWebhook(app);
   registerSportAlertRoutes(app);
   registerSettlementRoutes(app);
-<<<<<<< ours
-=======
   registerMarketSyncRoutes(app);
->>>>>>> theirs
 
   app.use(
     "/api/trpc",
