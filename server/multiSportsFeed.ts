@@ -77,6 +77,7 @@ function mapGenericGame(game: GenericGame, config: SportConfig): MatchCardData |
     sport: config.label,
     status: currentStatus,
     time: date ? new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit" }).format(new Date(date)) : game.time ?? "—",
+    startsAt: date,
     minute: currentStatus === "زنده" && elapsed != null ? `${faDigits(elapsed)}′` : undefined,
     home: home.name,
     homeLogo: home.logo ?? "",

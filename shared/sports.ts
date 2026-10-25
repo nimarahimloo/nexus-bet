@@ -18,6 +18,8 @@ export type MatchCardData = {
   sport: string;
   status: "زنده" | "امروز" | "فردا" | "نمونه";
   time: string;
+  /** ISO kickoff from the feed, when available. Used for market closing, never rendered. */
+  startsAt?: string;
   minute?: string;
   home: string;
   homeLogo: string;
@@ -51,6 +53,7 @@ export function mapSportsFixture(fixture: SportsApiFixture): MatchCardData | nul
     sport: "فوتبال",
     status,
     time: faTime(fixture.fixture?.date),
+    startsAt: fixture.fixture?.date,
     minute: isLive && fixture.fixture?.status?.elapsed != null ? `${toFaDigits(fixture.fixture.status.elapsed)}′` : undefined,
     home,
     homeLogo: fixture.teams?.home?.logo ?? "",

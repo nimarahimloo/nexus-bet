@@ -4,9 +4,14 @@ import { registerOAuthRoutes } from "./_core/oauth";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerNowPaymentsWebhook } from "./nowpaymentsWebhook";
+<<<<<<< ours
+=======
+import { registerMarketSyncRoutes } from "./marketSyncWorker";
+>>>>>>> theirs
 import { registerSettlementRoutes } from "./settlementWorker";
 import { registerSportAlertRoutes } from "./sportAlerts";
 import { ENV } from "./_core/env";
+import { allowedHostsFromPublicUrl, originGuard } from "./_core/originGuard";
 import { nowPaymentsReadiness } from "./nowpayments";
 import { getDb } from "./db";
 
@@ -23,10 +28,18 @@ export function createApp(): Express {
     }),
   );
 
+  // CSRF layer two: cross-origin state-changing requests are rejected before
+  // any route sees them. SameSite=Lax on the session cookie is layer one.
+  app.use("/api", originGuard(allowedHostsFromPublicUrl(ENV.appPublicUrl)));
+
   registerOAuthRoutes(app);
   registerNowPaymentsWebhook(app);
   registerSportAlertRoutes(app);
   registerSettlementRoutes(app);
+<<<<<<< ours
+=======
+  registerMarketSyncRoutes(app);
+>>>>>>> theirs
 
   app.use(
     "/api/trpc",

@@ -40,7 +40,7 @@ export function InPlatformAuth({ open, mode, onClose, onModeChange }: { open: bo
     setNotice(null);
     if (mode === "forgot") {
       if (!resetRequested) { requestReset.mutate({ username }); return; }
-      resetPassword.mutate({ code: resetCode, password });
+      resetPassword.mutate({ username, code: resetCode, password });
       return;
     }
     const mutation = mode === "login" ? login : signup;

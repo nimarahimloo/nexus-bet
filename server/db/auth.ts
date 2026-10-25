@@ -105,28 +105,66 @@ export async function touchLocalUser(userId: number) {
   await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
 }
 
+export const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
+export const MAX_RESET_ATTEMPTS = 5;
+
 export async function createPasswordResetToken(userId: number, tokenHash: string) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
-  await db.insert(passwordResetTokens).values({ userId, tokenHash, expiresAt });
-  return { expiresAt };
+  const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+  return db.transaction(async (tx) => {
+    // One live code per account: issuing a new one retires the previous codes,
+    // so a leaked code stops working the moment the user asks again.
+    await tx.update(passwordResetTokens).set({ consumedAt: new Date() }).where(and(eq(passwordResetTokens.userId, userId), isNull(passwordResetTokens.consumedAt)));
+    await tx.insert(passwordResetTokens).values({ userId, tokenHash, expiresAt });
+    return { expiresAt };
+  });
 }
 
-export async function resetLocalPassword(input: { tokenHash: string; passwordHash: string }) {
+/**
+ * Redeems a reset code for a specific account.
+ *
+ * The code alone is not enough: the caller must name the username, the token
+ * must belong to that account, and each wrong guess burns one of
+ * MAX_RESET_ATTEMPTS on the token — so guessing cannot be spread across IPs.
+ */
+export async function resetLocalPassword(input: { username: string; tokenHash: string; passwordHash: string }) {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   return db.transaction(async (tx) => {
-    const rows = await tx.select().from(passwordResetTokens).where(eq(passwordResetTokens.tokenHash, input.tokenHash)).limit(1);
-    const token = rows[0];
-    if (!token || token.consumedAt || token.expiresAt.getTime() <= Date.now()) throw new Error("INVALID_RESET_TOKEN");
-    const credentialRows = await tx.select().from(localCredentials).where(eq(localCredentials.userId, token.userId)).limit(1);
+    const credentialRows = await tx.select().from(localCredentials).where(eq(localCredentials.username, input.username)).limit(1);
     const credential = credentialRows[0];
-    if (!credential) throw new Error("CREDENTIAL_NOT_FOUND");
-    const claimed = await tx.update(passwordResetTokens).set({ consumedAt: new Date() }).where(and(eq(passwordResetTokens.id, token.id), isNull(passwordResetTokens.consumedAt)));
+    if (!credential) throw new Error("INVALID_RESET_TOKEN");
+
+    const rows = await tx
+      .select()
+      .from(passwordResetTokens)
+      .where(and(eq(passwordResetTokens.userId, credential.userId), isNull(passwordResetTokens.consumedAt)))
+      .orderBy(desc(passwordResetTokens.createdAt))
+      .limit(1);
+    const token = rows[0];
+    if (!token) throw new Error("INVALID_RESET_TOKEN");
+    if (token.expiresAt.getTime() <= Date.now()) throw new Error("INVALID_RESET_TOKEN");
+    if (token.attempts >= MAX_RESET_ATTEMPTS) throw new Error("RESET_TOKEN_LOCKED");
+
+    if (token.tokenHash !== input.tokenHash) {
+      const next = token.attempts + 1;
+      const exhausted = next >= MAX_RESET_ATTEMPTS;
+      await tx
+        .update(passwordResetTokens)
+        .set({ attempts: next, ...(exhausted ? { consumedAt: new Date() } : {}) })
+        .where(eq(passwordResetTokens.id, token.id));
+      throw new Error(exhausted ? "RESET_TOKEN_LOCKED" : "INVALID_RESET_TOKEN");
+    }
+
+    const claimed = await tx
+      .update(passwordResetTokens)
+      .set({ consumedAt: new Date() })
+      .where(and(eq(passwordResetTokens.id, token.id), isNull(passwordResetTokens.consumedAt)));
     if (!Number(claimed[0]?.affectedRows)) throw new Error("INVALID_RESET_TOKEN");
+
     await tx.update(localCredentials).set({ passwordHash: input.passwordHash, passwordUpdatedAt: new Date() }).where(eq(localCredentials.id, credential.id));
-    const userRows = await tx.select().from(users).where(eq(users.id, token.userId)).limit(1);
+    const userRows = await tx.select().from(users).where(eq(users.id, credential.userId)).limit(1);
     if (!userRows[0]) throw new Error("USER_NOT_FOUND");
     return userRows[0];
   });

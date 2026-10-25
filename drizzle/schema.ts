@@ -54,6 +54,8 @@ export const passwordResetTokens = mysqlTable("passwordResetTokens", {
   tokenHash: varchar("tokenHash", { length: 128 }).notNull(),
   expiresAt: timestamp("expiresAt").notNull(),
   consumedAt: timestamp("consumedAt"),
+  /** Failed redemption attempts; the token dies at MAX_RESET_ATTEMPTS. */
+  attempts: int("attempts").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
   tokenUnique: uniqueIndex("passwordResetTokens_hash_unique").on(table.tokenHash),
@@ -325,3 +327,47 @@ export const crashBets = mysqlTable("crashBets", {
 
 export type CrashRound = typeof crashRounds.$inferSelect;
 export type CrashBet = typeof crashBets.$inferSelect;
+
+/**
+ * Server-side price book for settleable markets.
+ *
+ * Populated from the sports feed by the `syncSportsMarkets` cron. `bet.place`
+ * prices every selection from this table and never from the request body, so a
+ * crafted client cannot choose its own odds.
+ */
+export const sportsMarkets = mysqlTable("sportsMarkets", {
+  id: int("id").autoincrement().primaryKey(),
+  fixtureId: varchar("fixtureId", { length: 64 }).notNull(),
+  /** Canonical outcome code: "1" | "X" | "2". */
+  code: varchar("code", { length: 8 }).notNull(),
+  name: varchar("name", { length: 96 }).notNull(),
+  price: decimal("price", { precision: 8, scale: 4 }).notNull(),
+  sport: varchar("sport", { length: 32 }).default("football").notNull(),
+  league: varchar("league", { length: 96 }),
+  home: varchar("home", { length: 96 }),
+  away: varchar("away", { length: 96 }),
+  /** Kickoff, when the feed provides it. */
+  startsAt: timestamp("startsAt"),
+  /** Raw feed status, e.g. "زنده", "امروز", "نمونه". */
+  matchStatus: varchar("matchStatus", { length: 24 }),
+  capturedAt: timestamp("capturedAt").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  fixtureCodeUnique: uniqueIndex("sportsMarkets_fixture_code_unique").on(table.fixtureId, table.code),
+}));
+
+export type SportsMarket = typeof sportsMarkets.$inferSelect;
+
+/**
+ * Fixed-window counters for auth and AI-throttling.
+ * One row per bucket key; `windowStart` is the floor of the current window so a
+ * rollover resets the count without a cleanup job.
+ */
+export const rateLimits = mysqlTable("rateLimits", {
+  bucketKey: varchar("bucketKey", { length: 191 }).primaryKey(),
+  windowStart: timestamp("windowStart").notNull(),
+  hits: int("hits").notNull().default(0),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RateLimit = typeof rateLimits.$inferSelect;
