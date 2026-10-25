@@ -492,11 +492,6 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] افزودن endpoint کرون‌محور `POST /api/scheduled/settleSportsBets` با احراز هویت cron-only و حالت `dryRun`.
 - [x] افزودن ۲۲ تست رفتاری برای تسویه، باطل‌شدن، لغو رویداد و محاسبات ledger.
 - [ ] ثبت Heartbeat پنج‌دقیقه‌ای `nexus-sports-settlement` در محیط عملیاتی و اجرای dry-run اولیه.
-<<<<<<< HEAD
-=======
-<<<<<<< ours
-=======
->>>>>>> dee75e4 (Fixed)
 
 ## P0 integrity pass — 2026-10-25
 - [x] قیمت‌گذاری سمت سرور: جدول `sportsMarkets`، سینک از فید و محاسبهٔ ضریب/بازده فقط از قیمت سرور (بدون اعتماد به ورودی کلاینت).
@@ -506,8 +501,6 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] كوكی نشست روی SameSite=Lax و گارد Origin برای درخواست‌های تغییردهنده روی `/api`.
 - [x] افزودن ۲۵ تست رفتاری برای قیمت‌گذاری، پنجرهٔ محدودیت نرخ و گارد Origin.
 - [ ] اجرای migration 0017 و ثبت کرون `nexus-sports-markets` در محیط عملیاتی.
-<<<<<<< HEAD
-=======
 
 ## Release readiness pass — 2026-10-25
 - [x] حذف پلاگین توسعهٔ jsx-loc و وابستگی‌های مرده از package.json؛ نصب سادهٔ `npm install` و `npm ci` بدون `--legacy-peer-deps` کار می‌کند و lockfile اضافه شد.
@@ -518,5 +511,3 @@ Nexus AI در این نسخه به‌صورت یک موتور پیشنهادده
 - [x] اصلاح مسیر API در Vercel (catch-all با حفظ زیرمسیر) و حذف installCommand غیرضروری.
 - [x] افزودن CI (typecheck + تست + بیلد + گارد conflict marker) و README عملیاتی.
 - [ ] اجرای migration 0017، ثبت دو کرون و تست دود با دیتابیس واقعی.
->>>>>>> theirs
->>>>>>> dee75e4 (Fixed)

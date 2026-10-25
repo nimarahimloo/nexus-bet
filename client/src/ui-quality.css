@@ -1,0 +1,314 @@
+/* ==========================================================================
+   UI quality layer — imported last, so it settles the platform-level rules
+   that the feature layers kept re-deciding (stacking, tap targets, form type,
+   tablet layout, overflow).
+
+   Rules here are deliberately narrow: one stacking scale, one tap-target
+   floor, one control type scale, and a tablet band. No new decoration.
+   ========================================================================== */
+
+:root {
+  /* Single stacking scale. Anything full-screen sits above the dock; modals
+     sit above sheets; toasts sit above everything. */
+  --z-dock: 30;
+  --z-launcher: 31;
+  --z-sheet: 60;
+  --z-modal: 70;
+  --z-support: 80;
+  --z-toast: 100;
+
+  --tap: 44px;
+  --control-font: 1rem;
+  --control-font-desktop: 0.9375rem;
+}
+
+/* ---------------------------------------------------------------- overflow */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* `clip` stops horizontal drift without turning body into a scroll container
+   (which would break `position: sticky` on the desktop bet slip). */
+html,
+body {
+  overflow-x: clip;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* Grid/flex children default to min-width:auto, which is what pushes wide
+   odds rows and long team names past the viewport edge. */
+.content-grid > *,
+.matches-layout > *,
+.sb-matches-layout > *,
+.hero > *,
+.subpage-hero > *,
+.match-card,
+.sb-match,
+.match-body > * {
+  min-width: 0;
+}
+
+.sb-team,
+.match-team,
+.teams b,
+.subpage-copy h1,
+.hero-copy h1 {
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------------- stacking */
+.mobile-bottom-nav {
+  z-index: var(--z-dock) !important;
+}
+
+.mobile-slip-launch {
+  z-index: var(--z-launcher) !important;
+}
+
+.support-launcher {
+  z-index: var(--z-launcher) !important;
+}
+
+/* A bet slip or prediction sheet must cover the dock, not the other way round. */
+.bet-sheet-layer,
+.prediction-sheet-layer {
+  z-index: var(--z-sheet) !important;
+}
+
+.modal-backdrop,
+.match-modal-backdrop,
+.vip-detail-backdrop,
+.overlay-backdrop,
+.support-layer {
+  z-index: var(--z-modal) !important;
+}
+
+.notifications-backdrop {
+  z-index: calc(var(--z-modal) - 1) !important;
+}
+
+.notifications-popover {
+  z-index: var(--z-modal) !important;
+}
+
+/* ------------------------------------------------------------------- focus */
+:where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--nx-yellow, #f2de1a) !important;
+  outline-offset: 2px !important;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--nx-yellow, #f2de1a) !important;
+  outline-offset: 1px !important;
+}
+
+/* ------------------------------------------------------------------- forms */
+/* Controls were 9–10px. Below 16px iOS zooms the viewport on focus, which is
+   also the single most common "mobile form feels broken" complaint. */
+@media (max-width: 720px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: var(--control-font) !important;
+    min-height: var(--tap);
+  }
+}
+
+@media (min-width: 721px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: var(--control-font-desktop) !important;
+    min-height: 42px;
+  }
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 0.6;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------- tap targets */
+@media (pointer: coarse) {
+  a,
+  button {
+    touch-action: manipulation;
+  }
+
+  .mobile-bottom-nav a,
+  .nav-link,
+  .filter-pill,
+  .sample-chip,
+  .sb-odds-btn,
+  .segmented button,
+  .tab-button {
+    min-height: var(--tap);
+  }
+}
+
+/* Hover-only affordances misfire on touch (they stick after a tap). */
+@media (hover: none) {
+  .match-card:hover,
+  .sb-match:hover,
+  .feature-hub-card:hover,
+  .standalone-card:hover,
+  .ai-pick-card:hover {
+    transform: none !important;
+    border-color: var(--nx-border, rgba(255, 255, 255, 0.08)) !important;
+  }
+}
+
+/* ---------------------------------------------------------------- safe area */
+.mobile-slip-launch {
+  bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+}
+
+.bet-sheet {
+  max-height: min(680px, calc(100dvh - 24px));
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+/* On phones the support bubble must clear the dock, not sit on top of it. */
+@media (max-width: 720px) {
+  .support-launcher {
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+  }
+}
+
+/* ------------------------------------------------------------------ tablet */
+/* 721–1023 previously inherited desktop rules written for ≥1024, which is why
+   the layout went cramped on iPad portrait. */
+@media (min-width: 721px) and (max-width: 1023px) {
+  .container {
+    width: min(100% - 40px, 960px);
+  }
+
+  .hero,
+  .subpage-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .hero-score {
+    min-height: 260px;
+    transform: none;
+  }
+
+  .content-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 18px;
+  }
+
+  .matches-layout,
+  .sb-matches-layout {
+    grid-template-columns: minmax(0, 1fr) 268px;
+    gap: 12px;
+  }
+
+  .matches-desktop-slip {
+    position: static;
+  }
+
+  .sb-odds-row {
+    gap: 0.35rem;
+  }
+}
+
+/* -------------------------------------------------------------- small phone */
+@media (max-width: 380px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .hero-copy h1,
+  .subpage-copy h1 {
+    font-size: 1.55rem;
+    line-height: 1.3;
+  }
+
+  .hero-score {
+    min-height: 230px;
+    transform: none;
+  }
+
+  .sb-odds-btn {
+    padding-inline: 0.25rem;
+  }
+
+  .match-card,
+  .sb-match {
+    padding: 11px;
+  }
+}
+
+/* ------------------------------------------------------------ motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .match-card,
+  .sb-match,
+  .feature-hub-card,
+  .standalone-card,
+  .ai-pick-card,
+  .sb-odds-btn,
+  .primary-cta,
+  .sheet-submit {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------- sheet scroll lock */
+/* Without this the page scrolls behind a docked sheet on touch, which reads as
+   a broken drag gesture. :has degrades to a no-op on older engines. */
+body:has(.bet-sheet-layer),
+body:has(.prediction-sheet-layer),
+body:has(.modal-backdrop),
+body:has(.match-modal-backdrop),
+body:has(.vip-detail-backdrop),
+body:has(.support-layer) {
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------- legibility floor */
+/* Validation text at 9px is unusable on a phone and unreadable in sunlight. */
+.input-error,
+.field-error,
+.form-error,
+[role="alert"] {
+  font-size: 0.75rem !important;
+  line-height: 1.5 !important;
+}
+
+.field-label,
+.form-label,
+.form-field > label {
+  font-size: 0.75rem !important;
+}
+
+.mobile-slip-launch span {
+  font-size: 0.6875rem !important;
+}
+
+/* The hero card was rotated -1.5deg. On phones that pushes the card past the
+   viewport edge and clips its own content. */
+@media (max-width: 720px) {
+  .hero-score {
+    transform: none;
+  }
+}

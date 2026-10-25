@@ -73,7 +73,7 @@
 .auth-form input:focus-visible,
 .sheet-summary input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--nexus-mint, #5fe2d0) !important;
+  outline: 2px solid var(--nexus-mint, #a3e635) !important;
   outline-offset: 2px !important;
 }
 
@@ -84,7 +84,7 @@ select:focus-visible {
 .odds-btn[aria-pressed="true"],
 .match-markets button.is-selected {
   transform: translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(92, 229, 209, 0.35), 0 6px 16px rgba(92, 229, 209, 0.12) !important;
+  box-shadow: 0 0 0 1px rgba(163,230,53, 0.35), 0 6px 16px rgba(163,230,53, 0.12) !important;
 }
 
 /* Live pulse — mint status */
@@ -204,7 +204,7 @@ button:disabled,
   width: 16px;
   height: 2px;
   border-radius: 999px;
-  background: var(--nexus-violet, #9b5cff);
+  background: var(--nexus-violet, #ffe94d);
   animation: nexus-row-in var(--dur-fast) var(--ease-out) both;
 }
 

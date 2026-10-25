@@ -28,7 +28,7 @@ body {
 
 .nexus-shell {
   background:
-    radial-gradient(ellipse 90% 40% at 50% -20%, rgba(88, 50, 180, 0.18), transparent 55%),
+    radial-gradient(ellipse 90% 40% at 50% -20%, rgba(201,185,21, 0.18), transparent 55%),
     var(--ir-bg) !important;
 }
 .nexus-shell::before {
@@ -51,9 +51,9 @@ body {
 }
 
 .login-button {
-  background: linear-gradient(180deg, #7c4dff, #5b2fd6) !important;
+  background: linear-gradient(180deg, #f2de1a, #c9b915) !important;
   border-radius: 8px !important;
-  box-shadow: 0 4px 14px rgba(91, 47, 214, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(242,222,26, 0.35) !important;
 }
 
 /* Section titles like FA sites: short + colored marker */
@@ -217,7 +217,7 @@ h2 {
 .sheet-submit,
 .primary-cta.deposit,
 .wallet-request-actions button[data-type="deposit"] {
-  background: linear-gradient(180deg, #34d399, #16a34a) !important;
+  background: linear-gradient(180deg, #84cc16, #16a34a) !important;
   color: #052e16 !important;
   font-weight: 800 !important;
   border: 0 !important;
@@ -277,7 +277,7 @@ h2 {
   border-radius: 14px !important;
 }
 .auth-submit {
-  background: linear-gradient(180deg, #7c4dff, #5b2fd6) !important;
+  background: linear-gradient(180deg, #f2de1a, #c9b915) !important;
   border-radius: 8px !important;
 }
 

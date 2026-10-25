@@ -17,7 +17,14 @@ describe("hero asset and font recovery", () => {
   it("keeps image overlays readable yet bright and prevents font fallback in the product shell", () => {
     const css = read("../client/src/index.css");
     expect(css).toContain(".subpage-art img { opacity: .9 !important; filter: brightness(1.12) saturate(1.05); }");
-    expect(css).toContain(".art-overlay { background: rgba(8, 6, 14, .06) !important; opacity: 1 !important; }");
+    // Behaviour, not an exact hex: the overlay must stay a dark, semi-opaque
+    // scrim so hero art stays readable without washing it out.
+    const brand = read("../client/src/ui-brand.css");
+    const overlay = `${css}\n${brand}`.match(/\.art-overlay\s*\{[^}]*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/);
+    expect(overlay).not.toBeNull();
+    const [, r, g, b, alpha] = overlay as unknown as string[];
+    expect(Math.max(Number(r), Number(g), Number(b))).toBeLessThanOrEqual(40);
+    expect(Number(alpha)).toBeGreaterThanOrEqual(0.3);
     expect(css).toContain(".nexus-shell, .nexus-shell *");
     expect(css).toContain("font-family: var(--font-body) !important");
   });

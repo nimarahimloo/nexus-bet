@@ -38,20 +38,14 @@
 2. Login → Wallet deposit small sandbox amount → provider address shown → IPN `finished` → balance increases once
 3. Withdrawal small amount → locked → provider accept → locked released; failure restores available
 4. Crash place + cashout + history «بررسی اثبات»
-<<<<<<< HEAD
 5. Market sync: `POST /api/scheduled/syncSportsMarkets` → `{ fixtures > 0, markets > 0 }`; then place a bet and confirm the stored `combinedOdds` matches the server book, and that editing the odds in devtools is rejected with `ODDS_CHANGED`
 6. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
 7. `pnpm test` and `pnpm check` green in CI/local
-=======
-<<<<<<< ours
 5. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
 5. `pnpm test` and `pnpm check` green in CI/local
-=======
 5. Market sync: `POST /api/scheduled/syncSportsMarkets` → `{ fixtures > 0, markets > 0 }`; then place a bet and confirm the stored `combinedOdds` matches the server book, and that editing the odds in devtools is rejected with `ODDS_CHANGED`
 6. Settlement: place a small bet on a finished fixture → `dryRun=1` reports it → real run settles it once, locked balance drops and `available` moves exactly once → bet history shows برنده/بازنده/بازگشت وجه
 7. `npm test` and `npm run check` green in CI/local
->>>>>>> theirs
->>>>>>> dee75e4 (Fixed)
 
 ## Explicitly not claimed until secrets verified
 
