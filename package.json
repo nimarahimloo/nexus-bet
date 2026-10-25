@@ -110,7 +110,11 @@
   "pnpm": {
     "overrides": {
       "tailwindcss>nanoid": "3.3.7"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "cypress",
+      "esbuild"
+    ]
   },
   "engines": {
     "node": ">=20"

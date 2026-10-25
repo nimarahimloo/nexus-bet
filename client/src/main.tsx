@@ -14,6 +14,7 @@ import "./ui-sportsbook.css";
 import "./ui-iranian.css";
 import "./ui-brand.css";
 import "./ui-quality.css";
+import "./ui-fa-rtl.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

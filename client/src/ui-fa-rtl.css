@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Persian / RTL correctness layer — loaded last.
+
+   Persian is a joined script: negative tracking breaks the connecting strokes,
+   tight line-heights clip ascenders and diacritics, and inline-block siblings
+   run together with no space. Every rule below is a measured defect from the
+   live build, not a preference.
+   ========================================================================== */
+
+/* ------------------------------------------------------- 1. Persian tracking */
+/* `h1 { letter-spacing: -0.025em }` shipped from ui-polish.css. At 32px that is
+   -0.8px, which visibly cramps the joins. Persian must never be tracked. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+label,
+button,
+summary,
+figcaption,
+blockquote,
+dt,
+dd,
+.nav-link,
+.section-kicker,
+.eyebrow,
+.filter-pill,
+.outline-cta,
+.text-cta,
+.primary-cta,
+.sb-odds-label,
+.sb-odds-value,
+.hero-copy,
+.hero-trust span,
+.match-card,
+.sb-match {
+  letter-spacing: normal !important;
+}
+
+/* Latin-only lock-ups keep their original tracking. */
+.brand-copy b {
+  letter-spacing: 0.04em !important;
+}
+
+/* ------------------------------------------------------- 2. Persian leading */
+/* Persian needs more line box than Latin: ascenders, descenders and the
+   occasional diacritic sit outside the Latin cap height. 1.2 clipped them. */
+h1,
+.hero-copy h1,
+.subpage-copy h1 {
+  line-height: 1.4 !important;
+}
+
+h2,
+h3,
+h4 {
+  line-height: 1.5 !important;
+}
+
+p,
+li,
+.hero-copy p,
+.hero-trust span,
+.feed-status,
+.hero-empty small {
+  line-height: 1.85 !important;
+}
+
+.section-kicker,
+.eyebrow {
+  line-height: 1.9 !important;
+}
+
+/* --------------------------------------------------------- 3. Numerals / bidi */
+/* A bare number inside an RTL paragraph can be reordered against adjacent
+   punctuation. Isolation keeps "۲٫۵ ×" and "18:45" intact. */
+.sb-odds-value,
+.scoreboard strong,
+.hero-market b,
+.amount,
+.price,
+time,
+.num {
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+
+/* ------------------------------------------------------------ 4. Brand block */
+/* .brand-mark is declared 11 times across the stylesheets; the last surviving
+   declaration cropped the logo (scrollWidth 71 inside a 30px box). */
+.brand {
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--nx-yellow, #f2de1a) !important;
+}
+
+.brand-mark img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  display: block;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 2px;
+  line-height: 1.15;
+  /* was `left`: wrong in an RTL header, and it clipped the tagline */
+  text-align: start;
+  min-width: 0;
+}
+
+.brand-copy b {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.brand-copy small {
+  color: var(--nx-muted, #a7a7ae);
+  font-size: 9.5px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* The tagline is decoration at 7px; below 1024 the header needs the room. */
+@media (max-width: 1023px) {
+  .brand-copy small {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------- 5. Header controls */
+/* `.mobile-menu { display: grid !important }` was global, so a hamburger sat
+   next to the full desktop nav at 1440px. */
+@media (min-width: 721px) {
+  .topbar .mobile-menu {
+    display: none !important;
+  }
+}
+
+/* ------------------------------------------------------- 6. Hero empty state */
+/* This element had no styles at all, so <b> and <small> flowed inline and
+   overlapped by 21px, producing "…نشده است.به‌محض…". */
+.hero-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 28px 20px;
+  min-height: 100%;
+}
+
+.hero-empty > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(242, 222, 26, 0.12);
+  color: var(--nx-yellow, #f2de1a);
+  border: 1px solid rgba(242, 222, 26, 0.28);
+}
+
+.hero-empty b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.75;
+  color: #fff;
+  max-width: 34ch;
+}
+
+.hero-empty small {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--nx-muted, #a7a7ae);
+  max-width: 38ch;
+}
+
+.hero-empty .outline-cta {
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------- 7. Filter pills */
+/* Measured 36px tall — under the 44px touch floor, and the tallest thing in
+   the row was the text itself. */
+.filter-pill,
+.filter-row button {
+  min-height: 40px;
+  padding-inline: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (pointer: coarse) {
+  .filter-pill,
+  .filter-row button {
+    min-height: 44px;
+  }
+}
+
+/* ------------------------------------------------------- 8. Section headings */
+.section-heading h2 {
+  letter-spacing: normal !important;
+}
+
+/* Persian labels sitting inside RTL rows must not inherit Latin alignment. */
+[dir="rtl"] .brand-copy,
+[dir="rtl"] .hero-copy,
+[dir="rtl"] .section-heading {
+  text-align: start;
+}

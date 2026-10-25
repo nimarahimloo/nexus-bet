@@ -293,7 +293,7 @@ export default function Home() {
         </div>
 
           <aside className="slip-card glass-panel" aria-label="بلیت پیش‌بینی">
-          <div className="slip-head"><div><ReceiptText size={20} /><h3>بلیت من</h3><span>{selections.length} انتخاب</span></div><div className="slip-head-actions"><button onClick={() => setSelections([])} disabled={!selections.length}>پاک‌سازی</button><button className="slip-mobile-close" onClick={() => setSlipOpen(false)} aria-label="بستن بلیت"><X size={16} /></button></div></div>
+          <div className="slip-head"><div><ReceiptText size={20} /><h3>بلیت من</h3><span>{formatFaNumber(selections.length, { maximumFractionDigits: 0 })} انتخاب</span></div><div className="slip-head-actions"><button onClick={() => setSelections([])} disabled={!selections.length}>پاک‌سازی</button><button className="slip-mobile-close" onClick={() => setSlipOpen(false)} aria-label="بستن بلیت"><X size={16} /></button></div></div>
           {selections.length === 0 ? (
             <div className="slip-empty"><div><LayoutGrid size={25} /></div><b>هنوز انتخابی ندارید</b><p>یک ضریب از مسابقات را لمس کنید تا بلیت شما آماده شود.</p></div>
           ) : (
@@ -342,7 +342,7 @@ export default function Home() {
         </div>
       </section>
 
-      {selections.length > 0 && <button className="mobile-slip-dock" onClick={() => setSlipOpen(true)}><span><ReceiptText size={17} /> {selections.length} انتخاب</span><b>{numberFa(potentialReturn)} USDT</b><ArrowLeft size={16} /></button>}
+      {selections.length > 0 && <button className="mobile-slip-dock" onClick={() => setSlipOpen(true)}><span><ReceiptText size={17} /> {formatFaNumber(selections.length, { maximumFractionDigits: 0 })} انتخاب</span><b>{numberFa(potentialReturn)} USDT</b><ArrowLeft size={16} /></button>}
 
       <BetSheet selections={selections} stake={stake} setStake={setStake} odds={odds} open={slipOpen} onClose={() => setSlipOpen(false)} onSubmit={showTicket} canSubmit={Boolean(stakeValid && selections.length && !placeBetMutation.isPending)} statusMessage={sheetStatusMessage} isSubmitting={placeBetMutation.isPending} />
 
