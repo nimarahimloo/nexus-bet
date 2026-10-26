@@ -1,128 +1,172 @@
 /* ==========================================================================
-   NEXUS DESIGN SYSTEM  ·  v1  ·  purple / dark
+   NEXUS · DESIGN LANGUAGE v2  ·  purple / dark
    --------------------------------------------------------------------------
-   Single source of truth for colour, type, spacing, radius, elevation, motion
-   and interactive states. Loaded last so it wins over the legacy layers.
+   A ground-up replacement for the previous skin stack. Everything visual is
+   expressed here through tokens: no component should invent a colour, radius
+   or shadow of its own.
 
-   Rule: components must consume --ds-* tokens. No raw hex outside this file
-   (the legacy layers still carry some; they are being retired section by
-   section).
+   Layers of the language
+     1. tokens      — colour ramps, surfaces, type, spacing, radius, depth
+     2. canvas      — page background: aurora mesh + grid + grain
+     3. surfaces    — cards, panels, glass
+     4. controls    — buttons, inputs, chips, odds
+     5. structure   — nav, overlays, tables
+     6. content     — hero, empty states, illustrations
    ========================================================================== */
 
 :root {
-  /* ---- brand ramp (violet) -------------------------------------------- */
-  --ds-violet-50:  #f5f3ff;
-  --ds-violet-100: #ede9fe;
-  --ds-violet-200: #ddd6fe;
-  --ds-violet-300: #c4b5fd;
-  --ds-violet-400: #a78bfa;
-  --ds-violet-500: #8b5cf6;
-  --ds-violet-600: #7c3aed;
-  --ds-violet-700: #6d28d9;
-  --ds-violet-800: #5b21b6;
-  --ds-violet-900: #3b1d78;
+  /* ---------- 1. colour (Horizon UI, MIT) ------------------------------- */
+  /* brand ramp */
+  --ds-violet-100: #E9E3FF;
+  --ds-violet-200: #E9E3FF;
+  --ds-violet-300: #E9E3FF;
+  --ds-violet-400: #7551FF;   /* brand.400 — dark-mode accent */
+  --ds-violet-500: #422AFB;   /* brand.500 — primary */
+  --ds-violet-600: #3311DB;   /* brand.600 — hover/press */
+  --ds-violet-700: #190793;
+  --ds-violet-800: #11047A;
+  --ds-violet-900: #02044A;
 
-  /* ---- neutral ramp (violet-tinted dark) ------------------------------ */
-  --ds-ink-950: #08050e;
-  --ds-ink-900: #0b0712;
-  --ds-ink-850: #100a1a;
-  --ds-ink-800: #120b1c;
-  --ds-ink-700: #171024;
-  --ds-ink-600: #1f1631;
-  --ds-ink-500: #2a1d42;
-  --ds-ink-400: #3a2a58;
+  /* navy ramp (template surfaces) */
+  --ds-ink-1000: #081029;
+  --ds-ink-950:  #0b1437;   /* navy.900 — page */
+  --ds-ink-900:  #0b1437;
+  --ds-ink-850:  #0e1730;
+  --ds-ink-800:  #111c44;   /* navy.800 — card */
+  --ds-ink-700:  #111c44;
+  --ds-ink-600:  #1B254B;   /* navy.700 — raised / line */
+  --ds-ink-500:  #24388a;   /* navy.600 */
+  --ds-ink-400:  #3652ba;   /* navy.400 */
 
-  /* ---- semantic surfaces ---------------------------------------------- */
-  --ds-bg:            var(--ds-ink-900);
-  --ds-bg-deep:       var(--ds-ink-950);
-  --ds-surface:       var(--ds-ink-700);
+  /* surfaces */
+  --ds-bg:            var(--ds-ink-950);
+  --ds-bg-deep:       var(--ds-ink-1000);
+  --ds-surface:       var(--ds-ink-800);
   --ds-surface-2:     var(--ds-ink-600);
   --ds-surface-3:     var(--ds-ink-500);
-  --ds-overlay:       rgba(8, 5, 14, 0.72);
+  --ds-surface-inset: #0e1730;
 
-  --ds-text:          #f5f3ff;
-  --ds-text-muted:    #a79fc0;
-  --ds-text-dim:      #756c90;
-  --ds-text-inverse:  #ffffff;
+  /* text */
+  --ds-text:         #ffffff;
+  --ds-text-muted:   #A3AED0;   /* secondaryGray.600 */
+  --ds-text-dim:     #8F9BBA;   /* secondaryGray.500 */
+  --ds-text-inverse: #0b1437;
 
-  --ds-border:        rgba(167, 139, 250, 0.14);
-  --ds-border-strong: rgba(167, 139, 250, 0.28);
-  --ds-border-subtle: rgba(255, 255, 255, 0.06);
+  /* lines */
+  --ds-border:        rgba(255, 255, 255, 0.12);
+  --ds-border-strong: rgba(255, 255, 255, 0.24);
+  --ds-border-subtle: rgba(255, 255, 255, 0.07);
 
-  /* ---- semantic actions ----------------------------------------------- */
-  --ds-primary:        var(--ds-violet-600);
-  --ds-primary-hover:  var(--ds-violet-500);
-  --ds-primary-active: var(--ds-violet-700);
-  --ds-primary-soft:   rgba(124, 58, 237, 0.16);
+  /* actions */
+  --ds-primary:        var(--ds-violet-500);
+  --ds-primary-hover:  var(--ds-violet-400);
+  --ds-primary-active: var(--ds-violet-600);
+  --ds-primary-soft:   rgba(66, 42, 251, 0.22);
   --ds-primary-ink:    #ffffff;
 
-  --ds-success:      #34d399;
-  --ds-success-soft: rgba(52, 211, 153, 0.14);
-  --ds-danger:       #fb7185;
-  --ds-danger-soft:  rgba(251, 113, 133, 0.14);
-  --ds-warning:      #fbbf24;
-  --ds-live:         #fb7185;
+  --ds-success:      #01B574;
+  --ds-success-soft: rgba(1, 181, 116, 0.16);
+  --ds-danger:       #EE5D50;
+  --ds-danger-soft:  rgba(238, 93, 80, 0.16);
+  --ds-warning:      #FFB547;
+  --ds-live:         #EE5D50;
 
-  --ds-focus:        rgba(167, 139, 250, 0.65);
-  --ds-ring:         0 0 0 3px var(--ds-focus);
+  --ds-focus: rgba(117, 81, 255, 0.65);
 
-  /* ---- typography ------------------------------------------------------ */
+  /* ---------- 2. typography --------------------------------------------- */
   --ds-font: "Peyda", "Kalameh", "Vazirmatn", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --ds-fs-display: 2.125rem;
+  --ds-fs-display: 2.25rem;
   --ds-fs-h1: 1.75rem;
   --ds-fs-h2: 1.375rem;
-  --ds-fs-h3: 1.125rem;
+  --ds-fs-h3: 1.0625rem;
   --ds-fs-body: 0.9375rem;
   --ds-fs-sm: 0.8125rem;
   --ds-fs-xs: 0.75rem;
-  --ds-lh-tight: 1.4;
+  /* Persian needs generous leading: ascenders, descenders and dots collide
+     long before Latin does. */
+  --ds-lh-display: 1.35;
+  --ds-lh-heading: 1.45;
   --ds-lh-body: 1.85;
   --ds-lh-ui: 1.6;
-  /* Persian is a joined script: never apply negative tracking. */
-  --ds-tracking: normal;
+  --ds-tracking: normal; /* never negative on a joined script */
 
-  /* ---- spacing (4px base) --------------------------------------------- */
+  /* ---------- 3. spacing / radius --------------------------------------- */
   --ds-1: 4px;  --ds-2: 8px;  --ds-3: 12px; --ds-4: 16px;
   --ds-5: 20px; --ds-6: 24px; --ds-7: 32px; --ds-8: 40px; --ds-9: 56px;
 
-  /* ---- radius ---------------------------------------------------------- */
   --ds-r-sm: 8px;
-  --ds-r-md: 12px;
-  --ds-r-lg: 16px;
-  --ds-r-xl: 20px;
+  --ds-r-md: 16px;
+  --ds-r-lg: 20px;
+  --ds-r-xl: 22px;
   --ds-r-pill: 999px;
 
-  /* ---- elevation (violet-tinted, no neon) ------------------------------ */
-  --ds-e1: 0 1px 2px rgba(8, 5, 14, 0.5);
-  --ds-e2: 0 6px 18px rgba(8, 5, 14, 0.45);
-  --ds-e3: 0 18px 44px rgba(8, 5, 14, 0.55);
+  /* ---------- 4. depth -------------------------------------------------- */
+  --ds-e1: 0 18px 40px rgba(112, 144, 176, 0.06);
+  --ds-e2: 45px 76px 113px 7px rgba(112, 144, 176, 0.08);
+  --ds-e3: 0 24px 60px rgba(8, 16, 41, 0.55);
+  --ds-glow: 0 12px 34px rgba(66, 42, 251, 0.35);
 
-  /* ---- motion ---------------------------------------------------------- */
+  /* ---------- 5. motion / layout ---------------------------------------- */
   --ds-dur-1: 120ms;
   --ds-dur-2: 180ms;
-  --ds-dur-3: 260ms;
+  --ds-dur-3: 280ms;
   --ds-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  /* ---- layout ---------------------------------------------------------- */
   --ds-container: 1180px;
   --ds-gutter: 24px;
   --ds-tap: 44px;
+
+  --ds-z-dock: 30;
+  --ds-z-launcher: 31;
+  --ds-z-sheet: 60;
+  --ds-z-modal: 70;
+  --ds-z-support: 80;
+  --ds-z-toast: 100;
+
+  /* ---------- 6. graphics ---------------------------------------------- */
+  --ds-empty-art: url("/graphics/empty-board.webp");
 }
 
 /* ==========================================================================
-   Base
+   BASE
    ========================================================================== */
 
-html { color-scheme: dark; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+
+html, body { overflow-x: clip; }
 
 body {
-  background: var(--ds-bg);
+  margin: 0;
+  background-color: var(--ds-bg);
   color: var(--ds-text);
   font-family: var(--ds-font);
   font-size: var(--ds-fs-body);
   line-height: var(--ds-lh-body);
   letter-spacing: var(--ds-tracking);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  letter-spacing: var(--ds-tracking);
+  line-height: var(--ds-lh-heading);
+  font-weight: 750;
+  color: var(--ds-text);
+}
+
+h1 { font-size: var(--ds-fs-h1); line-height: var(--ds-lh-display); }
+h2 { font-size: var(--ds-fs-h2); }
+h3 { font-size: var(--ds-fs-h3); }
+
+p, li { line-height: var(--ds-lh-body); }
+
+a { color: var(--ds-violet-300); text-decoration: none; transition: color var(--ds-dur-1) var(--ds-ease); }
+a:hover { color: var(--ds-violet-200); }
+
+small { font-size: var(--ds-fs-sm); color: var(--ds-text-muted); }
+
+img, svg, video { max-width: 100%; }
 
 ::selection { background: var(--ds-primary-soft); color: var(--ds-text); }
 
@@ -133,7 +177,41 @@ body {
 }
 
 /* ==========================================================================
-   Surfaces
+   CANVAS — the page background is part of the identity, not a flat colour
+   ========================================================================== */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 42% at 82% -6%, rgba(66, 42, 251, 0.34), transparent 68%),
+    radial-gradient(46% 38% at 8% 4%, rgba(117, 81, 255, 0.18), transparent 70%),
+    radial-gradient(70% 56% at 50% 108%, rgba(27, 37, 75, 0.55), transparent 72%),
+    linear-gradient(180deg, var(--ds-ink-950) 0%, var(--ds-bg) 42%, var(--ds-ink-1000) 100%);
+}
+
+/* perspective grid, faded at the edges */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 80% at 50% 0%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 0%, transparent 78%);
+}
+
+/* ==========================================================================
+   SURFACES
+   Gradient hairline borders read as depth without the old glass blur.
    ========================================================================== */
 
 .ds-surface,
@@ -141,291 +219,372 @@ body {
 .match-card,
 .feature-hub-card,
 .stat-card,
-.vip-card {
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-border);
+.vip-card,
+.sb-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, #111c44 0%, #0e1730 100%) padding-box,
+    linear-gradient(150deg, rgba(117, 81, 255, 0.55), rgba(255, 255, 255, 0.10) 48%, rgba(255, 255, 255, 0.04)) border-box;
+  border: 1px solid transparent;
   border-radius: var(--ds-r-lg);
-  box-shadow: none;
+  box-shadow: var(--ds-e1);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-.ds-surface--raised { background: var(--ds-surface-2); box-shadow: var(--ds-e2); }
+/* inner highlight along the top edge */
+.ds-surface::before,
+.match-card::before,
+.feature-hub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(233, 227, 255, 0.30), transparent);
+  pointer-events: none;
+}
+
+.ds-surface--raised {
+  background:
+    linear-gradient(180deg, #1B254B 0%, #111c44 100%) padding-box,
+    linear-gradient(150deg, rgba(117, 81, 255, 0.6), rgba(255, 255, 255, 0.08)) border-box;
+  box-shadow: var(--ds-e2);
+}
+
+.ds-surface--flat { background: var(--ds-surface-inset); border: 1px solid var(--ds-border-subtle); box-shadow: none; }
 
 /* ==========================================================================
-   Buttons
+   CONTROLS
    ========================================================================== */
 
 .primary-cta,
 .login-button,
 .withdraw-button,
-.ticket-button {
-  background: var(--ds-primary);
-  color: var(--ds-primary-ink);
-  border: 1px solid transparent;
-  border-radius: var(--ds-r-md);
-  font-weight: 700;
-  letter-spacing: var(--ds-tracking);
-  min-height: var(--ds-tap);
+.ticket-button,
+.ds-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--ds-2);
-  transition: background var(--ds-dur-1) var(--ds-ease),
-              transform var(--ds-dur-1) var(--ds-ease),
-              box-shadow var(--ds-dur-1) var(--ds-ease);
-  box-shadow: none;
+  min-height: var(--ds-tap);
+  padding: 0 var(--ds-5);
+  border: 1px solid transparent;
+  border-radius: var(--ds-r-md);
+  background: var(--ds-primary);
+  color: var(--ds-primary-ink);
+  font-family: var(--ds-font);
+  font-weight: 750;
+  letter-spacing: var(--ds-tracking);
+  box-shadow: var(--ds-e1);
+  transition: transform var(--ds-dur-1) var(--ds-ease), box-shadow var(--ds-dur-2) var(--ds-ease),
+              filter var(--ds-dur-1) var(--ds-ease);
 }
 
 .primary-cta:hover,
 .login-button:hover,
 .withdraw-button:hover,
-.ticket-button:hover {
+.ticket-button:hover,
+.ds-btn:hover {
   background: var(--ds-primary-hover);
-  transform: translateY(-1px);
   box-shadow: var(--ds-e2);
 }
 
 .primary-cta:active,
 .login-button:active,
 .withdraw-button:active,
-.ticket-button:active {
-  background: var(--ds-primary-active);
-  transform: none;
+.ticket-button:active,
+.ds-btn:active { transform: none; background: var(--ds-primary-active); box-shadow: none; }
+
+.ds-btn--ghost,
+.ghost-button {
+  background: transparent;
+  border: 1px solid var(--ds-border-strong);
+  color: var(--ds-text);
   box-shadow: none;
 }
 
-.primary-cta:disabled,
-.login-button:disabled,
-.withdraw-button:disabled,
-.ticket-button:disabled,
-button:disabled {
-  opacity: 0.5;
+.ds-btn--ghost:hover,
+.ghost-button:hover { background: rgba(117, 81, 255, 0.12); filter: none; }
+
+.ds-btn--danger { background: linear-gradient(180deg, #fb7185, #e11d48); border-color: rgba(251, 113, 133, 0.4); }
+
+:is(.primary-cta, .login-button, .withdraw-button, .ticket-button, .ds-btn, .ghost-button, button):disabled {
+  opacity: 0.45;
   cursor: not-allowed;
   transform: none;
+  filter: none;
   box-shadow: none;
 }
 
-/* ==========================================================================
-   Inputs
-   ========================================================================== */
+/* ---- inputs ------------------------------------------------------------ */
 
-input,
-select,
-textarea {
-  background: var(--ds-surface);
+input, select, textarea {
+  width: 100%;
+  min-height: var(--ds-tap);
+  padding: 0 var(--ds-3);
+  background: var(--ds-surface-inset);
   border: 1px solid var(--ds-border);
   border-radius: var(--ds-r-md);
   color: var(--ds-text);
   font-family: var(--ds-font);
   font-size: var(--ds-fs-body);
-  min-height: var(--ds-tap);
-  padding: 0 var(--ds-3);
-  transition: border-color var(--ds-dur-1) var(--ds-ease),
-              box-shadow var(--ds-dur-1) var(--ds-ease);
+  transition: border-color var(--ds-dur-1) var(--ds-ease), box-shadow var(--ds-dur-1) var(--ds-ease),
+              background var(--ds-dur-1) var(--ds-ease);
 }
 
-input::placeholder,
-textarea::placeholder { color: var(--ds-text-dim); }
-
-input:hover,
-select:hover,
-textarea:hover { border-color: var(--ds-border-strong); }
-
-input:focus,
-select:focus,
-textarea:focus {
+input::placeholder, textarea::placeholder { color: var(--ds-text-dim); }
+input:hover, select:hover, textarea:hover { border-color: var(--ds-border-strong); }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  background: var(--ds-surface);
   border-color: var(--ds-violet-400);
   box-shadow: 0 0 0 3px var(--ds-primary-soft);
-  outline: none;
 }
 
-label,
-.field-label { color: var(--ds-text-muted); font-size: var(--ds-fs-sm); }
+label, .field-label { display: inline-block; margin-bottom: var(--ds-1); color: var(--ds-text-muted); font-size: var(--ds-fs-sm); }
 
-/* iOS zooms the viewport when a control is under 16px. */
+.input-error, .field-error, [role="alert"] { color: var(--ds-danger); font-size: var(--ds-fs-sm); line-height: var(--ds-lh-ui); }
+
+/* iOS zooms the viewport on focus below 16px */
 @media (max-width: 720px) {
   input, select, textarea { font-size: 16px; }
 }
 
-/* ==========================================================================
-   Chips / pills / badges
-   ========================================================================== */
+/* ---- chips ------------------------------------------------------------- */
 
-.filter-pill,
-.chip,
-.sport-chip {
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-r-pill);
-  color: var(--ds-text-muted);
-  min-height: 40px;
-  padding: 0 var(--ds-4);
-  font-size: var(--ds-fs-sm);
+.filter-pill, .chip, .sport-chip {
   display: inline-flex;
   align-items: center;
   gap: var(--ds-2);
-  transition: color var(--ds-dur-1) var(--ds-ease),
-              border-color var(--ds-dur-1) var(--ds-ease),
+  min-height: 40px;
+  padding: 0 var(--ds-4);
+  background: var(--ds-surface-inset);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-pill);
+  color: var(--ds-text-muted);
+  font-size: var(--ds-fs-sm);
+  white-space: nowrap;
+  transition: color var(--ds-dur-1) var(--ds-ease), border-color var(--ds-dur-1) var(--ds-ease),
               background var(--ds-dur-1) var(--ds-ease);
 }
 
-.filter-pill:hover,
-.chip:hover,
-.sport-chip:hover {
-  color: var(--ds-text);
-  border-color: var(--ds-border-strong);
-}
+.filter-pill:hover, .chip:hover, .sport-chip:hover { color: var(--ds-text); border-color: var(--ds-border-strong); }
 
-.filter-pill.is-active,
-.chip.is-active,
-.sport-chip.is-active,
-[aria-selected="true"].filter-pill {
+.filter-pill.is-active, .chip.is-active, .sport-chip.is-active, [aria-selected="true"].filter-pill {
   background: var(--ds-primary-soft);
   border-color: var(--ds-violet-500);
   color: var(--ds-violet-200);
+  box-shadow: inset 0 0 0 1px rgba(117, 81, 255, 0.30);
 }
 
-.live-dot,
-.badge--live {
-  background: var(--ds-live);
-  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.18);
-}
+@media (pointer: coarse) { .filter-pill, .chip, .sport-chip { min-height: var(--ds-tap); } }
 
-@media (pointer: coarse) {
-  .filter-pill, .chip, .sport-chip { min-height: var(--ds-tap); }
-}
-
-/* ==========================================================================
-   Odds buttons — the most-used control in the product
-   ========================================================================== */
+/* ---- odds -------------------------------------------------------------- */
 
 .sb-odds-btn {
-  background: var(--ds-surface-2);
+  min-height: 52px;
+  background: var(--ds-surface-inset);
   border: 1px solid var(--ds-border);
   border-radius: var(--ds-r-sm);
-  min-height: 52px;
-  transition: background var(--ds-dur-1) var(--ds-ease),
-              border-color var(--ds-dur-1) var(--ds-ease);
+  transition: background var(--ds-dur-1) var(--ds-ease), border-color var(--ds-dur-1) var(--ds-ease),
+              box-shadow var(--ds-dur-1) var(--ds-ease);
 }
 
-.sb-odds-btn:hover {
-  background: var(--ds-ink-400);
-  border-color: var(--ds-border-strong);
+.sb-odds-btn:hover { background: var(--ds-ink-500); border-color: var(--ds-border-strong); }
+
+.sb-odds-btn.is-selected, .sb-odds-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, var(--ds-violet-500), var(--ds-violet-700));
+  border-color: var(--ds-violet-400);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(66, 42, 251, 0.35);
 }
 
-.sb-odds-btn.is-selected,
-.sb-odds-btn[aria-pressed="true"] {
-  background: var(--ds-primary);
-  border-color: var(--ds-violet-500);
-}
+.sb-odds-btn.is-selected .sb-odds-value, .sb-odds-btn[aria-pressed="true"] .sb-odds-value { color: #fff; }
+.sb-odds-btn.is-selected .sb-odds-label, .sb-odds-btn[aria-pressed="true"] .sb-odds-label { color: rgba(255, 255, 255, 0.76); }
 
-.sb-odds-btn.is-selected .sb-odds-value,
-.sb-odds-btn[aria-pressed="true"] .sb-odds-value { color: var(--ds-primary-ink); }
-
-.sb-odds-btn.is-selected .sb-odds-label,
-.sb-odds-btn[aria-pressed="true"] .sb-odds-label { color: rgba(255, 255, 255, 0.78); }
-
-.sb-odds-value {
-  color: var(--ds-text);
-  font-size: 0.95rem;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-  unicode-bidi: isolate;
-}
-
-.sb-odds-label { color: var(--ds-text-muted); font-size: var(--ds-fs-xs); }
+.sb-odds-value { font-size: 0.95rem; font-weight: 750; font-variant-numeric: tabular-nums; unicode-bidi: isolate; color: var(--ds-text); }
+.sb-odds-label { font-size: var(--ds-fs-xs); color: var(--ds-text-muted); }
 
 /* ==========================================================================
-   Navigation
+   STRUCTURE
    ========================================================================== */
 
 .topbar {
-  background: var(--ds-ink-850);
+  background: rgba(12, 8, 20, 0.82);
   border-bottom: 1px solid var(--ds-border);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
-.main-nav a,
-.mobile-bottom-nav a,
-.bottom-dock a {
+.main-nav a, .mobile-bottom-nav a, .bottom-dock a {
   color: var(--ds-text-muted);
   letter-spacing: var(--ds-tracking);
   transition: color var(--ds-dur-1) var(--ds-ease);
 }
 
-.main-nav a:hover,
-.main-nav a.is-active,
-.mobile-bottom-nav a.is-active,
-.bottom-dock a.is-active { color: var(--ds-violet-300); }
+.main-nav a:hover, .main-nav a.is-active,
+.mobile-bottom-nav a.is-active, .bottom-dock a.is-active { color: var(--ds-violet-300); }
 
 .brand-mark {
-  background: var(--ds-surface-2);
-  border: 1px solid var(--ds-border);
+  background: linear-gradient(160deg, var(--ds-surface-2), var(--ds-ink-850));
+  border: 1px solid var(--ds-border-strong);
   border-radius: var(--ds-r-md);
   overflow: hidden;
 }
 
-.brand-mark img,
-.brand-mark svg { max-width: 100%; max-height: 100%; object-fit: contain; }
+.brand-mark img, .brand-mark svg { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* ==========================================================================
-   Overlays
-   ========================================================================== */
-
-.modal-backdrop,
-.match-modal-backdrop,
-.vip-detail-backdrop,
-.overlay-backdrop,
-.bet-sheet-layer {
-  background: var(--ds-overlay);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.mobile-bottom-nav, .bottom-dock {
+  background: rgba(10, 7, 16, 0.9);
+  border-top: 1px solid var(--ds-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: var(--ds-z-dock);
 }
 
-.sheet-card,
-.modal-card,
-.match-modal,
-.vip-detail {
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-border);
+/* ---- overlays ---------------------------------------------------------- */
+
+.modal-backdrop, .match-modal-backdrop, .vip-detail-backdrop, .overlay-backdrop, .bet-sheet-layer {
+  background: rgba(6, 4, 9, 0.74);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sheet-card, .modal-card, .match-modal, .vip-detail {
+  background: linear-gradient(180deg, var(--ds-surface-2), var(--ds-surface));
+  border: 1px solid var(--ds-border-strong);
   border-radius: var(--ds-r-xl) var(--ds-r-xl) 0 0;
   box-shadow: var(--ds-e3);
 }
 
-/* ==========================================================================
-   Tables & data
-   ========================================================================== */
+/* ---- tables ------------------------------------------------------------ */
 
-table { border-collapse: collapse; width: 100%; }
-th { color: var(--ds-text-dim); font-size: var(--ds-fs-xs); font-weight: 600; }
-td, th { border-bottom: 1px solid var(--ds-border-subtle); padding: var(--ds-3); }
-tbody tr:hover { background: var(--ds-surface-2); }
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--ds-text-dim); font-size: var(--ds-fs-xs); font-weight: 600; text-align: start; }
+td, th { padding: var(--ds-3); border-bottom: 1px solid var(--ds-border-subtle); }
+tbody tr { transition: background var(--ds-dur-1) var(--ds-ease); }
+tbody tr:hover { background: rgba(117, 81, 255, 0.08); }
 .amount, .price, .balance, time { font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
 
+/* ---- badges ------------------------------------------------------------ */
+
+.live-dot, .badge--live, .live-badge {
+  background: var(--ds-live);
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.16);
+}
+
+.ds-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-2);
+  font-size: var(--ds-fs-xs);
+  font-weight: 700;
+  color: var(--ds-violet-300);
+  letter-spacing: var(--ds-tracking);
+}
+
+.ds-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--ds-violet-400), transparent);
+}
+
 /* ==========================================================================
-   Empty / loading states
+   CONTENT — hero art and empty states
    ========================================================================== */
 
-.empty-state,
-.hero-empty {
+.hero, .subpage-hero {
+  position: relative;
+  border-radius: var(--ds-r-xl);
+  border: 1px solid var(--ds-border);
+  background-color: var(--ds-ink-850);
+  background-image:
+    radial-gradient(120% 150% at 100% 0%, rgba(117, 81, 255, 0.50) 0%, rgba(66, 42, 251, 0.20) 44%, transparent 74%),
+    linear-gradient(160deg, #1B254B 0%, #111c44 45%, #0b1437 100%);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -40% 0;
+  height: 70%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(66, 42, 251, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.hero h1, .subpage-hero h1 {
+  letter-spacing: var(--ds-tracking);
+  line-height: var(--ds-lh-display);
+}
+
+.hero-empty, .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ds-2);
-  text-align: center;
+  gap: var(--ds-3);
   padding: var(--ds-6) var(--ds-4);
+  text-align: center;
   color: var(--ds-text-muted);
 }
 
-.empty-state b, .hero-empty b { color: var(--ds-text); font-size: 1rem; line-height: var(--ds-lh-ui); }
-.empty-state small, .hero-empty small { font-size: var(--ds-fs-sm); color: var(--ds-text-dim); }
+.hero-empty::before, .empty-state::before {
+  content: "";
+  width: 132px;
+  height: 132px;
+  background: var(--ds-empty-art) center / contain no-repeat;
+  opacity: 0.92;
+  filter: drop-shadow(0 10px 26px rgba(66, 42, 251, 0.35));
+}
+
+.hero-empty b, .empty-state b { display: block; color: var(--ds-text); font-size: 1rem; line-height: var(--ds-lh-ui); }
+.hero-empty small, .empty-state small { display: block; max-width: 42ch; color: var(--ds-text-dim); font-size: var(--ds-fs-sm); line-height: var(--ds-lh-body); }
+.hero-empty > svg, .empty-state > svg { display: none; }
+
+/* section rhythm */
+section + section { margin-top: var(--ds-8); }
 
 /* ==========================================================================
-   Motion preferences
+   RESPONSIVE
    ========================================================================== */
+
+@media (max-width: 1023px) {
+  :root { --ds-gutter: 20px; }
+  .hero, .subpage-hero { background-image:
+      radial-gradient(140% 120% at 90% 0%, rgba(117, 81, 255, 0.42) 0%, transparent 70%),
+      linear-gradient(160deg, #1B254B 0%, #111c44 50%, #0b1437 100%);
+    background-position: center, center; }
+}
+
+@media (max-width: 720px) {
+  :root { --ds-gutter: 16px; --ds-fs-h1: 1.5rem; --ds-fs-display: 1.75rem; }
+  .hero, .subpage-hero { border-radius: var(--ds-r-lg); }
+  .hero-empty::before, .empty-state::before { width: 104px; height: 104px; }
+  .ds-surface::before, .match-card::before, .feature-hub-card::before { display: none; }
+}
+
+@media (max-width: 380px) {
+  :root { --ds-fs-h1: 1.375rem; }
+  .filter-pill, .chip, .sport-chip { padding: 0 var(--ds-3); }
+}
+
+/* ==========================================================================
+   MOTION
+   ========================================================================== */
+
+@keyframes ds-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+.live-dot, .badge--live { animation: ds-pulse 2.4s var(--ds-ease) infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
