@@ -41,13 +41,13 @@
   --nexus-radius-lg: 22px;
   --nexus-radius-sm: 12px;
 
-  --nexus-bg: #0b0b0c;
+  --nexus-bg: #0b0712;
   --nexus-ink: #ffffff;
   --nexus-muted: #a59cb8;
-  --nexus-violet: #ffe94d;
-  --nexus-violet-deep: #f2de1a;
-  --nexus-cyan: #a3e635;
-  --nexus-mint: #a3e635;
+  --nexus-violet: #9f7aff;
+  --nexus-violet-deep: #7c3aed;
+  --nexus-cyan: #34d399;
+  --nexus-mint: #34d399;
   --nexus-glass: rgba(27, 27, 30, 0.72);
   --nexus-glass-strong: rgba(27, 27, 30, 0.88);
   --nexus-stroke: rgba(255, 255, 255, 0.11);
@@ -465,7 +465,7 @@ h3 {
   border-radius: 14px !important;
   font-weight: 700 !important;
   background: var(--nexus-cyan) !important;
-  color: #141416 !important;
+  color: #171024 !important;
 }
 
 /* -------------------------------------------------------------------------- */

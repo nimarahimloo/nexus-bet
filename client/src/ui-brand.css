@@ -3,20 +3,20 @@
    lime secondary, flat borders, no neon glow. */
 
 :root {
-  --nx-void: #0b0b0c;
-  --nx-deep: #121213;
-  --nx-panel: #141416;
-  --nx-panel-strong: #1b1b1e;
+  --nx-void: #0b0712;
+  --nx-deep: #120b1c;
+  --nx-panel: #171024;
+  --nx-panel-strong: #1f1631;
   --nx-border: rgba(255, 255, 255, 0.08);
   --nx-border-strong: rgba(255, 255, 255, 0.16);
   /* Yellow reads as the brand action colour; lime is the secondary/highlight. */
-  --nx-yellow: #f2de1a;
-  --nx-yellow-bright: #ffe94d;
-  --nx-yellow-dim: #c9b915;
-  --nx-lime: #a3e635;
-  --nx-lime-soft: #bef264;
+  --nx-yellow: #7c3aed;
+  --nx-yellow-bright: #9f7aff;
+  --nx-yellow-dim: #6d28d9;
+  --nx-lime: #34d399;
+  --nx-lime-soft: #6ee7b7;
   --nx-red: #ef3e3e;
-  --nx-ink: #0b0b0c;
+  --nx-ink: #0b0712;
   --nx-text: #ffffff;
   --nx-muted: #a7a7ae;
   --nx-dim: #6e6e76;

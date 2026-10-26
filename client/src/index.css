@@ -26,31 +26,31 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #0b0b0c;
+  --background: #0b0712;
   --foreground: #ffffff;
-  --card: #141416;
+  --card: #171024;
   --card-foreground: #ffffff;
-  --popover: #1b1b1e;
+  --popover: #1f1631;
   --popover-foreground: #ffffff;
-  --primary: #f2de1a;
-  --primary-foreground: #0b0b0c;
-  --secondary: #1b1b1e;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --secondary: #1f1631;
   --secondary-foreground: #ffffff;
-  --muted: #1b1b1e;
+  --muted: #1f1631;
   --muted-foreground: #a7a7ae;
-  --accent: #a3e635;
-  --accent-foreground: #0b0b0c;
+  --accent: #34d399;
+  --accent-foreground: #04120c;
   --destructive: #ef3e3e;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #f2de1a;
+  --border: rgba(167, 139, 250, 0.14);
+  --input: rgba(167, 139, 250, 0.14);
+  --ring: #7c3aed;
   --radius: 0.75rem;
-  --nexus-purple: #f2de1a;
-  --nexus-purple-bright: #ffe94d;
-  --nexus-mint: #a3e635;
-  --nexus-bg: #0b0b0c;
-  --nexus-panel: #141416;
-  --nexus-line: rgba(255, 255, 255, 0.08);
+  --nexus-purple: #7c3aed;
+  --nexus-purple-bright: #9f7aff;
+  --nexus-mint: #34d399;
+  --nexus-bg: #0b0712;
+  --nexus-panel: #171024;
+  --nexus-line: rgba(167, 139, 250, 0.14);
   --nexus-text-soft: #a7a7ae;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -90,7 +90,7 @@ a:focus-visible {
   position: relative;
   isolation: isolate;
   padding: 18px 0 48px;
-  background: #0b0b0c;
+  background: #0b0712;
 }
 .nexus-shell::before {
   content: "";
@@ -140,7 +140,7 @@ a:focus-visible {
   );
 }
 .glass-panel {
-  background: #141416;
+  background: #171024;
   border: 1px solid var(--nexus-line);
   box-shadow:
     0 22px 60px rgba(0, 0, 0, 0.23),
@@ -200,7 +200,7 @@ a:focus-visible {
     800 18px "Manrope",
     sans-serif;
   color: #0f0f11;
-  background: linear-gradient(135deg, #ffe94d, #f2de1a 54%, #84cc16);
+  background: linear-gradient(135deg, #9f7aff, #7c3aed 54%, #34d399);
   border-radius: 11px 11px 3px 11px;
   box-shadow: 0 6px 18px rgba(242, 222, 26, 0.35);
 }
@@ -245,7 +245,7 @@ a:focus-visible {
   display: grid;
   place-items: center;
   border: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   background: rgba(255, 255, 255, 0.055);
   width: 35px;
   height: 35px;
@@ -269,7 +269,7 @@ a:focus-visible {
   height: 6px;
   border-radius: 50%;
   background: var(--nexus-mint);
-  border: 1px solid #141416;
+  border: 1px solid #171024;
 }
 .balance-chip {
   display: flex;
@@ -308,9 +308,9 @@ a:focus-visible {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #252115;
+  color: #3b1d78;
   font-weight: 800;
-  background: linear-gradient(135deg, #edda6d, #a58b2d);
+  background: linear-gradient(135deg, #7c3aed, #7c3aed);
 }
 .login-button {
   height: 35px;
@@ -319,7 +319,7 @@ a:focus-visible {
   color: #fff !important;
   font-size: 12px;
   font-weight: 700;
-  background: linear-gradient(135deg, #f2de1a, #c9b915) !important;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
   box-shadow: 0 7px 20px rgba(242, 222, 26, 0.24);
 }
 .mobile-menu {
@@ -362,7 +362,7 @@ a:focus-visible {
 }
 .hero h1 em {
   font-style: normal;
-  background: linear-gradient(120deg, #ffe94d, #f2de1a 55%, #a3e635);
+  background: linear-gradient(120deg, #9f7aff, #7c3aed 55%, #34d399);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -386,7 +386,7 @@ a:focus-visible {
   border: 0;
   border-radius: 14px;
   color: #fff !important;
-  background: linear-gradient(135deg, #f2de1a, #c9b915) !important;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
   box-shadow: 0 14px 30px rgba(242, 222, 26, 0.25);
   font-weight: 700;
 }
@@ -396,7 +396,7 @@ a:focus-visible {
   align-items: center;
   gap: 5px;
   border: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   background: transparent;
   font-size: 12px;
   font-weight: 700;
@@ -492,10 +492,10 @@ a:focus-visible {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ffe94d;
+  background: #9f7aff;
   box-shadow:
     0 0 0 4px rgba(242, 222, 26, 0.1),
-    0 0 14px #f2de1a;
+    0 0 14px #7c3aed;
 }
 .nexus-network i:nth-child(1) {
   top: 5px;
@@ -507,7 +507,7 @@ a:focus-visible {
   background: var(--nexus-mint);
   box-shadow:
     0 0 0 4px rgba(163, 230, 53, 0.1),
-    0 0 14px #a3e635;
+    0 0 14px #34d399;
 }
 .nexus-network i:nth-child(3) {
   bottom: 18px;
@@ -548,7 +548,7 @@ a:focus-visible {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #a3e635;
+  background: #34d399;
   box-shadow: 0 0 0 4px rgba(163, 230, 53, 0.1);
 }
 .scoreboard {
@@ -610,7 +610,7 @@ a:focus-visible {
   align-items: center;
   padding: 0 12px;
   gap: 12px;
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 11px;
 }
 .hero-market b {
@@ -718,8 +718,8 @@ a:focus-visible {
   display: grid;
   place-items: center;
   border-radius: 10px;
-  color: #141416;
-  background: linear-gradient(135deg, #ffe94d, #f2de1a);
+  color: #171024;
+  background: linear-gradient(135deg, #9f7aff, #7c3aed);
 }
 .feature-strip > div:nth-child(2) {
   display: grid;
@@ -771,7 +771,7 @@ a:focus-visible {
   font-size: 9px;
 }
 .status-upcoming {
-  color: #ffe94d;
+  color: #9f7aff;
   padding: 2px 6px;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.07);
@@ -813,7 +813,7 @@ a:focus-visible {
   place-items: center;
   font: 800 12px "Manrope";
   color: #ffffff;
-  background: linear-gradient(135deg, #6e6e76, #141416);
+  background: linear-gradient(135deg, #6e6e76, #171024);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .team-badge.muted {
@@ -877,7 +877,7 @@ a:focus-visible {
 .odds-button.more {
   grid-template-columns: 1fr;
   place-items: center;
-  color: #f2de1a;
+  color: #7c3aed;
 }
 .show-more {
   display: flex;
@@ -888,7 +888,7 @@ a:focus-visible {
   margin-top: 12px;
   border: 1px dashed rgba(255, 233, 77, 0.24);
   background: transparent;
-  color: #ffe94d;
+  color: #9f7aff;
   border-radius: 13px;
   height: 44px;
   font-size: 11px;
@@ -949,7 +949,7 @@ a:focus-visible {
   height: 46px;
   border: 1px solid rgba(255, 233, 77, 0.18);
   border-radius: 16px;
-  color: #f2de1a;
+  color: #7c3aed;
   background: rgba(242, 222, 26, 0.09);
   margin-bottom: 12px;
 }
@@ -1100,7 +1100,7 @@ a:focus-visible {
   margin-top: 11px;
   border-radius: 11px;
   color: #0f0f11 !important;
-  background: linear-gradient(135deg, #a3e635, #84cc16) !important;
+  background: linear-gradient(135deg, #34d399, #34d399) !important;
   font-size: 11px;
   font-weight: 800;
 }
@@ -1114,7 +1114,7 @@ a:focus-visible {
   margin: 12px 2px 0;
 }
 .slip-note svg {
-  color: #ffe94d;
+  color: #9f7aff;
   flex: none;
   margin-top: 1px;
 }
@@ -1165,9 +1165,9 @@ a:focus-visible {
   height: 36px;
   display: grid;
   place-items: center;
-  color: #141416;
+  color: #171024;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ffe94d, #f2de1a);
+  background: linear-gradient(135deg, #9f7aff, #7c3aed);
 }
 .wallet-card-top > button {
   border: 0;
@@ -1190,7 +1190,7 @@ a:focus-visible {
 }
 .total-balance strong small {
   font-size: 12px;
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .total-balance em {
   color: #82798d;
@@ -1231,7 +1231,7 @@ a:focus-visible {
 }
 .balance-breakdown .locked {
   width: 26%;
-  background: #f2de1a;
+  background: #7c3aed;
 }
 .wallet-actions {
   display: grid;
@@ -1244,7 +1244,7 @@ a:focus-visible {
   justify-items: center;
   gap: 4px;
   padding: 8px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.025);
   border-radius: 10px;
@@ -1330,7 +1330,7 @@ a:focus-visible {
   align-items: center;
 }
 .network-detail svg {
-  color: #f2de1a;
+  color: #7c3aed;
 }
 .wallet-warning {
   display: flex;
@@ -1348,7 +1348,7 @@ a:focus-visible {
   margin-top: 1px;
 }
 .withdraw-panel > .panel-title > svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .withdraw-fields {
   display: grid;
@@ -1387,7 +1387,7 @@ a:focus-visible {
   background-repeat: no-repeat;
 }
 .withdraw-button {
-  background: linear-gradient(135deg, #f2de1a, #f2de1a) !important;
+  background: linear-gradient(135deg, #7c3aed, #7c3aed) !important;
   color: #fff !important;
 }
 
@@ -1413,15 +1413,15 @@ a:focus-visible {
   border-radius: 11px;
 }
 .icon-surface.violet {
-  color: #ffe94d;
+  color: #9f7aff;
   background: rgba(242, 222, 26, 0.17);
 }
 .icon-surface.mint {
-  color: #a3e635;
+  color: #34d399;
   background: rgba(163, 230, 53, 0.12);
 }
 .icon-surface.gold {
-  color: #edcf72;
+  color: #7c3aed;
   background: rgba(237, 207, 114, 0.1);
 }
 .card-header > div {
@@ -1458,7 +1458,7 @@ a:focus-visible {
   gap: 5px;
 }
 .open-bet-line span {
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .open-bet-line b {
@@ -1496,11 +1496,11 @@ a:focus-visible {
   border-radius: 8px;
 }
 .activity-icon.incoming {
-  color: #a3e635;
+  color: #34d399;
   background: rgba(163, 230, 53, 0.1);
 }
 .activity-icon.outgoing {
-  color: #ffe94d;
+  color: #9f7aff;
   background: rgba(242, 222, 26, 0.12);
 }
 .activity-line > div:nth-child(2) {
@@ -1519,7 +1519,7 @@ a:focus-visible {
   direction: ltr;
 }
 .activity-line strong.income {
-  color: #a3e635;
+  color: #34d399;
 }
 .safety-items {
   display: grid;
@@ -1544,7 +1544,7 @@ a:focus-visible {
   gap: 6px;
 }
 .safety-items svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 
 .responsible {
@@ -1567,7 +1567,7 @@ a:focus-visible {
   place-items: center;
   width: 40px;
   height: 40px;
-  color: #ebd579;
+  color: #7c3aed;
   border-radius: 13px;
   background: rgba(232, 199, 99, 0.1);
 }
@@ -1587,7 +1587,7 @@ a:focus-visible {
   align-items: center;
   gap: 5px;
   border: 0;
-  color: #e6d48e;
+  color: #c4b5fd;
   background: transparent;
   font-size: 10px;
 }
@@ -1612,7 +1612,7 @@ a:focus-visible {
 }
 .footer-brand b {
   font: 800 12px "Manrope";
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .footer-brand p {
   margin: 0 4px;
@@ -1640,7 +1640,7 @@ a:focus-visible {
   place-items: center;
   width: 31px;
   height: 31px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 9px;
   font: 800 11px "Manrope";
@@ -1711,7 +1711,7 @@ a:focus-visible {
   min-height: 43px;
   margin-top: 19px;
   color: #0f0f11 !important;
-  background: linear-gradient(135deg, #a3e635, #f2de1a) !important;
+  background: linear-gradient(135deg, #34d399, #7c3aed) !important;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 800;
@@ -1719,7 +1719,7 @@ a:focus-visible {
 .age-limit {
   margin-top: 13px;
   border: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   background: transparent;
   font-size: 10px;
 }
@@ -2114,7 +2114,7 @@ a:focus-visible {
   height: 34px;
   color: #0f0f11;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ffe94d, #f2de1a 58%, #a3e635);
+  background: linear-gradient(135deg, #9f7aff, #7c3aed 58%, #34d399);
   box-shadow: 0 8px 21px rgba(242, 222, 26, 0.22);
 }
 .ai-refresh {
@@ -2124,7 +2124,7 @@ a:focus-visible {
   border: 1px solid rgba(255, 233, 77, 0.25);
   border-radius: 9px;
   padding: 7px 9px;
-  color: #ffe94d;
+  color: #9f7aff;
   background: rgba(255, 255, 255, 0.05);
   font-size: 9px;
   transition: 0.16s var(--ease-out);
@@ -2195,7 +2195,7 @@ a:focus-visible {
 }
 .ai-tags em {
   padding: 2px 5px;
-  color: #ffe94d;
+  color: #9f7aff;
   border-radius: 4px;
   background: rgba(242, 222, 26, 0.14);
   font-size: 7px;
@@ -2232,11 +2232,11 @@ a:focus-visible {
   border-radius: 5px;
 }
 .risk-low {
-  color: #a3e635;
+  color: #34d399;
   background: rgba(163, 230, 53, 0.1);
 }
 .risk-mid {
-  color: #e6ca78;
+  color: #7c3aed;
   background: rgba(230, 202, 120, 0.1);
 }
 .risk-high {
@@ -2275,7 +2275,7 @@ a:focus-visible {
   font-size: 8px;
 }
 .ai-disclaimer svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 @keyframes ai-pulse {
   0%,
@@ -2392,14 +2392,14 @@ a:focus-visible {
   font-size: 9px;
 }
 .profit-live strong {
-  color: #a3e635;
+  color: #34d399;
   font: 800 12px "Manrope";
   direction: ltr;
   animation: profit-flash 0.5s var(--ease-out);
 }
 .profit-live small {
   font-size: 8px;
-  color: #bef264;
+  color: #6ee7b7;
 }
 @keyframes selection-enter {
   0% {
@@ -2447,7 +2447,7 @@ a:focus-visible {
   }
   100% {
     opacity: 1;
-    color: #a3e635;
+    color: #34d399;
     transform: translateY(0);
   }
 }
@@ -2512,10 +2512,10 @@ a:focus-visible {
   text-align: right;
 }
 .balance-status {
-  color: #a3e635 !important;
+  color: #34d399 !important;
 }
 .balance-status.loading {
-  color: #ffe94d !important;
+  color: #9f7aff !important;
   animation: balance-blink 1s ease-in-out infinite;
 }
 .balance-live {
@@ -2536,17 +2536,17 @@ a:focus-visible {
   box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.1);
 }
 .balance-live.loading {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .balance-live.loading::before {
-  background: #ffe94d;
+  background: #9f7aff;
   animation: balance-blink 1s ease-in-out infinite;
 }
 .balance-live.login-required {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .balance-live.login-required::before {
-  background: #ffe94d;
+  background: #9f7aff;
 }
 .input-error.live-insufficient {
   display: flex;
@@ -2724,11 +2724,11 @@ a:focus-visible {
 }
 
 :root {
-  --nexus-bg: #0b0b0c;
-  --nexus-purple: #f2de1a;
-  --nexus-purple-bright: #ffe94d;
-  --nexus-mint: #a3e635;
-  --nexus-panel: #1b1b1e;
+  --nexus-bg: #0b0712;
+  --nexus-purple: #7c3aed;
+  --nexus-purple-bright: #9f7aff;
+  --nexus-mint: #34d399;
+  --nexus-panel: #1f1631;
   --nexus-line: rgba(255, 255, 255, 0.2);
   --nexus-text-soft: #a7a7ae;
 }
@@ -2737,7 +2737,7 @@ a:focus-visible {
 }
 body {
   font-family: "Peyda", Tahoma, sans-serif;
-  background: #0b0b0c;
+  background: #0b0712;
 }
 h1,
 h2,
@@ -2752,36 +2752,36 @@ select {
   font-family: "Kalameh", "Peyda", Tahoma, sans-serif;
 }
 .nexus-shell {
-  background: #0b0b0c;
+  background: #0b0712;
 }
 .nexus-shell::before,
 .aurora {
   display: none;
 }
 .glass-panel {
-  background: #1b1b1e;
+  background: #1f1631;
   border-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 .topbar {
-  background: #121213;
+  background: #120b1c;
 }
 .primary-cta,
 .login-button {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
   box-shadow: 0 14px 32px rgba(242, 222, 26, 0.28);
 }
 .withdraw-button {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
 }
 .ticket-button {
-  background: #a3e635 !important;
+  background: #34d399 !important;
 }
 .hero h1 em {
   background: none;
-  color: #ffe94d;
-  -webkit-text-fill-color: #ffe94d;
+  color: #9f7aff;
+  -webkit-text-fill-color: #9f7aff;
 }
 .hero-score,
 .ai-picks,
@@ -2844,7 +2844,7 @@ select {
   pointer-events: none;
 }
 .brand-mark {
-  background: #f2de1a;
+  background: #7c3aed;
   overflow: hidden;
 }
 .brand-mark img {
@@ -2856,7 +2856,7 @@ select {
 }
 .wallet-logo,
 .feature-icon {
-  background: #f2de1a;
+  background: #7c3aed;
   color: #fff;
 }
 .team-orb.red {
@@ -2872,10 +2872,10 @@ select {
   background: #1f1f23;
 }
 .odds-button.chosen {
-  background: #3f6212;
+  background: #065f46;
 }
 .ai-pick {
-  background: #141416;
+  background: #171024;
   border-color: rgba(255, 255, 255, 0.22);
 }
 @media (max-width: 720px) {
@@ -2901,10 +2901,10 @@ select {
 .selection-enter,
 .return-box::after,
 .wallet-warning {
-  background-color: #1b1b1e !important;
+  background-color: #1f1631 !important;
 }
 .ai-orb {
-  background-color: #f2de1a !important;
+  background-color: #7c3aed !important;
   color: #fff;
 }
 
@@ -2922,7 +2922,7 @@ select {
   overflow: hidden;
   padding: 19px;
   border-radius: 21px;
-  background-color: #1b1b1e;
+  background-color: #1f1631;
 }
 .vip-panel::before {
   content: "VIP";
@@ -2950,14 +2950,14 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 17px;
   color: #fff;
-  background-color: #f2de1a;
+  background-color: #7c3aed;
   box-shadow: 0 12px 28px rgba(242, 222, 26, 0.22);
 }
 .vip-emblem.silver {
   background-color: #686173;
 }
 .vip-emblem.royal {
-  background-color: #c9b915;
+  background-color: #6d28d9;
 }
 .vip-emblem.obsidian {
   background-color: #0f0f11;
@@ -2982,7 +2982,7 @@ select {
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 13px;
-  background-color: #141416;
+  background-color: #171024;
 }
 .vip-progress-head,
 .vip-progress-foot {
@@ -2999,7 +2999,7 @@ select {
   direction: ltr;
 }
 .vip-progress-head small {
-  color: #f2de1a;
+  color: #7c3aed;
   font: 600 8px "Peyda";
 }
 .vip-progress-track {
@@ -3013,7 +3013,7 @@ select {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background-color: #f2de1a;
+  background-color: #7c3aed;
   box-shadow: 0 0 16px rgba(242, 222, 26, 0.5);
   transition: width 0.35s var(--ease-out);
 }
@@ -3046,7 +3046,7 @@ select {
   color: var(--nexus-mint);
   border: 1px solid rgba(163, 230, 53, 0.15);
   border-radius: 7px;
-  background-color: #141416;
+  background-color: #171024;
   font-size: 8px;
 }
 .reward-grid {
@@ -3073,7 +3073,7 @@ select {
   height: 31px;
   border-radius: 10px;
   color: var(--nexus-mint);
-  background-color: #141416;
+  background-color: #171024;
 }
 .reward-card b {
   font-size: 10px;
@@ -3102,12 +3102,12 @@ select {
   opacity: 0.62;
 }
 .reward-card.locked .reward-icon {
-  color: #f2de1a;
-  background-color: #141416;
+  color: #7c3aed;
+  background-color: #171024;
 }
 .reward-card.locked button {
-  color: #f2de1a;
-  background-color: #141416;
+  color: #7c3aed;
+  background-color: #171024;
 }
 .vip-note {
   position: relative;
@@ -3121,7 +3121,7 @@ select {
   line-height: 1.8;
 }
 .vip-note svg {
-  color: #f2de1a;
+  color: #7c3aed;
   flex: none;
   margin-top: 1px;
 }
@@ -3167,7 +3167,7 @@ select {
   padding: 25px;
   border-radius: 20px;
   text-align: right;
-  background-color: #1b1b1e;
+  background-color: #1f1631;
   box-shadow: 0 26px 80px rgba(0, 0, 0, 0.55);
   animation: vip-modal-in 0.22s var(--ease-out);
 }
@@ -3181,8 +3181,8 @@ select {
   height: 29px;
   border: 0;
   border-radius: 9px;
-  color: #ffe94d;
-  background-color: #141416;
+  color: #9f7aff;
+  background-color: #171024;
 }
 .vip-detail-icon {
   display: grid;
@@ -3192,7 +3192,7 @@ select {
   margin-bottom: 14px;
   border-radius: 14px;
   color: #fff;
-  background-color: #f2de1a;
+  background-color: #7c3aed;
 }
 .vip-detail-modal h3 {
   margin: 8px 0 7px;
@@ -3211,8 +3211,8 @@ select {
   margin-top: 16px;
   padding: 9px;
   border-radius: 9px;
-  color: #ffe94d;
-  background-color: #141416;
+  color: #9f7aff;
+  background-color: #171024;
   font-size: 9px;
 }
 .vip-detail-state svg {
@@ -3260,7 +3260,7 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   color: #978ba7;
-  background-color: #141416;
+  background-color: #171024;
 }
 .mobile-search input {
   width: 100%;
@@ -3371,7 +3371,7 @@ select {
     padding: 7px 5px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 17px;
-    background-color: #141416;
+    background-color: #171024;
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
     backdrop-filter: blur(18px);
   }
@@ -3454,8 +3454,8 @@ select {
   height: 29px;
   border: 0;
   border-radius: 8px;
-  color: #ffe94d;
-  background-color: #141416;
+  color: #9f7aff;
+  background-color: #171024;
 }
 @media (max-width: 720px) {
   .slip-card {
@@ -3605,7 +3605,7 @@ select {
 .status-demo {
   display: inline-flex;
   align-items: center;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 233, 77, 0.24);
   background: rgba(242, 222, 26, 0.16);
   border-radius: 6px;
@@ -3621,7 +3621,7 @@ select {
 .sport-logo {
   display: grid;
   place-items: center;
-  color: #ffe94d;
+  color: #9f7aff;
   background: rgba(242, 222, 26, 0.14);
   border: 1px solid rgba(255, 233, 77, 0.24);
 }
@@ -3653,13 +3653,13 @@ select {
   padding: 0 10px;
   border: 1px solid rgba(232, 213, 125, 0.22);
   border-radius: 9px;
-  color: #eadb9d;
+  color: #c4b5fd;
   background: rgba(234, 216, 142, 0.06);
   font-size: 9px;
   white-space: nowrap;
 }
 .responsible-actions button:last-child {
-  color: #ffe94d;
+  color: #9f7aff;
   border-color: rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.035);
 }
@@ -3700,7 +3700,7 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 9px;
   white-space: nowrap;
 }
@@ -3724,7 +3724,7 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 9px;
 }
 .demo-disclosure small {
@@ -3866,7 +3866,7 @@ select {
 .risk-chip {
   display: inline-flex;
   align-items: center;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 233, 77, 0.22);
   background: rgba(242, 222, 26, 0.15);
   border-radius: 6px;
@@ -4046,7 +4046,7 @@ select {
   margin-top: 15px;
 }
 .risk-chip {
-  color: #eadf9a;
+  color: #c4b5fd;
   border-color: rgba(235, 211, 126, 0.2);
   background: rgba(235, 211, 126, 0.07);
 }
@@ -4070,7 +4070,7 @@ select {
 }
 .vip-level > div:first-child svg {
   grid-row: span 2;
-  color: #f0d16e;
+  color: #7c3aed;
 }
 .vip-level span,
 .vip-level small {
@@ -4094,7 +4094,7 @@ select {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #f2de1a;
+  background: #7c3aed;
 }
 .vip-progress small {
   display: block;
@@ -4423,7 +4423,7 @@ select {
   gap: 6px;
   min-height: 31px;
   border-top: 1px solid rgba(255, 255, 255, 0.055);
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .lineup-player span {
@@ -4449,7 +4449,7 @@ select {
   border-right: 2px solid var(--nexus-mint);
   border-radius: 11px;
   background: rgba(255, 255, 255, 0.04);
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .detail-event > b {
@@ -4719,7 +4719,7 @@ select {
   gap: 8px;
   min-height: 42px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .standing-row span {
@@ -4774,11 +4774,11 @@ select {
   place-items: start center;
   border-radius: 50%;
   background: conic-gradient(
-    #c9b915 0 20%,
-    #141416 20% 40%,
-    #f2de1a 40% 60%,
+    #6d28d9 0 20%,
+    #171024 20% 40%,
+    #7c3aed 40% 60%,
     #0f0f11 60% 80%,
-    #a3e635 80% 100%
+    #34d399 80% 100%
   );
   transition: transform 900ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -4864,7 +4864,7 @@ select {
   background: #0f0f11;
 }
 .wheel-core span {
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .wheel-copy h2 {
@@ -5204,7 +5204,7 @@ select {
   font-size: 8px;
 }
 .tournament-metrics b {
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
   line-height: 1.6;
 }
@@ -5299,7 +5299,7 @@ select {
 :root {
   --font-body: "Peyda", "Kalameh", Tahoma, sans-serif;
   --font-display: "Kalameh", "Peyda", Tahoma, sans-serif;
-  --nexus-bg: #0b0b0c;
+  --nexus-bg: #0b0712;
   --nexus-surface: rgba(27, 27, 30, 0.78);
   --nexus-surface-strong: rgba(27, 27, 30, 0.92);
   --nexus-hairline: rgba(255, 255, 255, 0.1);
@@ -5386,7 +5386,7 @@ button:active,
 }
 .primary-cta,
 .login-button {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
     0 10px 26px rgba(242, 222, 26, 0.24),
@@ -5394,7 +5394,7 @@ button:active,
 }
 .primary-cta:hover,
 .login-button:hover {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
   box-shadow:
     0 13px 30px rgba(242, 222, 26, 0.32),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
@@ -5466,7 +5466,7 @@ button:active,
 
 /* Real material glass + mobile shell refinement */
 .nexus-shell {
-  background: #0b0b0c;
+  background: #0b0712;
 }
 .nexus-shell::after {
   content: "";
@@ -5477,7 +5477,7 @@ button:active,
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: #141416;
+  background: #171024;
   filter: blur(88px);
   opacity: 0.42;
   pointer-events: none;
@@ -5708,7 +5708,7 @@ button:active,
   flex: none;
   min-height: 32px;
   padding: 0 8px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
@@ -5865,7 +5865,7 @@ button:active,
   font: 800 14px var(--font-display);
 }
 .sheet-summary strong small {
-  color: #a3e635;
+  color: #34d399;
   font-size: 8px;
 }
 .sheet-note {
@@ -5991,7 +5991,7 @@ button:active,
   background: rgba(243, 100, 117, 0.08);
 }
 .sheet-status-success {
-  color: #a3e635;
+  color: #34d399;
   border: 1px solid rgba(163, 230, 53, 0.2);
   background: rgba(163, 230, 53, 0.08);
 }
@@ -6106,9 +6106,9 @@ button:active,
 :root {
   --font-body: "Nexus Kalameh", Tahoma, sans-serif;
   --font-display: "Nexus Kalameh", Tahoma, sans-serif;
-  --nexus-bg: #0b0b0c;
-  --nexus-mint: #a3e635;
-  --nexus-purple: #ffe94d;
+  --nexus-bg: #0b0712;
+  --nexus-mint: #34d399;
+  --nexus-purple: #9f7aff;
   --nexus-panel: rgba(27, 27, 30, 0.62);
   --nexus-line: rgba(255, 255, 255, 0.14);
 }
@@ -6123,7 +6123,7 @@ option {
   letter-spacing: normal !important;
 }
 .nexus-shell {
-  background: #0b0b0c !important;
+  background: #0b0712 !important;
 }
 .glass-panel {
   background: rgba(27, 27, 30, 0.62) !important;
@@ -6135,11 +6135,11 @@ option {
   border-radius: 22px;
 }
 .brand-mark {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
 }
 .login-button,
 .primary-cta {
-  background: #f2de1a !important;
+  background: #7c3aed !important;
 }
 .feature-hub-card,
 .offer-card,
@@ -6155,8 +6155,8 @@ option {
   background: rgba(163, 230, 53, 0.08) !important;
 }
 .ticket-button {
-  background: #a3e635 !important;
-  color: #141416 !important;
+  background: #34d399 !important;
+  color: #171024 !important;
 }
 @media (max-width: 720px) {
   .topbar {
@@ -6318,7 +6318,7 @@ option {
   place-items: center;
   width: 34px;
   height: 34px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
@@ -6329,7 +6329,7 @@ option {
   width: 46px;
   height: 46px;
   margin-bottom: 15px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 233, 77, 0.25);
   border-radius: 16px;
   background: rgba(242, 222, 26, 0.16);
@@ -6370,7 +6370,7 @@ option {
   gap: 9px;
   min-height: 48px;
   padding: 0 12px;
-  color: #f2de1a;
+  color: #7c3aed;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   background: rgba(27, 27, 30, 0.28);
@@ -6402,7 +6402,7 @@ option {
   color: #fff;
   border: 0;
   border-radius: 15px;
-  background: #f2de1a;
+  background: #7c3aed;
   font: 700 12px var(--font-display);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
@@ -6413,7 +6413,7 @@ option {
   gap: 7px;
   align-items: flex-start;
   padding: 9px 10px;
-  color: #bef264;
+  color: #6ee7b7;
   border: 1px solid rgba(163, 230, 53, 0.16);
   border-radius: 12px;
   background: rgba(163, 230, 53, 0.07);
@@ -6535,7 +6535,7 @@ option {
   place-items: center;
   width: 39px;
   height: 39px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 233, 77, 0.25);
   border-radius: 14px;
   background: rgba(242, 222, 26, 0.16);
@@ -6563,7 +6563,7 @@ option {
   place-items: center;
   width: 34px;
   height: 34px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 11px;
   background: rgba(255, 255, 255, 0.05);
@@ -6652,12 +6652,12 @@ option {
 .auth-backdrop::before {
   top: -140px;
   right: -80px;
-  background: #f2de1a;
+  background: #7c3aed;
 }
 .auth-backdrop::after {
   bottom: -160px;
   left: -120px;
-  background: #3f6212;
+  background: #065f46;
   animation-delay: -3.5s;
 }
 .auth-modal {
@@ -6707,13 +6707,13 @@ option {
 .auth-orb-one {
   top: -92px;
   left: -78px;
-  background: #f2de1a;
+  background: #7c3aed;
   animation: auth-orb-float 5.6s ease-in-out infinite alternate;
 }
 .auth-orb-two {
   right: -98px;
   bottom: 46px;
-  background: #84cc16;
+  background: #34d399;
   animation: auth-orb-float 6.8s ease-in-out -2.4s infinite alternate-reverse;
 }
 .auth-mark {
@@ -6809,7 +6809,7 @@ option {
     text-shadow 0.16s var(--ease-out);
 }
 .auth-switch button:hover {
-  color: #d9f99d;
+  color: #6ee7b7;
   text-shadow: 0 0 14px rgba(163, 230, 53, 0.38);
 }
 @keyframes auth-modal-arrive {
@@ -7991,7 +7991,7 @@ body {
 }
 .bet-ticket {
   min-width: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   font: 700 10px var(--font-display);
   direction: ltr;
 }
@@ -8005,7 +8005,7 @@ body {
   font-size: 9px;
 }
 .bet-status.pending {
-  color: #f4c96c;
+  color: #7c3aed;
   background: rgba(244, 201, 108, 0.1);
 }
 .bet-status.won {
@@ -8214,7 +8214,7 @@ body {
   font-size: 11px;
 }
 .context-ai-strip b {
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
 }
 .context-ai-strip:hover {
@@ -8583,11 +8583,11 @@ body {
   border-radius: 50%;
   background: conic-gradient(
     from -10deg,
-    #f2de1a,
-    #a3e635,
-    #ffe94d,
-    #f4c96c,
-    #f2de1a
+    #7c3aed,
+    #34d399,
+    #9f7aff,
+    #7c3aed,
+    #7c3aed
   );
   box-shadow:
     0 22px 55px rgba(0, 0, 0, 0.42),
@@ -8635,7 +8635,7 @@ body {
   border: 5px solid rgba(27, 27, 30, 0.86);
   border-radius: 50%;
   color: #fff;
-  background: linear-gradient(145deg, #f2de1a, #c9b915);
+  background: linear-gradient(145deg, #7c3aed, #6d28d9);
   box-shadow:
     0 10px 26px rgba(0, 0, 0, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.34);
@@ -8701,7 +8701,7 @@ body {
 .preview-chip,
 .status-demo,
 .demo-tag {
-  color: #ffe94d !important;
+  color: #9f7aff !important;
   border-color: rgba(242, 222, 26, 0.38) !important;
   background: rgba(242, 222, 26, 0.16) !important;
 }
@@ -8715,7 +8715,7 @@ body {
   filter: saturate(1.15) brightness(1.15);
 }
 .market-preview small {
-  color: #f2de1a;
+  color: #7c3aed;
 }
 
 @media (max-width: 720px) {
@@ -8967,7 +8967,7 @@ body {
   width: 36px;
   height: 36px;
   padding: 0 !important;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 11px;
   background: rgba(255, 255, 255, 0.05);
@@ -8982,7 +8982,7 @@ body {
   min-height: 46px;
   justify-content: flex-start;
   padding: 10px 12px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 13px;
   background: rgba(255, 255, 255, 0.035);
@@ -9045,7 +9045,7 @@ body {
   white-space: nowrap;
 }
 .trust-bar svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .mobile-menu {
   display: grid !important;
@@ -9089,9 +9089,9 @@ body {
 
 /* Deep redesign layer: restrained hierarchy, image-led discovery and a quieter premium surface. */
 :root {
-  --brand-violet: #f2de1a;
+  --brand-violet: #7c3aed;
   --brand-violet-soft: rgba(242, 222, 26, 0.16);
-  --surface-0: #0b0b0c;
+  --surface-0: #0b0712;
   --surface-1: rgba(27, 27, 30, 0.78);
   --surface-2: rgba(27, 27, 30, 0.72);
   --stroke-strong: rgba(255, 255, 255, 0.18);
@@ -9163,7 +9163,7 @@ body {
   grid-row: 1;
   width: 32px;
   height: 32px;
-  color: #ffe94d !important;
+  color: #9f7aff !important;
   background: var(--brand-violet-soft) !important;
   border-color: rgba(255, 233, 77, 0.18);
 }
@@ -9193,7 +9193,7 @@ body {
   padding-top: 14px;
 }
 .nexus-shell .trust-bar svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .nexus-shell .topbar {
   background: rgba(27, 27, 30, 0.72) !important;
@@ -9214,7 +9214,7 @@ body {
   color: var(--text-tertiary);
 }
 .nexus-shell .back-link:hover {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .nexus-shell .feed-status {
   color: var(--text-tertiary);
@@ -9308,7 +9308,7 @@ body {
   height: 6px;
   flex: 0 0 auto;
   border-radius: 999px;
-  background: #a3e635;
+  background: #34d399;
   box-shadow:
     0 0 0 3px rgba(163, 230, 53, 0.11),
     0 0 14px rgba(163, 230, 53, 0.55);
@@ -9322,7 +9322,7 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 999px;
-  background: #a3e635;
+  background: #34d399;
   box-shadow: 0 0 9px rgba(163, 230, 53, 0.75);
 }
 .support-foot {
@@ -9379,7 +9379,7 @@ body {
   border-radius: 12px !important;
 }
 .nexus-support-chat .prose {
-  color: #ffe94d;
+  color: #9f7aff;
   font-family: var(--font-body);
   font-size: 11px;
   line-height: 1.9;
@@ -9399,7 +9399,7 @@ body {
   text-align: center;
 }
 .wheel-loading svg {
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .wheel-loading .outline-cta {
   min-height: 36px;
@@ -9595,7 +9595,7 @@ body {
   font-size: 11px;
 }
 .wallet-provider-note svg {
-  color: #a3e635;
+  color: #34d399;
 }
 .sheet-currency-control {
   display: grid;
@@ -9606,7 +9606,7 @@ body {
 .sheet-currency-control select {
   min-width: 58px;
   border: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   background: transparent;
   font: inherit;
   outline: none;
@@ -9639,7 +9639,7 @@ body {
 .admin-overline {
   display: block;
   margin-bottom: 8px;
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -9661,7 +9661,7 @@ body {
   padding: 9px 12px;
   border: 1px solid rgba(163, 230, 53, 0.24);
   border-radius: 999px;
-  color: #a3e635;
+  color: #34d399;
   font-size: 11px;
 }
 .admin-stat-grid {
@@ -9679,7 +9679,7 @@ body {
 }
 .admin-stat svg {
   grid-row: span 2;
-  color: #ffe94d;
+  color: #9f7aff;
 }
 .admin-stat span {
   color: #a7a7ae;
@@ -9749,7 +9749,7 @@ body {
 }
 .admin-status.active,
 .admin-status.confirmed {
-  color: #a3e635 !important;
+  color: #34d399 !important;
   background: rgba(163, 230, 53, 0.1);
 }
 .admin-status.maintenance,
@@ -9778,7 +9778,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9px;
   background: rgba(255, 255, 255, 0.04);
-  color: #ffe94d;
+  color: #9f7aff;
   font: inherit;
   font-size: 10px;
   cursor: pointer;
@@ -9817,7 +9817,7 @@ body {
   font-size: 26px;
 }
 .admin-feed-summary span {
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 11px;
 }
 .admin-feed-summary p {
@@ -10023,7 +10023,7 @@ body {
 }
 .match-insight p {
   margin: 0;
-  color: #ffe94d;
+  color: #9f7aff;
   font-size: 10px;
   line-height: 1.9;
 }
@@ -10268,7 +10268,7 @@ body {
   width: 100%;
   min-height: 38px;
   padding: 8px 12px;
-  color: #141416;
+  color: #171024;
   border: 0;
   border-radius: 11px;
   background: var(--nexus-mint);
@@ -10403,7 +10403,7 @@ body {
   place-items: center;
   width: 17px;
   height: 17px;
-  color: #141416;
+  color: #171024;
   border-radius: 50%;
   background: var(--nexus-mint);
   font-size: 10px;
@@ -10440,10 +10440,10 @@ body {
 
 /* Nexus Bet brand system — final responsive layer */
 :root {
-  --nexus-brand-violet: #f2de1a;
-  --nexus-brand-violet-deep: #1b1b1e;
+  --nexus-brand-violet: #7c3aed;
+  --nexus-brand-violet-deep: #1f1631;
   --nexus-brand-ink: #0f0f11;
-  --nexus-brand-teal: #a3e635;
+  --nexus-brand-teal: #34d399;
   --nexus-content-max: 1240px;
 }
 .brand {
@@ -10551,7 +10551,7 @@ body {
   width: 34px;
   height: 34px;
   flex: 0 0 34px;
-  color: #ffe94d;
+  color: #9f7aff;
   border: 1px solid rgba(255, 233, 77, 0.22);
   border-radius: 10px;
   background: rgba(242, 222, 26, 0.12);
@@ -10914,7 +10914,7 @@ body {
   background: rgba(163, 230, 53, 0.08);
 }
 .trust-status-icon.is-blocked {
-  color: #f4c96c;
+  color: #7c3aed;
   border: 1px solid rgba(244, 201, 108, 0.2);
   background: rgba(244, 201, 108, 0.08);
 }
@@ -10966,7 +10966,7 @@ body {
   gap: 10px;
 }
 .trust-boundaries-head > svg {
-  color: #f4c96c;
+  color: #7c3aed;
 }
 .trust-boundaries-head h2 {
   margin: 4px 0 0;
@@ -10979,7 +10979,7 @@ body {
 }
 .trust-boundary-list span {
   padding: 7px 10px;
-  color: #f6d98c;
+  color: #c4b5fd;
   border: 1px solid rgba(244, 201, 108, 0.2);
   border-radius: 999px;
   background: rgba(244, 201, 108, 0.06);

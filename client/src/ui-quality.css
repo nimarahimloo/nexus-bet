@@ -105,14 +105,14 @@ canvas {
   [role="button"],
   [tabindex]:not([tabindex="-1"])
 ):focus-visible {
-  outline: 2px solid var(--nx-yellow, #f2de1a) !important;
+  outline: 2px solid var(--nx-yellow, #7c3aed) !important;
   outline-offset: 2px !important;
 }
 
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--nx-yellow, #f2de1a) !important;
+  outline: 2px solid var(--nx-yellow, #7c3aed) !important;
   outline-offset: 1px !important;
 }
 
