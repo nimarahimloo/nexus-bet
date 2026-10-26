@@ -73,7 +73,7 @@
 .auth-form input:focus-visible,
 .sheet-summary input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--nexus-mint, #a3e635) !important;
+  outline: 2px solid var(--nexus-mint, #34d399) !important;
   outline-offset: 2px !important;
 }
 
@@ -245,7 +245,7 @@ button:disabled,
   width: 16px;
   height: 2px;
   border-radius: 999px;
-  background: var(--nexus-violet, #ffe94d);
+  background: var(--nexus-violet, #9f7aff);
   animation: nexus-row-in var(--dur-fast) var(--ease-out) both;
 }
 

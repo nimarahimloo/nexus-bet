@@ -11,10 +11,10 @@
   --ir-line: rgba(255, 255, 255, 0.08);
   --ir-text: #eef2f7;
   --ir-muted: #8b95a8;
-  --ir-green: #22c55e;
+  --ir-green: #34d399;
   --ir-green-dim: rgba(34, 197, 94, 0.14);
   --ir-red-live: #ef4444;
-  --ir-gold: #f5c542;
+  --ir-gold: #7c3aed;
   --ir-odds-bg: #1e2636;
   --ir-odds-hover: #263044;
   --ir-radius: 10px;
@@ -55,7 +55,7 @@ body {
 }
 
 .login-button {
-  background: linear-gradient(180deg, #f2de1a, #c9b915) !important;
+  background: linear-gradient(180deg, #7c3aed, #6d28d9) !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 14px rgba(242, 222, 26, 0.35) !important;
 }
@@ -217,7 +217,7 @@ h2 {
 .sb-odds-row button.is-selected {
   background: var(--ir-green-dim) !important;
   border-color: var(--ir-green) !important;
-  color: #86efac !important;
+  color: #6ee7b7 !important;
   box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.35) !important;
   transform: none !important;
 }
@@ -227,8 +227,8 @@ h2 {
 .sheet-submit,
 .primary-cta.deposit,
 .wallet-request-actions button[data-type="deposit"] {
-  background: linear-gradient(180deg, #84cc16, #16a34a) !important;
-  color: #052e16 !important;
+  background: linear-gradient(180deg, #34d399, #065f46) !important;
+  color: #065f46 !important;
   font-weight: 800 !important;
   border: 0 !important;
   border-radius: 8px !important;
@@ -262,7 +262,7 @@ h2 {
 .tournament-tabs button.active {
   background: rgba(34, 197, 94, 0.15) !important;
   border-color: rgba(34, 197, 94, 0.45) !important;
-  color: #bbf7d0 !important;
+  color: #6ee7b7 !important;
 }
 
 /* Bottom nav — solid dock */
@@ -287,7 +287,7 @@ h2 {
   border-radius: 14px !important;
 }
 .auth-submit {
-  background: linear-gradient(180deg, #f2de1a, #c9b915) !important;
+  background: linear-gradient(180deg, #7c3aed, #6d28d9) !important;
   border-radius: 8px !important;
 }
 

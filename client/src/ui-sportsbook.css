@@ -318,13 +318,13 @@
 }
 
 .sb-odds-btn.is-selected {
-  border-color: #f2de1a;
-  background: #f2de1a;
+  border-color: #7c3aed;
+  background: #7c3aed;
   box-shadow: none;
 }
 
 .sb-odds-btn.is-selected .sb-odds-value {
-  color: #0b0b0c;
+  color: #0b0712;
 }
 .sb-odds-btn.is-selected .sb-odds-label {
   color: rgba(11, 11, 12, 0.72);
@@ -376,7 +376,7 @@
 }
 .sb-slip-fab b {
   font-size: 0.95rem;
-  color: #a3e635;
+  color: #34d399;
   font-variant-numeric: tabular-nums;
 }
 
@@ -396,9 +396,9 @@
   min-height: 2.85rem;
   border-radius: 0.85rem;
   font-weight: 700;
-  background: #f2de1a;
+  background: #7c3aed;
   border: 0;
-  color: #0b0b0c;
+  color: #0b0712;
   box-shadow: none;
 }
 
@@ -417,7 +417,7 @@
 }
 
 .bottom-dock a.is-active {
-  color: #f2de1a !important;
+  color: #7c3aed !important;
 }
 .bottom-dock a.is-active svg {
   filter: drop-shadow(0 0 6px rgba(190, 242, 100, 0.45));
@@ -535,7 +535,7 @@
 
 .bet-sheet .sheet-summary strong,
 .bet-sheet .sheet-summary b {
-  color: #a3e635;
+  color: #34d399;
   font-variant-numeric: tabular-nums;
 }
 
@@ -543,5 +543,5 @@
   color: #fda4af !important;
 }
 .sheet-status-success {
-  color: #a3e635 !important;
+  color: #34d399 !important;
 }

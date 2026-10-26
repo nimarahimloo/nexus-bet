@@ -1,0 +1,437 @@
+/* ==========================================================================
+   NEXUS DESIGN SYSTEM  ·  v1  ·  purple / dark
+   --------------------------------------------------------------------------
+   Single source of truth for colour, type, spacing, radius, elevation, motion
+   and interactive states. Loaded last so it wins over the legacy layers.
+
+   Rule: components must consume --ds-* tokens. No raw hex outside this file
+   (the legacy layers still carry some; they are being retired section by
+   section).
+   ========================================================================== */
+
+:root {
+  /* ---- brand ramp (violet) -------------------------------------------- */
+  --ds-violet-50:  #f5f3ff;
+  --ds-violet-100: #ede9fe;
+  --ds-violet-200: #ddd6fe;
+  --ds-violet-300: #c4b5fd;
+  --ds-violet-400: #a78bfa;
+  --ds-violet-500: #8b5cf6;
+  --ds-violet-600: #7c3aed;
+  --ds-violet-700: #6d28d9;
+  --ds-violet-800: #5b21b6;
+  --ds-violet-900: #3b1d78;
+
+  /* ---- neutral ramp (violet-tinted dark) ------------------------------ */
+  --ds-ink-950: #08050e;
+  --ds-ink-900: #0b0712;
+  --ds-ink-850: #100a1a;
+  --ds-ink-800: #120b1c;
+  --ds-ink-700: #171024;
+  --ds-ink-600: #1f1631;
+  --ds-ink-500: #2a1d42;
+  --ds-ink-400: #3a2a58;
+
+  /* ---- semantic surfaces ---------------------------------------------- */
+  --ds-bg:            var(--ds-ink-900);
+  --ds-bg-deep:       var(--ds-ink-950);
+  --ds-surface:       var(--ds-ink-700);
+  --ds-surface-2:     var(--ds-ink-600);
+  --ds-surface-3:     var(--ds-ink-500);
+  --ds-overlay:       rgba(8, 5, 14, 0.72);
+
+  --ds-text:          #f5f3ff;
+  --ds-text-muted:    #a79fc0;
+  --ds-text-dim:      #756c90;
+  --ds-text-inverse:  #ffffff;
+
+  --ds-border:        rgba(167, 139, 250, 0.14);
+  --ds-border-strong: rgba(167, 139, 250, 0.28);
+  --ds-border-subtle: rgba(255, 255, 255, 0.06);
+
+  /* ---- semantic actions ----------------------------------------------- */
+  --ds-primary:        var(--ds-violet-600);
+  --ds-primary-hover:  var(--ds-violet-500);
+  --ds-primary-active: var(--ds-violet-700);
+  --ds-primary-soft:   rgba(124, 58, 237, 0.16);
+  --ds-primary-ink:    #ffffff;
+
+  --ds-success:      #34d399;
+  --ds-success-soft: rgba(52, 211, 153, 0.14);
+  --ds-danger:       #fb7185;
+  --ds-danger-soft:  rgba(251, 113, 133, 0.14);
+  --ds-warning:      #fbbf24;
+  --ds-live:         #fb7185;
+
+  --ds-focus:        rgba(167, 139, 250, 0.65);
+  --ds-ring:         0 0 0 3px var(--ds-focus);
+
+  /* ---- typography ------------------------------------------------------ */
+  --ds-font: "Peyda", "Kalameh", "Vazirmatn", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ds-fs-display: 2.125rem;
+  --ds-fs-h1: 1.75rem;
+  --ds-fs-h2: 1.375rem;
+  --ds-fs-h3: 1.125rem;
+  --ds-fs-body: 0.9375rem;
+  --ds-fs-sm: 0.8125rem;
+  --ds-fs-xs: 0.75rem;
+  --ds-lh-tight: 1.4;
+  --ds-lh-body: 1.85;
+  --ds-lh-ui: 1.6;
+  /* Persian is a joined script: never apply negative tracking. */
+  --ds-tracking: normal;
+
+  /* ---- spacing (4px base) --------------------------------------------- */
+  --ds-1: 4px;  --ds-2: 8px;  --ds-3: 12px; --ds-4: 16px;
+  --ds-5: 20px; --ds-6: 24px; --ds-7: 32px; --ds-8: 40px; --ds-9: 56px;
+
+  /* ---- radius ---------------------------------------------------------- */
+  --ds-r-sm: 8px;
+  --ds-r-md: 12px;
+  --ds-r-lg: 16px;
+  --ds-r-xl: 20px;
+  --ds-r-pill: 999px;
+
+  /* ---- elevation (violet-tinted, no neon) ------------------------------ */
+  --ds-e1: 0 1px 2px rgba(8, 5, 14, 0.5);
+  --ds-e2: 0 6px 18px rgba(8, 5, 14, 0.45);
+  --ds-e3: 0 18px 44px rgba(8, 5, 14, 0.55);
+
+  /* ---- motion ---------------------------------------------------------- */
+  --ds-dur-1: 120ms;
+  --ds-dur-2: 180ms;
+  --ds-dur-3: 260ms;
+  --ds-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ---- layout ---------------------------------------------------------- */
+  --ds-container: 1180px;
+  --ds-gutter: 24px;
+  --ds-tap: 44px;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html { color-scheme: dark; }
+
+body {
+  background: var(--ds-bg);
+  color: var(--ds-text);
+  font-family: var(--ds-font);
+  font-size: var(--ds-fs-body);
+  line-height: var(--ds-lh-body);
+  letter-spacing: var(--ds-tracking);
+}
+
+::selection { background: var(--ds-primary-soft); color: var(--ds-text); }
+
+:where(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--ds-violet-300);
+  outline-offset: 2px;
+  border-radius: var(--ds-r-sm);
+}
+
+/* ==========================================================================
+   Surfaces
+   ========================================================================== */
+
+.ds-surface,
+.glass-panel,
+.match-card,
+.feature-hub-card,
+.stat-card,
+.vip-card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-lg);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ds-surface--raised { background: var(--ds-surface-2); box-shadow: var(--ds-e2); }
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.primary-cta,
+.login-button,
+.withdraw-button,
+.ticket-button {
+  background: var(--ds-primary);
+  color: var(--ds-primary-ink);
+  border: 1px solid transparent;
+  border-radius: var(--ds-r-md);
+  font-weight: 700;
+  letter-spacing: var(--ds-tracking);
+  min-height: var(--ds-tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-2);
+  transition: background var(--ds-dur-1) var(--ds-ease),
+              transform var(--ds-dur-1) var(--ds-ease),
+              box-shadow var(--ds-dur-1) var(--ds-ease);
+  box-shadow: none;
+}
+
+.primary-cta:hover,
+.login-button:hover,
+.withdraw-button:hover,
+.ticket-button:hover {
+  background: var(--ds-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--ds-e2);
+}
+
+.primary-cta:active,
+.login-button:active,
+.withdraw-button:active,
+.ticket-button:active {
+  background: var(--ds-primary-active);
+  transform: none;
+  box-shadow: none;
+}
+
+.primary-cta:disabled,
+.login-button:disabled,
+.withdraw-button:disabled,
+.ticket-button:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Inputs
+   ========================================================================== */
+
+input,
+select,
+textarea {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-md);
+  color: var(--ds-text);
+  font-family: var(--ds-font);
+  font-size: var(--ds-fs-body);
+  min-height: var(--ds-tap);
+  padding: 0 var(--ds-3);
+  transition: border-color var(--ds-dur-1) var(--ds-ease),
+              box-shadow var(--ds-dur-1) var(--ds-ease);
+}
+
+input::placeholder,
+textarea::placeholder { color: var(--ds-text-dim); }
+
+input:hover,
+select:hover,
+textarea:hover { border-color: var(--ds-border-strong); }
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--ds-violet-400);
+  box-shadow: 0 0 0 3px var(--ds-primary-soft);
+  outline: none;
+}
+
+label,
+.field-label { color: var(--ds-text-muted); font-size: var(--ds-fs-sm); }
+
+/* iOS zooms the viewport when a control is under 16px. */
+@media (max-width: 720px) {
+  input, select, textarea { font-size: 16px; }
+}
+
+/* ==========================================================================
+   Chips / pills / badges
+   ========================================================================== */
+
+.filter-pill,
+.chip,
+.sport-chip {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-pill);
+  color: var(--ds-text-muted);
+  min-height: 40px;
+  padding: 0 var(--ds-4);
+  font-size: var(--ds-fs-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-2);
+  transition: color var(--ds-dur-1) var(--ds-ease),
+              border-color var(--ds-dur-1) var(--ds-ease),
+              background var(--ds-dur-1) var(--ds-ease);
+}
+
+.filter-pill:hover,
+.chip:hover,
+.sport-chip:hover {
+  color: var(--ds-text);
+  border-color: var(--ds-border-strong);
+}
+
+.filter-pill.is-active,
+.chip.is-active,
+.sport-chip.is-active,
+[aria-selected="true"].filter-pill {
+  background: var(--ds-primary-soft);
+  border-color: var(--ds-violet-500);
+  color: var(--ds-violet-200);
+}
+
+.live-dot,
+.badge--live {
+  background: var(--ds-live);
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.18);
+}
+
+@media (pointer: coarse) {
+  .filter-pill, .chip, .sport-chip { min-height: var(--ds-tap); }
+}
+
+/* ==========================================================================
+   Odds buttons — the most-used control in the product
+   ========================================================================== */
+
+.sb-odds-btn {
+  background: var(--ds-surface-2);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-sm);
+  min-height: 52px;
+  transition: background var(--ds-dur-1) var(--ds-ease),
+              border-color var(--ds-dur-1) var(--ds-ease);
+}
+
+.sb-odds-btn:hover {
+  background: var(--ds-ink-400);
+  border-color: var(--ds-border-strong);
+}
+
+.sb-odds-btn.is-selected,
+.sb-odds-btn[aria-pressed="true"] {
+  background: var(--ds-primary);
+  border-color: var(--ds-violet-500);
+}
+
+.sb-odds-btn.is-selected .sb-odds-value,
+.sb-odds-btn[aria-pressed="true"] .sb-odds-value { color: var(--ds-primary-ink); }
+
+.sb-odds-btn.is-selected .sb-odds-label,
+.sb-odds-btn[aria-pressed="true"] .sb-odds-label { color: rgba(255, 255, 255, 0.78); }
+
+.sb-odds-value {
+  color: var(--ds-text);
+  font-size: 0.95rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+
+.sb-odds-label { color: var(--ds-text-muted); font-size: var(--ds-fs-xs); }
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.topbar {
+  background: var(--ds-ink-850);
+  border-bottom: 1px solid var(--ds-border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.main-nav a,
+.mobile-bottom-nav a,
+.bottom-dock a {
+  color: var(--ds-text-muted);
+  letter-spacing: var(--ds-tracking);
+  transition: color var(--ds-dur-1) var(--ds-ease);
+}
+
+.main-nav a:hover,
+.main-nav a.is-active,
+.mobile-bottom-nav a.is-active,
+.bottom-dock a.is-active { color: var(--ds-violet-300); }
+
+.brand-mark {
+  background: var(--ds-surface-2);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-md);
+  overflow: hidden;
+}
+
+.brand-mark img,
+.brand-mark svg { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+/* ==========================================================================
+   Overlays
+   ========================================================================== */
+
+.modal-backdrop,
+.match-modal-backdrop,
+.vip-detail-backdrop,
+.overlay-backdrop,
+.bet-sheet-layer {
+  background: var(--ds-overlay);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.sheet-card,
+.modal-card,
+.match-modal,
+.vip-detail {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-r-xl) var(--ds-r-xl) 0 0;
+  box-shadow: var(--ds-e3);
+}
+
+/* ==========================================================================
+   Tables & data
+   ========================================================================== */
+
+table { border-collapse: collapse; width: 100%; }
+th { color: var(--ds-text-dim); font-size: var(--ds-fs-xs); font-weight: 600; }
+td, th { border-bottom: 1px solid var(--ds-border-subtle); padding: var(--ds-3); }
+tbody tr:hover { background: var(--ds-surface-2); }
+.amount, .price, .balance, time { font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+
+/* ==========================================================================
+   Empty / loading states
+   ========================================================================== */
+
+.empty-state,
+.hero-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-2);
+  text-align: center;
+  padding: var(--ds-6) var(--ds-4);
+  color: var(--ds-text-muted);
+}
+
+.empty-state b, .hero-empty b { color: var(--ds-text); font-size: 1rem; line-height: var(--ds-lh-ui); }
+.empty-state small, .hero-empty small { font-size: var(--ds-fs-sm); color: var(--ds-text-dim); }
+
+/* ==========================================================================
+   Motion preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

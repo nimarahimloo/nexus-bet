@@ -106,7 +106,7 @@ time,
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: var(--nx-yellow, #f2de1a) !important;
+  background: var(--nx-yellow, #7c3aed) !important;
 }
 
 .brand-mark img {
@@ -177,7 +177,7 @@ time,
   height: 40px;
   border-radius: 12px;
   background: rgba(242, 222, 26, 0.12);
-  color: var(--nx-yellow, #f2de1a);
+  color: var(--nx-yellow, #7c3aed);
   border: 1px solid rgba(242, 222, 26, 0.28);
 }
 
