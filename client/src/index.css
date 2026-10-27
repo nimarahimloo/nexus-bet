@@ -2,6 +2,27 @@
 @import "tw-animate-css";
 @import "./ios26.css";
 
+/* Final ABT90-inspired surface tokens. Keep the sportsbook readable even when legacy theme layers load later. */
+.nexus-shell .hero-score.glass-panel,
+.nexus-shell .glass-panel,
+.nexus-shell .match-card {
+  background: #171126 !important;
+  color: #f8f5ff !important;
+  border-color: rgba(207, 193, 255, 0.12) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22) !important;
+}
+.nexus-shell .hero-score.glass-panel::before,
+.nexus-shell .hero-score.glass-panel::after {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.34), rgba(9, 7, 15, 0.2)) !important;
+}
+.nexus-shell .primary-cta,
+.nexus-shell button.primary-cta,
+.nexus-shell .login-button {
+  background: linear-gradient(135deg, #9f7aff, #7c3aed) !important;
+  color: #fff !important;
+  border-color: #9f7aff !important;
+}
+
 /* Nexus Bet brand layer: quiet labels, clear hierarchy and a consistent trust signal. */
 .context-ai-strip {
   display: none !important;
