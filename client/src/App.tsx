@@ -22,6 +22,7 @@ import {
 import { TrustCenterPage } from "./pages/TrustCenter";
 import AdminPage from "./pages/AdminPage";
 import { appRoutePaths } from "@shared/routes";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function Router() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <TooltipProvider>
           <Toaster richColors position="top-center" />
           <Router />
+          <SpeedInsights />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
