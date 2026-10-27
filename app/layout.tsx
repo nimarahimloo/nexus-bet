@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'NexusBet — Neon sports, sharper picks',
-  description: 'NexusBet is a focused purple-neon sportsbook experience for exploring live markets and upcoming games.',
+  title: 'OddsPulse — Neon sports, sharper picks',
+  description: 'OddsPulse is a focused purple-neon sportsbook experience for exploring live markets and upcoming games.',
   generator: 'v0.app',
   icons: {
     icon: [

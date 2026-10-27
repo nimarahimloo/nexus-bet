@@ -37,11 +37,11 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState('Popular')
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#08060f] text-white selection:bg-violet-500/40">
+    <main className="min-h-screen bg-[#08060f] text-white selection:bg-violet-500/40">
       <header className="sticky top-0 z-20 border-b border-white/[0.08] bg-[#0b0815]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-6 px-4 sm:px-8">
           <button className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white lg:hidden" aria-label="Open navigation"><Menu /></button>
-          <a href="#" className="flex items-center gap-2 text-lg font-bold tracking-tight"><span className="grid size-8 place-items-center rounded-lg bg-violet-500 shadow-[0_0_24px_rgba(139,92,246,.55)]"><Sparkles className="size-4" /></span><span>NEXUS<span className="text-violet-400">BET</span></span></a>
+          <a href="#" className="flex items-center gap-2 text-lg font-bold tracking-tight"><span className="grid size-8 place-items-center rounded-lg bg-violet-500 shadow-[0_0_24px_rgba(139,92,246,.55)]"><Sparkles className="size-4" /></span><span>ODDS<span className="text-violet-400">PULSE</span></span></a>
           <nav className="hidden items-center gap-1 text-sm text-white/60 lg:flex" aria-label="Main navigation">
             {['Sports', 'Live', 'Promos'].map((item) => <a key={item} href={`#${item.toLowerCase()}`} className={`rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white ${item === 'Sports' ? 'bg-white/10 text-white' : ''}`}>{item}</a>)}
           </nav>
@@ -54,7 +54,7 @@ export default function Page() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-5 px-3 py-4 sm:gap-6 sm:px-8 sm:py-6 lg:grid-cols-[210px_minmax(0,1fr)_330px]">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-6 px-4 py-6 sm:px-8 lg:grid-cols-[210px_minmax(0,1fr)_330px]">
         <aside className="hidden lg:block">
           <div className="sticky top-24 flex flex-col gap-6">
             <div><p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Browse</p><div className="flex flex-col gap-1">{['All Sports', 'Live Now', 'Upcoming', 'My Favorites'].map((item, index) => <button key={item} className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm ${index === 0 ? 'bg-violet-500/15 font-medium text-violet-200' : 'text-white/55 hover:bg-white/[0.06] hover:text-white'}`}><span className="flex items-center gap-3">{index === 0 ? <Trophy className="size-4" /> : index === 1 ? <Activity className="size-4" /> : index === 2 ? <Clock3 className="size-4" /> : <Sparkles className="size-4" />}{item}</span>{index === 1 && <span className="rounded-full bg-fuchsia-500/20 px-1.5 text-[10px] text-fuchsia-200">8</span>}</button>)}</div></div>
@@ -65,7 +65,7 @@ export default function Page() {
 
         <section className="min-w-0">
           <div className="mb-6 overflow-hidden rounded-2xl border border-violet-300/20 bg-gradient-to-br from-[#211141] via-[#180d2e] to-[#100a20] p-6 shadow-[0_0_60px_rgba(124,58,237,.12)] sm:p-8">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-violet-300"><Flame className="size-4" /> Tonight&apos;s spotlight</p><h1 className="max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">Your edge starts here.</h1><p className="mt-3 max-w-lg text-sm leading-6 text-white/55">Live lines, clear markets, and a sharper way to follow the moments that matter.</p><button className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-[#170d2b] hover:bg-violet-100">Explore live odds <ChevronRight className="size-4" /></button></div><div className="relative mx-auto grid size-36 place-items-center rounded-full border border-violet-300/30 bg-violet-400/10 sm:mx-0"><div className="absolute inset-3 rounded-full border border-dashed border-fuchsia-300/30" /><Trophy className="size-12 text-violet-200" /></div></div>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-violet-300"><Flame className="size-4" /> Tonight&apos;s spotlight</p><h1 className="max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">The edge is yours.</h1><p className="mt-3 max-w-lg text-sm leading-6 text-white/55">Live lines, sharper insights, and a betting experience built around the moments that matter.</p><button className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-[#170d2b] hover:bg-violet-100">Explore live odds <ChevronRight className="size-4" /></button></div><div className="relative mx-auto grid size-36 place-items-center rounded-full border border-violet-300/30 bg-violet-400/10 sm:mx-0"><div className="absolute inset-3 rounded-full border border-dashed border-fuchsia-300/30" /><Trophy className="size-12 text-violet-200" /></div></div>
           </div>
 
           <div className="mb-5 flex items-center gap-2 overflow-x-auto border-b border-white/[0.08] pb-1">{leagues.map((league) => <button key={league} onClick={() => setActiveLeague(league)} className={`whitespace-nowrap rounded-t-lg px-3 py-2.5 text-sm transition ${activeLeague === league ? 'border-b-2 border-violet-400 font-medium text-white' : 'text-white/45 hover:text-white'}`}>{league}</button>)}</div>
