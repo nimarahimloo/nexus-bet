@@ -56,12 +56,10 @@ export function registerNowPaymentsWebhook(app: Express) {
           ));
 
         if (!transaction) {
-          return res
-            .status(404)
-            .json({
-              code: "WALLET_TRANSACTION_NOT_FOUND",
-              providerEventId: event.providerEventId,
-            });
+          return res.status(404).json({
+            code: "WALLET_TRANSACTION_NOT_FOUND",
+            providerEventId: event.providerEventId,
+          });
         }
 
         // Always record latest provider status for audit (idempotent attach while pending).
@@ -79,13 +77,11 @@ export function registerNowPaymentsWebhook(app: Express) {
         const settleStatus = mapProviderStatusToSettle(event.paymentStatus);
         if (!settleStatus) {
           // Waiting / confirming / partially_paid — acknowledge without ledger movement.
-          return res
-            .status(200)
-            .json({
-              code: "ACK_PENDING",
-              providerEventId: event.providerEventId,
-              paymentStatus: event.paymentStatus,
-            });
+          return res.status(200).json({
+            code: "ACK_PENDING",
+            providerEventId: event.providerEventId,
+            paymentStatus: event.paymentStatus,
+          });
         }
 
         const result = await settleWalletProviderTransaction({

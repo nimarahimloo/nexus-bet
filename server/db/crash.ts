@@ -279,15 +279,13 @@ export async function placeCrashBet(
       );
     if (!Number(updated[0]?.affectedRows))
       throw new Error("INSUFFICIENT_BALANCE");
-    const inserted = await tx
-      .insert(crashBets)
-      .values({
-        userId,
-        roundId,
-        currency: normalizedCurrency,
-        stake: stake.toFixed(6),
-        status: "pending",
-      });
+    const inserted = await tx.insert(crashBets).values({
+      userId,
+      roundId,
+      currency: normalizedCurrency,
+      stake: stake.toFixed(6),
+      status: "pending",
+    });
     return {
       id: Number(inserted[0].insertId),
       roundId,
@@ -335,16 +333,14 @@ export async function cashoutCrashBet(userId: number, crashBetId: number) {
       .where(
         and(eq(wallets.userId, userId), eq(wallets.currency, row.bet.currency))
       );
-    await tx
-      .insert(walletTransactions)
-      .values({
-        userId,
-        type: "crash_settlement",
-        status: "confirmed",
-        currency: row.bet.currency,
-        amount: payout.toFixed(6),
-        referenceId: `crashBet:${crashBetId}`,
-      });
+    await tx.insert(walletTransactions).values({
+      userId,
+      type: "crash_settlement",
+      status: "confirmed",
+      currency: row.bet.currency,
+      amount: payout.toFixed(6),
+      referenceId: `crashBet:${crashBetId}`,
+    });
     return {
       id: crashBetId,
       payout,

@@ -72,16 +72,14 @@ export async function spinLuckyWheel(userId: number, now = new Date()) {
         amount: reward.amount.toFixed(6),
         entryType: "wheel_reward",
       });
-      await tx
-        .insert(walletTransactions)
-        .values({
-          userId,
-          type: "wheel_reward",
-          status: "confirmed",
-          currency: "USDT",
-          amount: reward.amount.toFixed(6),
-          referenceId: `wheelSpin:${spinId}`,
-        });
+      await tx.insert(walletTransactions).values({
+        userId,
+        type: "wheel_reward",
+        status: "confirmed",
+        currency: "USDT",
+        amount: reward.amount.toFixed(6),
+        referenceId: `wheelSpin:${spinId}`,
+      });
     }
 
     return {
@@ -285,15 +283,13 @@ export async function claimActivityReward(
       )
       .limit(1);
     if (existing.length) throw new Error("ACTIVITY_ALREADY_CLAIMED");
-    const inserted = await tx
-      .insert(activityRewardLedger)
-      .values({
-        userId,
-        activityCode,
-        activityDate,
-        currency: "USDT",
-        amount: task.amount.toFixed(6),
-      });
+    const inserted = await tx.insert(activityRewardLedger).values({
+      userId,
+      activityCode,
+      activityDate,
+      currency: "USDT",
+      amount: task.amount.toFixed(6),
+    });
     await tx
       .update(wallets)
       .set({
@@ -301,16 +297,14 @@ export async function claimActivityReward(
         updatedAt: now,
       })
       .where(eq(wallets.userId, userId));
-    await tx
-      .insert(walletTransactions)
-      .values({
-        userId,
-        type: "activity_reward",
-        status: "confirmed",
-        currency: "USDT",
-        amount: task.amount.toFixed(6),
-        referenceId: `activity:${activityCode}:${activityDate}`,
-      });
+    await tx.insert(walletTransactions).values({
+      userId,
+      type: "activity_reward",
+      status: "confirmed",
+      currency: "USDT",
+      amount: task.amount.toFixed(6),
+      referenceId: `activity:${activityCode}:${activityDate}`,
+    });
     return {
       id: Number(inserted[0].insertId),
       activityCode,

@@ -84,21 +84,19 @@ export async function getSupportAccountContext(userId: number) {
       availableBalance: asset.availableBalance,
       lockedBalance: asset.lockedBalance,
     })),
-    bets: bets
-      .slice(0, 8)
-      .map(bet => ({
-        ticketCode: bet.ticketCode,
-        currency: bet.currency,
-        status: bet.status,
-        stake: bet.stake,
-        combinedOdds: bet.combinedOdds,
-        potentialReturn: bet.potentialReturn,
-        createdAt: bet.createdAt,
-        selections: bet.selections.map(selection => ({
-          match: selection.match,
-          market: selection.market,
-          odds: selection.odds,
-        })),
+    bets: bets.slice(0, 8).map(bet => ({
+      ticketCode: bet.ticketCode,
+      currency: bet.currency,
+      status: bet.status,
+      stake: bet.stake,
+      combinedOdds: bet.combinedOdds,
+      potentialReturn: bet.potentialReturn,
+      createdAt: bet.createdAt,
+      selections: bet.selections.map(selection => ({
+        match: selection.match,
+        market: selection.market,
+        odds: selection.odds,
       })),
+    })),
   };
 }

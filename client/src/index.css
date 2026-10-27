@@ -2,6 +2,27 @@
 @import "tw-animate-css";
 @import "./ios26.css";
 
+/* Final ABT90-inspired surface tokens. Keep the sportsbook readable even when legacy theme layers load later. */
+.nexus-shell .hero-score.glass-panel,
+.nexus-shell .glass-panel,
+.nexus-shell .match-card {
+  background: #171126 !important;
+  color: #f8f5ff !important;
+  border-color: rgba(207, 193, 255, 0.12) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22) !important;
+}
+.nexus-shell .hero-score.glass-panel::before,
+.nexus-shell .hero-score.glass-panel::after {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.34), rgba(9, 7, 15, 0.2)) !important;
+}
+.nexus-shell .primary-cta,
+.nexus-shell button.primary-cta,
+.nexus-shell .login-button {
+  background: linear-gradient(135deg, #9f7aff, #7c3aed) !important;
+  color: #fff !important;
+  border-color: #9f7aff !important;
+}
+
 /* Nexus Bet brand layer: quiet labels, clear hierarchy and a consistent trust signal. */
 .context-ai-strip {
   display: none !important;
@@ -26,31 +47,31 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #0b0712;
-  --foreground: #ffffff;
-  --card: #171024;
-  --card-foreground: #ffffff;
-  --popover: #1f1631;
-  --popover-foreground: #ffffff;
-  --primary: #7c3aed;
-  --primary-foreground: #ffffff;
-  --secondary: #1f1631;
-  --secondary-foreground: #ffffff;
-  --muted: #1f1631;
-  --muted-foreground: #a7a7ae;
-  --accent: #34d399;
-  --accent-foreground: #04120c;
-  --destructive: #ef3e3e;
-  --border: rgba(167, 139, 250, 0.14);
-  --input: rgba(167, 139, 250, 0.14);
-  --ring: #7c3aed;
+  --background: #07111a;
+  --foreground: #f4fbff;
+  --card: #102534;
+  --card-foreground: #f4fbff;
+  --popover: #163246;
+  --popover-foreground: #f4fbff;
+  --primary: #b8f36b;
+  --primary-foreground: #07111a;
+  --secondary: #163246;
+  --secondary-foreground: #f4fbff;
+  --muted: #163246;
+  --muted-foreground: #9cb2bf;
+  --accent: #45e0b5;
+  --accent-foreground: #07111a;
+  --destructive: #ff647c;
+  --border: rgba(148, 190, 208, 0.14);
+  --input: rgba(148, 190, 208, 0.14);
+  --ring: #b8f36b;
   --radius: 0.75rem;
-  --nexus-purple: #7c3aed;
-  --nexus-purple-bright: #9f7aff;
-  --nexus-mint: #34d399;
-  --nexus-bg: #0b0712;
-  --nexus-panel: #171024;
-  --nexus-line: rgba(167, 139, 250, 0.14);
+  --nexus-purple: #b8f36b;
+  --nexus-purple-bright: #d5ff9d;
+  --nexus-mint: #45e0b5;
+  --nexus-bg: #07111a;
+  --nexus-panel: #102534;
+  --nexus-line: rgba(148, 190, 208, 0.14);
   --nexus-text-soft: #a7a7ae;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -82,6 +103,61 @@ select:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--nexus-mint);
   outline-offset: 3px;
+}
+
+/* Sportsbook UI system: navy surfaces, lime action states, and compact mobile-first controls. */
+:root {
+  --nexus-bg: #07111a;
+  --nexus-panel: #102534;
+  --nexus-line: rgba(148, 190, 208, 0.14);
+  --nexus-purple: #b8f36b;
+  --nexus-purple-bright: #d5ff9d;
+  --nexus-mint: #45e0b5;
+}
+.nexus-shell { background: #07111a; padding-top: 0; }
+.nexus-shell::before { opacity: .12; background-size: 56px 56px; }
+.topbar.glass-panel {
+  width: 100%; min-height: 72px; margin: 0; padding-inline: max(20px, calc((100vw - 1240px) / 2));
+  border-radius: 0; border-inline: 0; background: rgba(7,17,26,.96) !important;
+  position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
+}
+.brand-mark { width: 42px; height: 42px; border-radius: 12px; background: #b8f36b !important; box-shadow: none; }
+.brand-mark img { display: none; }
+.brand-mark::before { content: "N"; color: #07111a; font: 900 22px "Manrope", sans-serif; }
+.brand b { color: #f4fbff; font-size: 16px; }
+.brand small { color: #b8f36b; letter-spacing: 2.3px; }
+.nav-link { color: #9cb2bf; padding: 10px 14px; border-radius: 8px; }
+.nav-link:hover { color: #f4fbff; background: rgba(184,243,107,.08); }
+.nav-link.is-active { color: #07111a !important; background: #b8f36b !important; }
+.nav-link.is-active::after { display: none; }
+.icon-button { width: 38px; height: 38px; border: 1px solid rgba(148,190,208,.14); background: #102534; color: #9cb2bf; }
+.hero { gap: 24px; padding-block: 32px 28px; }
+.hero-copy h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); letter-spacing: -.04em; }
+.match-card { background: #102534 !important; border-color: rgba(148,190,208,.14) !important; border-radius: 12px; }
+.match-card:hover { background: #143043 !important; border-color: rgba(184,243,107,.45) !important; transform: translateY(-1px); }
+.odds-button { min-height: 56px; border-radius: 8px; border: 1px solid rgba(148,190,208,.14); background: #163246; }
+.odds-button:hover, .odds-button.chosen { background: rgba(184,243,107,.13); border-color: #b8f36b; }
+.odds-button b, .match-time strong { color: #b8f36b; }
+.login-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #b8f36b !important;
+  border-radius: 8px;
+  background: #b8f36b !important;
+  color: #07111a !important;
+  box-shadow: none !important;
+  font-weight: 800;
+}
+.login-button:hover { background: #d5ff9d !important; }
+@media (max-width: 760px) {
+  .topbar.glass-panel { min-height: 64px; padding-inline: 14px; }
+  .brand-copy { display: none !important; }
+  .main-nav { display: none; }
+  .container { width: min(100% - 24px, 620px); }
+  .hero { padding-block: 22px 18px; gap: 14px; }
+  .hero-score { min-height: 270px; }
+  .hero-copy h1 { font-size: 2rem; }
+  .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 .nexus-shell {
@@ -641,6 +717,42 @@ a:focus-visible {
 .signal-row svg {
   color: var(--nexus-mint);
 }
+
+/* Editorial sportsbook template: keep legacy hero components legible on paper surfaces. */
+.nexus-shell,
+.nexus-shell main {
+  color: #211d19;
+}
+.hero-score,
+.hero-score::before {
+  background: #211d19 !important;
+}
+.hero-score::after {
+  background: linear-gradient(135deg, rgba(238, 107, 77, 0.82), rgba(33, 29, 25, 0.2)) !important;
+}
+.hero-score .score-center,
+.hero-score .score-center strong,
+.hero-score .score-center span,
+.hero-score .hero-market b {
+  color: #fffdfa !important;
+}
+.hero-market {
+  border-color: rgba(238, 107, 77, 0.34) !important;
+  background: rgba(238, 107, 77, 0.14) !important;
+  color: #ffb09a !important;
+}
+.hero-market button {
+  background: #ee6b4d !important;
+  color: #fffdfa !important;
+}
+.signal-row { color: rgba(255, 253, 250, 0.62) !important; }
+.mobile-nav {
+  background: #211d19 !important;
+  border-color: rgba(238, 107, 77, 0.24) !important;
+}
+.mobile-nav a { color: #c8beb3 !important; }
+.mobile-nav a.is-active { color: #ee6b4d !important; }
+
 
 .content-grid {
   display: grid;
@@ -5509,7 +5621,8 @@ button:active,
 }
 .subpage-art,
 .hero-score {
-  background: rgba(27, 27, 30, 0.55);
+  background: #211d19 !important;
+  border-color: rgba(238, 107, 77, 0.28) !important;
 }
 .mobile-bottom-nav {
   padding: 8px 11px calc(8px + env(safe-area-inset-bottom));

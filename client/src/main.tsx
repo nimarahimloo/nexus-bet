@@ -12,10 +12,10 @@ import "./ui-responsive.css";
 import "./ui-touch.css";
 import "./ui-sportsbook.css";
 import "./ui-iranian.css";
-import "./ui-brand.css";
-import "./ui-quality.css";
-import "./ui-fa-rtl.css";
-import "./ui-system.css";
+ import "./ui-quality.css";
+ import "./ui-fa-rtl.css";
+ import "./ui-system.css";
+ import "./ui-brand.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
