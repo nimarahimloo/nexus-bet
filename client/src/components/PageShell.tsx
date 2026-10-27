@@ -156,8 +156,8 @@ export function PageShell({
             <img src="/brand/nexus-bet-logo_92fe8c09.png" alt="" />
           </span>
           <span className="brand-copy">
-            <b>NEXUS</b>
-            <small>BET · TRUSTED PLAY</small>
+            <b>NEXUS SPORT</b>
+            <small>LIVE ODDS · PLAY SMART</small>
           </span>
         </Link>
         <nav
