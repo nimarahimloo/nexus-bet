@@ -3,23 +3,23 @@
    lime secondary, flat borders, no neon glow. */
 
 :root {
-  --nx-void: #0b0712;
-  --nx-deep: #120b1c;
-  --nx-panel: #171024;
-  --nx-panel-strong: #1f1631;
-  --nx-border: rgba(255, 255, 255, 0.08);
-  --nx-border-strong: rgba(255, 255, 255, 0.16);
-  /* Yellow reads as the brand action colour; lime is the secondary/highlight. */
-  --nx-yellow: #7c3aed;
-  --nx-yellow-bright: #9f7aff;
-  --nx-yellow-dim: #6d28d9;
-  --nx-lime: #34d399;
-  --nx-lime-soft: #6ee7b7;
-  --nx-red: #ef3e3e;
-  --nx-ink: #0b0712;
-  --nx-text: #ffffff;
-  --nx-muted: #a7a7ae;
-  --nx-dim: #6e6e76;
+  --nx-void: #07111a;
+  --nx-deep: #0b1b28;
+  --nx-panel: #102534;
+  --nx-panel-strong: #163246;
+  --nx-border: rgba(148, 190, 208, 0.14);
+  --nx-border-strong: rgba(148, 190, 208, 0.24);
+  /* Deep navy surfaces with a high-contrast mint action color. */
+  --nx-yellow: #b8f36b;
+  --nx-yellow-bright: #d5ff9d;
+  --nx-yellow-dim: #8dcc3f;
+  --nx-lime: #45e0b5;
+  --nx-lime-soft: #8af5d8;
+  --nx-red: #ff647c;
+  --nx-ink: #07111a;
+  --nx-text: #f4fbff;
+  --nx-muted: #9cb2bf;
+  --nx-dim: #66808d;
   /* Legacy aliases kept so untouched rules inherit the new palette. */
   --nx-purple: var(--nx-yellow);
   --nx-purple-bright: var(--nx-yellow-bright);
