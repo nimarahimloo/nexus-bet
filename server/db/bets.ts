@@ -161,25 +161,21 @@ export async function placeBet(input: PlaceBetInput) {
       selectionsJson: JSON.stringify(pricedSelections),
       status: "pending",
     });
-    await tx
-      .insert(walletTransactions)
-      .values({
-        userId: input.userId,
-        type: "bet_lock",
-        status: "confirmed",
-        currency,
-        amount: input.stake.toFixed(6),
-        referenceId: ticketCode,
-      });
-    await tx
-      .insert(notifications)
-      .values({
-        userId: input.userId,
-        type: "bet",
-        title: "بلیتت ثبت شد",
-        message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} ${currency} در وضعیت بررسی قرار گرفت.`,
-        href: "/account",
-      });
+    await tx.insert(walletTransactions).values({
+      userId: input.userId,
+      type: "bet_lock",
+      status: "confirmed",
+      currency,
+      amount: input.stake.toFixed(6),
+      referenceId: ticketCode,
+    });
+    await tx.insert(notifications).values({
+      userId: input.userId,
+      type: "bet",
+      title: "بلیتت ثبت شد",
+      message: `بلیت ${ticketCode} با مبلغ ${input.stake.toFixed(2)} ${currency} در وضعیت بررسی قرار گرفت.`,
+      href: "/account",
+    });
     return {
       id: Number(inserted[0].insertId),
       ticketCode,

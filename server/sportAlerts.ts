@@ -11,13 +11,11 @@ export async function processSportAlerts(req: Request, res: Response) {
     return res.json({ ok: true, ...result });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return res
-      .status(500)
-      .json({
-        error: message,
-        context: { url: req.originalUrl },
-        timestamp: new Date().toISOString(),
-      });
+    return res.status(500).json({
+      error: message,
+      context: { url: req.originalUrl },
+      timestamp: new Date().toISOString(),
+    });
   }
 }
 

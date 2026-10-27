@@ -129,17 +129,15 @@ export async function addSportWatchlist(
     )
     .limit(1);
   if (existing[0]) return existing[0];
-  const inserted = await db
-    .insert(sportWatchlist)
-    .values({
-      userId,
-      eventId,
-      sport: input.sport.trim(),
-      league: input.league.trim(),
-      home: input.home.trim(),
-      away: input.away.trim(),
-      eventTime: input.eventTime ?? null,
-    });
+  const inserted = await db.insert(sportWatchlist).values({
+    userId,
+    eventId,
+    sport: input.sport.trim(),
+    league: input.league.trim(),
+    home: input.home.trim(),
+    away: input.away.trim(),
+    eventTime: input.eventTime ?? null,
+  });
   const rows = await db
     .select()
     .from(sportWatchlist)
@@ -233,15 +231,13 @@ export async function upsertSportAlertPreference(
       threshold: input.threshold == null ? null : input.threshold.toFixed(4),
     };
   }
-  const inserted = await db
-    .insert(sportAlertPreferences)
-    .values({
-      userId,
-      watchlistId: input.watchlistId,
-      alertType: input.alertType,
-      threshold: input.threshold == null ? null : input.threshold.toFixed(4),
-      enabled: input.enabled ? 1 : 0,
-    });
+  const inserted = await db.insert(sportAlertPreferences).values({
+    userId,
+    watchlistId: input.watchlistId,
+    alertType: input.alertType,
+    threshold: input.threshold == null ? null : input.threshold.toFixed(4),
+    enabled: input.enabled ? 1 : 0,
+  });
   const rows = await db
     .select()
     .from(sportAlertPreferences)
@@ -279,15 +275,13 @@ export async function dispatchDueSportAlerts() {
       preference.lastNotifiedAt >= watch.eventTime
     )
       continue;
-    await db
-      .insert(notifications)
-      .values({
-        userId: preference.userId,
-        type: "sports",
-        title: "شروع مسابقه نزدیک است",
-        message: `${watch.home} — ${watch.away} تا چند دقیقهٔ دیگر آغاز می‌شود.`,
-        href: "/matches",
-      });
+    await db.insert(notifications).values({
+      userId: preference.userId,
+      type: "sports",
+      title: "شروع مسابقه نزدیک است",
+      message: `${watch.home} — ${watch.away} تا چند دقیقهٔ دیگر آغاز می‌شود.`,
+      href: "/matches",
+    });
     await db
       .update(sportAlertPreferences)
       .set({ lastNotifiedAt: new Date() })

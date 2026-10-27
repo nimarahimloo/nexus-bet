@@ -105,17 +105,15 @@ export async function createAdminNotification(input: {
         ? [input.userId]
         : [];
   if (!targetUserIds.length) throw new Error("NOTIFICATION_TARGET_REQUIRED");
-  const inserted = await db
-    .insert(notifications)
-    .values(
-      targetUserIds.map(userId => ({
-        userId,
-        type: input.type,
-        title: input.title.trim(),
-        message: input.message.trim(),
-        href: input.href?.trim() || null,
-      }))
-    );
+  const inserted = await db.insert(notifications).values(
+    targetUserIds.map(userId => ({
+      userId,
+      type: input.type,
+      title: input.title.trim(),
+      message: input.message.trim(),
+      href: input.href?.trim() || null,
+    }))
+  );
   return {
     count: targetUserIds.length,
     firstId: Number(inserted[0]?.insertId ?? 0),
@@ -283,15 +281,13 @@ export async function reviewAdminWalletTransaction(input: {
           eq(walletTransactions.status, "pending")
         )
       );
-    await tx
-      .insert(notifications)
-      .values({
-        userId: transaction.userId,
-        type: "wallet",
-        title: "وضعیت کیف پول به‌روزرسانی شد",
-        message: `درخواست ${transaction.type === "deposit" ? "واریز" : "برداشت"} ${amount.toFixed(6)} ${transaction.currency} اکنون ${input.status} است.`,
-        href: "/wallet",
-      });
+    await tx.insert(notifications).values({
+      userId: transaction.userId,
+      type: "wallet",
+      title: "وضعیت کیف پول به‌روزرسانی شد",
+      message: `درخواست ${transaction.type === "deposit" ? "واریز" : "برداشت"} ${amount.toFixed(6)} ${transaction.currency} اکنون ${input.status} است.`,
+      href: "/wallet",
+    });
     return { success: true as const, status: input.status };
   });
 }

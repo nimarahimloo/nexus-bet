@@ -130,31 +130,25 @@ export async function createLocalUser(input: {
   const db = await getDb();
   if (!db) throw new Error("DATABASE_UNAVAILABLE");
   return db.transaction(async tx => {
-    const userResult = await tx
-      .insert(users)
-      .values({
-        openId: `local_${randomUUID()}`,
-        name: input.username,
-        loginMethod: "password",
-        lastSignedIn: new Date(),
-      });
+    const userResult = await tx.insert(users).values({
+      openId: `local_${randomUUID()}`,
+      name: input.username,
+      loginMethod: "password",
+      lastSignedIn: new Date(),
+    });
     const userId = Number(userResult[0]?.insertId);
     if (!userId) throw new Error("USER_CREATE_FAILED");
-    await tx
-      .insert(localCredentials)
-      .values({
-        userId,
-        username: input.username,
-        passwordHash: input.passwordHash,
-      });
-    await tx
-      .insert(wallets)
-      .values({
-        userId,
-        currency: "USDT",
-        availableBalance: "0",
-        lockedBalance: "0",
-      });
+    await tx.insert(localCredentials).values({
+      userId,
+      username: input.username,
+      passwordHash: input.passwordHash,
+    });
+    await tx.insert(wallets).values({
+      userId,
+      currency: "USDT",
+      availableBalance: "0",
+      lockedBalance: "0",
+    });
     const created = await tx
       .select()
       .from(users)

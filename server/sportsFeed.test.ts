@@ -8,31 +8,29 @@ describe("sports feed contract", () => {
   it("maps a successful live response and keeps API source", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(
-            JSON.stringify({
-              errors: [],
-              response: [
-                {
-                  fixture: {
-                    id: 7,
-                    date: "2026-08-27T18:30:00Z",
-                    status: { short: "1H", elapsed: 32 },
-                  },
-                  league: { name: "لیگ نمونه" },
-                  teams: {
-                    home: { name: "میزبان", logo: null },
-                    away: { name: "مهمان", logo: null },
-                  },
-                  goals: { home: 1, away: 0 },
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            errors: [],
+            response: [
+              {
+                fixture: {
+                  id: 7,
+                  date: "2026-08-27T18:30:00Z",
+                  status: { short: "1H", elapsed: 32 },
                 },
-              ],
-            }),
-            { status: 200, headers: { "content-type": "application/json" } }
-          )
+                league: { name: "لیگ نمونه" },
+                teams: {
+                  home: { name: "میزبان", logo: null },
+                  away: { name: "مهمان", logo: null },
+                },
+                goals: { home: 1, away: 0 },
+              },
+            ],
+          }),
+          { status: 200, headers: { "content-type": "application/json" } }
         )
+      )
     );
     const result = await fetchSportsFeed("fixtures?live=all", "test-key");
     expect(result.source).toBe("api");
@@ -122,14 +120,12 @@ describe("sports feed contract", () => {
   it("maps the scheduled fixtures path independently and serves explicit preview fixtures on upstream failure", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(JSON.stringify({ errors: [], response: [] }), {
-            status: 200,
-            headers: { "content-type": "application/json" },
-          })
-        )
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ errors: [], response: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        })
+      )
     );
     const success = await fetchSportsFeed("fixtures?next=10", "test-key");
     expect(success.source).toBe("preview");
