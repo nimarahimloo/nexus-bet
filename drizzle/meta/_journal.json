@@ -1,0 +1,132 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1787763988640,
+      "tag": "0000_tiresome_sharon_ventura",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787779283086,
+      "tag": "0001_slim_stranger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787850718939,
+      "tag": "0002_hard_spyke",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1787857129833,
+      "tag": "0003_fearless_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1787869966654,
+      "tag": "0004_ambiguous_firestar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1787870134262,
+      "tag": "0005_watery_warbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1787878785108,
+      "tag": "0006_familiar_pyro",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1787950395506,
+      "tag": "0007_cute_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1788015236035,
+      "tag": "0008_chubby_satana",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1788260331266,
+      "tag": "0009_orange_dragon_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1788387547794,
+      "tag": "0010_sudden_mikhail_rasputin",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1788560086462,
+      "tag": "0011_new_genesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1788560107340,
+      "tag": "0012_odd_madripoor",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1788560661113,
+      "tag": "0013_icy_power_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1788561020121,
+      "tag": "0014_noisy_mantis",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1791247042392,
+      "tag": "0015_big_warhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1791403040599,
+      "tag": "0016_happy_freak",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1792881524315,
+      "tag": "0017_p0_markets_and_rate_limits",
+      "breakpoints": true
+    }
+  ]
+}

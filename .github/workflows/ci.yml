@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Cypress is a local e2e tool; do not download a browser in CI.
+      CYPRESS_INSTALL_BINARY: "0"
+    steps:
+      - uses: actions/checkout@v4
+
+      # The repo is pnpm-managed (pnpm-lock.yaml + packageManager field).
+      # setup-node's cache must match the package manager or the job fails fast.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Reject committed conflict markers
+        run: |
+          if git grep -nE '^(<<<<<<< |>>>>>>> |=======$)' -- server client shared docs drizzle api todo.md README.md; then
+            echo "::error::Merge conflict markers are committed. Resolve them before pushing."
+            exit 1
+          fi
+
+      - name: Typecheck
+        run: pnpm run check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm run build

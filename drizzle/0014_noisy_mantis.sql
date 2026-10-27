@@ -1,0 +1,1 @@
+ALTER TABLE `sportAlertPreferences` ADD `lastNotifiedAt` timestamp;

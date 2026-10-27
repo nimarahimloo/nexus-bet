@@ -1,0 +1,99 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+import {
+  createCrashSeed,
+  crashMultiplierFromSeed,
+  verifyCrashProof,
+  verifyCrashSeed,
+} from "./crash";
+
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
+
+/** Aggregate db layer after modular split under server/db/*. */
+const readDbLayer = () =>
+  [
+    read("./db.ts"),
+    read("./db/core.ts"),
+    read("./db/auth.ts"),
+    read("./db/wallet.ts"),
+    read("./db/bets.ts"),
+    read("./db/notifications.ts"),
+    read("./db/rewards.ts"),
+    read("./db/crash.ts"),
+    read("./db/misc.ts"),
+  ].join("\n");
+
+describe("Crash backend integration contract", () => {
+  it("uses the database transaction for round validation and atomic wallet locking", () => {
+    const db = readDbLayer();
+    expect(db).toContain("export async function placeCrashBet");
+    expect(db).toContain('round.status !== "running"');
+    expect(db).toContain("gte(wallets.availableBalance, stake.toFixed(6))");
+    expect(db).toContain('throw new Error("INSUFFICIENT_BALANCE")');
+    expect(db).toContain('status: "pending"');
+  });
+
+  it("binds crash multiplier to server seed and rejects tampering", () => {
+    const seed = createCrashSeed();
+    expect(seed.serverSeed).toHaveLength(64);
+    expect(seed.serverSeedHash).toHaveLength(64);
+    expect(verifyCrashSeed(seed.serverSeed, seed.serverSeedHash)).toBe(true);
+    expect(
+      verifyCrashSeed(`${seed.serverSeed}tampered`, seed.serverSeedHash)
+    ).toBe(false);
+
+    const mult = crashMultiplierFromSeed(seed.serverSeed);
+    expect(Number(mult)).toBeGreaterThanOrEqual(1.05);
+    expect(Number(mult)).toBeLessThanOrEqual(12.99);
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, mult)).toBe(
+      true
+    );
+    expect(verifyCrashProof(seed.serverSeed, seed.serverSeedHash, "9.99")).toBe(
+      false
+    );
+    expect(
+      verifyCrashProof(`${seed.serverSeed}x`, seed.serverSeedHash, mult)
+    ).toBe(false);
+
+    // Same seed always yields same multiplier (determinism).
+    expect(crashMultiplierFromSeed(seed.serverSeed)).toBe(mult);
+  });
+
+  it("commits hash at create and reveals seed only after crash", () => {
+    const db = readDbLayer();
+    expect(db).toContain("crashMultiplierFromSeed");
+    expect(db).toContain("rememberPendingSeed");
+    expect(db).toContain("takePendingSeed");
+    expect(db).toContain("serverSeedHash");
+    // Running payload must not expose target multiplier field name in public return shape comments/structure
+    expect(db).toContain("never crashMultiplier target or serverSeed");
+    expect(db).toContain("serverSeed intentionally omitted until crash reveal");
+    // Seed is persisted so proof survives process restart, but still omitted from public running return
+    expect(db).toContain("serverSeed,");
+  });
+
+  it("wires current, history, place and cashout through protected/public tRPC procedures", () => {
+    const routers = read("./routers.ts");
+    expect(routers).toContain("crash: router");
+    expect(routers).toContain("current: publicProcedure");
+    expect(routers).toContain("history: publicProcedure");
+    expect(routers).toContain("place: protectedProcedure");
+    expect(routers).toContain("cashout: protectedProcedure");
+  });
+
+  it("shows real wallet balance, maps backend failures, and exposes public seed verifier in Crash UI", () => {
+    const crash = read("../client/src/pages/Crash.tsx");
+    expect(crash).toContain("trpc.wallet.portfolio.useQuery");
+    expect(crash).toContain("availableBalance");
+    expect(crash).toContain("currency: activeCurrency");
+    expect(crash).toContain("INSUFFICIENT_BALANCE");
+    expect(crash).toContain("ROUND_CLOSED");
+    expect(crash).toContain("BET_CLOSED");
+    expect(crash).toContain("wallet.portfolio.invalidate");
+    expect(crash).toContain("round-proof");
+    expect(crash).toContain("public seed");
+    expect(crash).toContain("verifyCrashProofClient");
+    expect(crash).toContain("بررسی اثبات");
+  });
+});

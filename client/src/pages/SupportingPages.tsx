@@ -1,0 +1,637 @@
+import { Link } from "wouter";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  ArrowDownLeft,
+  ArrowLeft,
+  ArrowUpRight,
+  Bell,
+  BrainCircuit,
+  Check,
+  CheckCircle2,
+  Clock3,
+  Crown,
+  Gift,
+  LockKeyhole,
+  ShieldCheck,
+  Sparkles,
+  Ticket,
+  Trash2,
+  WalletCards,
+  XCircle,
+} from "lucide-react";
+import { PageShell } from "@/components/PageShell";
+import { formatFaDecimal } from "@shared/format";
+import type { AiPick } from "@shared/ai";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { MultiAssetWallet } from "@/components/MultiAssetWallet";
+
+const usdt = (value: number) => formatFaDecimal(value);
+
+export function WalletPage() {
+  return <MultiAssetWallet />;
+}
+
+export function AiPage() {
+  const sportsQuery = trpc.sports.fixtures.useQuery(
+    { next: 10 },
+    { staleTime: 30_000 }
+  );
+  const candidates = (sportsQuery.data?.matches ?? []).flatMap(match =>
+    match.markets
+      .filter(market => market.odds > 0)
+      .map((market, index) => ({
+        eventId: match.id,
+        league: match.league,
+        match: `${match.home} — ${match.away}`,
+        sport: match.sport,
+        marketLabel: market.label,
+        marketName: market.name,
+        odds: market.odds,
+        status: match.status,
+        popularity: Math.max(50, 90 - index * 8),
+      }))
+  );
+  const aiQuery = trpc.ai.smartPicks.useQuery(
+    { candidates },
+    { enabled: candidates.length > 0, staleTime: 60_000 }
+  );
+  return (
+    <PageShell
+      eyebrow="NEXUS AI"
+      title="پیشنهادها را بهتر بفهم"
+      description="سیگنال‌های توضیح‌پذیر بر اساس فید مسابقات و بازارهای موجود؛ نه توصیهٔ قطعی و نه وعدهٔ سود."
+      heroImage="/brand/nexus-bet-ai-hero-v2_ad9c88ae.png"
+    >
+      <div className="ai-callout glass-panel">
+        <BrainCircuit size={23} />
+        <div>
+          <b>تحلیل متصل به فید مسابقات</b>
+          <p>
+            {sportsQuery.isLoading
+              ? "در حال دریافت فید واقعی مسابقات…"
+              : aiQuery.isLoading
+                ? "در حال تحلیل بازارهای موجود…"
+                : "پیشنهادها از دادهٔ فید فعلی ساخته می‌شوند."}
+          </p>
+        </div>
+        <span className="sample-chip">غیرتضمینی</span>
+      </div>
+      {sportsQuery.error || sportsQuery.data?.error ? (
+        <div className="inline-alert">
+          فید واقعی در دسترس نیست؛ برای جلوگیری از ساخت پیشنهاد جعلی، نتیجه‌ای
+          نمایش داده نمی‌شود.
+        </div>
+      ) : null}
+      <div className="standalone-grid">
+        {aiQuery.data?.picks.map((pick: AiPick) => (
+          <article
+            className="ai-pick-card glass-panel"
+            key={`${pick.eventId}-${pick.marketLabel}`}
+          >
+            <div>
+              <Sparkles size={16} />
+              <span>{pick.tags.join(" · ") || "تحلیل الگوریتمی"}</span>
+            </div>
+            <h3>{pick.marketName}</h3>
+            <p>{pick.match}</p>
+            <strong>{formatFaDecimal(pick.odds)}</strong>
+            <span className="risk-chip">
+              ریسک {pick.risk} · اعتماد {formatFaDecimal(pick.confidence, 0)}٪
+            </span>
+            <p>{pick.rationale}</p>
+            <button className="outline-cta" disabled>
+              افزودن به بلیت <ArrowLeft size={15} />
+            </button>
+          </article>
+        ))}
+      </div>
+      {!aiQuery.isLoading &&
+        !aiQuery.data?.picks.length &&
+        !sportsQuery.isLoading && (
+          <div className="empty-state glass-panel">
+            برای این لحظه پیشنهاد قابل اتکایی از فید موجود تولید نشد.
+          </div>
+        )}
+      <p className="data-state">
+        منبع:{" "}
+        {aiQuery.data?.source === "ai"
+          ? "Nexus AI روی فید مسابقات"
+          : "فید خالی یا سرویس AI در دسترس نیست"}
+        . نتیجه تضمین‌شده نیست.
+      </p>
+    </PageShell>
+  );
+}
+
+export function VipPage() {
+  const { isAuthenticated } = useAuth();
+  const summaryQuery = trpc.vip.summary.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const summary = summaryQuery.data;
+  return (
+    <PageShell
+      eyebrow="NEXUS VIP"
+      title="فعال بمان، بیشتر دیده شو"
+      description="سطح و progress از activity ledger واقعی محاسبه می‌شوند؛ هیچ امتیاز یا tier ساختگی در رابط نمایش داده نمی‌شود."
+      heroImage="/brand/nexus-bet-vip-hero-v2_6e37762c.png"
+    >
+      <div className="vip-level glass-panel">
+        <div>
+          <Crown size={24} />
+          <span>وضعیت باشگاه</span>
+          <strong>
+            {summaryQuery.isLoading
+              ? "در حال دریافت…"
+              : (summary?.currentTier ?? "—")}
+          </strong>
+        </div>
+        <div>
+          <b>{summary ? formatFaDecimal(summary.points, 0) : "—"}</b>
+          <span>امتیاز فعالیت</span>
+        </div>
+        <div className="vip-progress">
+          <span style={{ width: `${summary?.progress ?? 0}%` }} />
+          <small>
+            {summary?.nextTier
+              ? `${formatFaDecimal(summary.nextThreshold ?? 0, 0)} امتیاز تا ${summary.nextTier}`
+              : isAuthenticated
+                ? "بیشترین سطح فعال"
+                : "برای مشاهده وارد شوید"}
+          </small>
+        </div>
+      </div>
+      {!isAuthenticated && (
+        <div className="data-state preview-notice">
+          <ShieldCheck size={15} />
+          <span>برای دیدن tier و امتیاز واقعی وارد حساب شوید.</span>
+        </div>
+      )}
+      {summaryQuery.error && (
+        <div className="inline-alert">activity ledger فعلاً در دسترس نیست.</div>
+      )}
+      <div className="standalone-grid two">
+        <article className="standalone-card glass-panel">
+          <Gift size={21} />
+          <h3>مزایای فعال</h3>
+          <p>
+            مزایا فقط بعد از ثبت در policy و activity ledger نمایش داده می‌شوند.
+          </p>
+        </article>
+        <article className="standalone-card glass-panel">
+          <WalletCards size={21} />
+          <h3>اولویت خدمات کیف پول</h3>
+          <p>وضعیت سرویس بر اساس tier واقعی حساب تعیین خواهد شد.</p>
+        </article>
+      </div>
+    </PageShell>
+  );
+}
+
+type BetHistoryFilter = "all" | "pending" | "won" | "lost" | "void";
+
+const betStatusMeta: Record<
+  Exclude<BetHistoryFilter, "all">,
+  { label: string; icon: typeof Clock3; className: string }
+> = {
+  pending: { label: "در انتظار", icon: Clock3, className: "pending" },
+  won: { label: "برنده", icon: CheckCircle2, className: "won" },
+  lost: { label: "بازنده", icon: XCircle, className: "lost" },
+  void: { label: "بازگشت وجه", icon: ArrowDownLeft, className: "void" },
+};
+
+export function AccountPage() {
+  const { user, isAuthenticated } = useAuth();
+  const [filter, setFilter] = useState<BetHistoryFilter>("all");
+  const [selectedRiskProfile, setSelectedRiskProfile] = useState<
+    "conservative" | "balanced" | "assertive"
+  >("balanced");
+  const overviewQuery = trpc.account.overview.useQuery(undefined, {
+    enabled: isAuthenticated,
+    refetchInterval: 10_000,
+  });
+  const riskProfileQuery = trpc.ai.riskProfile.get.useQuery(undefined, {
+    enabled: isAuthenticated,
+    staleTime: 60_000,
+  });
+  useEffect(() => {
+    if (riskProfileQuery.data?.profile)
+      setSelectedRiskProfile(riskProfileQuery.data.profile);
+  }, [riskProfileQuery.data?.profile]);
+  const riskProfileMutation = trpc.ai.riskProfile.set.useMutation({
+    onSuccess: () => {
+      void riskProfileQuery.refetch();
+      toast.success("پروفایل ریسک ذخیره شد.");
+    },
+    onError: () => {
+      setSelectedRiskProfile(riskProfileQuery.data?.profile ?? "balanced");
+      toast.error("ذخیرهٔ پروفایل ریسک انجام نشد.");
+    },
+  });
+  const overview = overviewQuery.data;
+  const bets = overview?.bets ?? [];
+  const visibleBets =
+    filter === "all" ? bets : bets.filter(bet => bet.status === filter);
+  const counts = {
+    all: bets.length,
+    pending: bets.filter(bet => bet.status === "pending").length,
+    won: bets.filter(bet => bet.status === "won").length,
+    lost: bets.filter(bet => bet.status === "lost").length,
+    void: bets.filter(bet => bet.status === "void").length,
+  };
+  const openBets = bets.filter(bet => bet.status === "pending");
+  const watchlistQuery = trpc.watchlist.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+  });
+  const alertQuery = trpc.watchlist.alerts.useQuery(undefined, {
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+  });
+  const removeWatchMutation = trpc.watchlist.remove.useMutation({
+    onSuccess: () => {
+      void watchlistQuery.refetch();
+      void alertQuery.refetch();
+      toast.success("مسابقه از پیگیری حذف شد.");
+    },
+    onError: () => toast.error("حذف پیگیری انجام نشد."),
+  });
+  const setAlertMutation = trpc.watchlist.setAlert.useMutation({
+    onSuccess: () => {
+      void alertQuery.refetch();
+      toast.success("تنظیم اعلان ذخیره شد.");
+    },
+    onError: error =>
+      toast.error(
+        error.message.includes("WATCHLIST_NOT_FOUND")
+          ? "این مسابقه دیگر در پیگیری نیست."
+          : "تنظیم اعلان ذخیره نشد."
+      ),
+  });
+  const alertEnabled = (
+    watchlistId: number,
+    alertType: "kickoff" | "odds_change" | "result"
+  ) =>
+    alertQuery.data?.some(
+      alert =>
+        alert.watchlistId === watchlistId &&
+        alert.alertType === alertType &&
+        alert.enabled === 1
+    ) ?? false;
+
+  return (
+    <PageShell
+      eyebrow="حساب کاربری"
+      title="همه‌چیز دربارهٔ حساب تو"
+      description="شرط‌ها، spinها و تراکنش‌های کیف پول از overview واقعی backend خوانده می‌شوند؛ هیچ رکورد نمایشی جای فعالیت واقعی را نمی‌گیرد."
+      heroImage="/brand/nexus-bet-account-hero-v2_f471d0ea.jpg"
+    >
+      <div className="account-summary glass-panel">
+        <div className="avatar">N</div>
+        <div>
+          <b>{user?.name ?? "حساب Nexus"}</b>
+          <span>
+            {isAuthenticated
+              ? "فعالیت حساب از منبع واقعی"
+              : "برای مشاهدهٔ فعالیت وارد حساب شوید."}
+          </span>
+        </div>
+        <ShieldCheck size={21} />
+      </div>
+      {isAuthenticated && (
+        <section
+          className="risk-profile-panel glass-panel"
+          aria-labelledby="risk-profile-title"
+        >
+          <div className="risk-profile-copy">
+            <span className="section-kicker">
+              <BrainCircuit size={15} /> کنترل تصمیم
+            </span>
+            <div className="risk-profile-title-row">
+              <h2 id="risk-profile-title">پروفایل ریسک</h2>
+              <span className="saved-profile">
+                <ShieldCheck size={13} />{" "}
+                {riskProfileMutation.isPending ? "در حال ذخیره" : "ذخیره‌شده"}
+              </span>
+            </div>
+            <p>
+              سطحی را انتخاب کن تا سقف پیشنهاد مبلغ در بلیت پیش‌بینی با رفتار
+              مالی تو هماهنگ شود.
+            </p>
+            <small className="risk-profile-disclaimer">
+              این ابزار نتیجه یا سود را تضمین نمی‌کند.
+            </small>
+          </div>
+          <div
+            className="risk-profile-options"
+            role="radiogroup"
+            aria-label="پروفایل ریسک"
+          >
+            {(
+              [
+                ["conservative", "محافظه‌کار", "آرام‌تر", "حداکثر ۱٪ موجودی"],
+                ["balanced", "متعادل", "انتخاب پیشنهادی", "حداکثر ۲٪ موجودی"],
+                ["assertive", "فعال", "نوسان بیشتر", "حداکثر ۳٪ موجودی"],
+              ] as const
+            ).map(([value, label, tone, detail]) => (
+              <button
+                type="button"
+                key={value}
+                role="radio"
+                aria-checked={selectedRiskProfile === value}
+                className={selectedRiskProfile === value ? "is-active" : ""}
+                onClick={() => {
+                  setSelectedRiskProfile(value);
+                  riskProfileMutation.mutate({ profile: value });
+                }}
+                disabled={riskProfileMutation.isPending}
+              >
+                <span className="risk-option-check">
+                  {selectedRiskProfile === value ? "✓" : ""}
+                </span>
+                <b>{label}</b>
+                <small>
+                  {tone} · {detail}
+                </small>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      <div className="standalone-grid two">
+        <article className="standalone-card glass-panel">
+          <FileClockIcon />
+          <h3>شرط‌های باز</h3>
+          <strong>
+            {isAuthenticated ? `${openBets.length} بلیت فعال` : "—"}
+          </strong>
+          {openBets[0] ? (
+            <p>
+              {openBets[0].selections[0]?.match ?? "انتخاب ثبت‌شده"} · ضریب{" "}
+              {formatFaDecimal(openBets[0].combinedOdds)}
+            </p>
+          ) : (
+            <p>
+              {overviewQuery.isLoading
+                ? "در حال دریافت…"
+                : "هنوز بلیت ثبت‌شده‌ای وجود ندارد."}
+            </p>
+          )}
+        </article>
+        <article className="standalone-card glass-panel">
+          <Gift />
+          <h3>فعالیت پاداش</h3>
+          <strong>
+            {isAuthenticated ? `${overview?.wheelSpins.length ?? 0} spin` : "—"}
+          </strong>
+          <p>تاریخچهٔ reward از backend به‌روزرسانی می‌شود.</p>
+        </article>
+      </div>
+      <section
+        className="bet-history glass-panel"
+        aria-labelledby="bet-history-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">
+              <Ticket size={15} /> تاریخچهٔ واقعی
+            </span>
+            <h2 id="bet-history-title">تاریخچهٔ شرط‌بندی</h2>
+          </div>
+          <span className="sample-chip">
+            {isAuthenticated ? `${counts.all} بلیت` : "نیازمند ورود"}
+          </span>
+        </div>
+        {!isAuthenticated ? (
+          <div className="empty-state">
+            <ShieldCheck size={20} />
+            <p>برای مشاهدهٔ betهای خود وارد حساب شوید.</p>
+          </div>
+        ) : overviewQuery.isLoading ? (
+          <div className="empty-state">
+            <p>در حال دریافت تاریخچه از backend…</p>
+          </div>
+        ) : overviewQuery.error ? (
+          <div className="inline-alert">
+            تاریخچهٔ شرط‌بندی فعلاً از backend دریافت نشد.
+          </div>
+        ) : (
+          <>
+            <div
+              className="bet-history-tabs"
+              role="tablist"
+              aria-label="فیلتر وضعیت شرط‌ها"
+            >
+              {(["all", "pending", "won", "lost", "void"] as const).map(key => (
+                <button
+                  key={key}
+                  className={filter === key ? "is-active" : ""}
+                  role="tab"
+                  aria-selected={filter === key}
+                  onClick={() => setFilter(key)}
+                >
+                  {key === "all" ? "همه" : betStatusMeta[key].label}
+                  <b>{counts[key]}</b>
+                </button>
+              ))}
+            </div>
+            {visibleBets.length ? (
+              <div className="bet-history-list">
+                {visibleBets.map(bet => {
+                  const meta =
+                    betStatusMeta[
+                      bet.status as Exclude<BetHistoryFilter, "all">
+                    ] ?? betStatusMeta.pending;
+                  const StatusIcon = meta.icon;
+                  return (
+                    <article
+                      className={`bet-history-card ${meta.className}`}
+                      key={bet.id}
+                    >
+                      <div className="bet-history-card-head">
+                        <span className="bet-ticket">
+                          <Ticket size={15} /> {bet.ticketCode}
+                        </span>
+                        <span className={`bet-status ${meta.className}`}>
+                          <StatusIcon size={14} /> {meta.label}
+                        </span>
+                      </div>
+                      <div className="bet-history-metrics">
+                        <div>
+                          <span>مبلغ شرط</span>
+                          <b>
+                            {formatFaDecimal(bet.stake)} {bet.currency}
+                          </b>
+                        </div>
+                        <div>
+                          <span>ضریب ترکیبی</span>
+                          <b>{formatFaDecimal(bet.combinedOdds)}</b>
+                        </div>
+                        <div>
+                          <span>
+                            {bet.status === "won"
+                              ? "بازگشت نهایی"
+                              : bet.status === "void"
+                                ? "مبلغ برگشتی"
+                                : "بازگشت احتمالی"}
+                          </span>
+                          <b
+                            className={bet.status === "won" ? "mint-text" : ""}
+                          >
+                            {formatFaDecimal(bet.potentialReturn)}{" "}
+                            {bet.currency}
+                          </b>
+                        </div>
+                      </div>
+                      <div className="bet-selections">
+                        {bet.selections.map(selection => (
+                          <span key={`${bet.id}-${selection.id}`}>
+                            {selection.match} · {selection.market} ·{" "}
+                            <b>{formatFaDecimal(selection.odds)}</b>
+                          </span>
+                        ))}
+                      </div>
+                      <time dateTime={new Date(bet.createdAt).toISOString()}>
+                        {new Date(bet.createdAt).toLocaleString("fa-IR")}
+                      </time>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <Check size={20} />
+                <p>در این وضعیت هنوز bet واقعی ثبت نشده است.</p>
+              </div>
+            )}
+          </>
+        )}
+      </section>
+      {isAuthenticated && (
+        <section
+          className="watchlist-panel glass-panel"
+          aria-labelledby="watchlist-title"
+        >
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">
+                <Bell size={15} /> پیگیری
+              </span>
+              <h2 id="watchlist-title">مسابقه‌های پیگیری‌شده</h2>
+            </div>
+            <span className="sample-chip">
+              {watchlistQuery.data?.length ?? 0} مسابقه
+            </span>
+          </div>
+          {watchlistQuery.isLoading ? (
+            <p className="data-state">در حال دریافت پیگیری‌ها…</p>
+          ) : watchlistQuery.data?.length ? (
+            <div className="watchlist-list">
+              {watchlistQuery.data.map(item => (
+                <article className="watchlist-item" key={item.id}>
+                  <div>
+                    <b>
+                      {item.home} — {item.away}
+                    </b>
+                    <small>
+                      {item.sport} · {item.league}
+                    </small>
+                  </div>
+                  <div className="watchlist-actions">
+                    <button
+                      type="button"
+                      className={
+                        alertEnabled(item.id, "kickoff") ? "is-active" : ""
+                      }
+                      onClick={() =>
+                        setAlertMutation.mutate({
+                          watchlistId: item.id,
+                          alertType: "kickoff",
+                          enabled: !alertEnabled(item.id, "kickoff"),
+                        })
+                      }
+                      aria-label="اعلان شروع مسابقه"
+                    >
+                      <Bell size={14} /> شروع
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        alertEnabled(item.id, "result") ? "is-active" : ""
+                      }
+                      onClick={() =>
+                        setAlertMutation.mutate({
+                          watchlistId: item.id,
+                          alertType: "result",
+                          enabled: !alertEnabled(item.id, "result"),
+                        })
+                      }
+                      aria-label="اعلان نتیجه مسابقه"
+                    >
+                      <Check size={14} /> نتیجه
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        alertEnabled(item.id, "odds_change") ? "is-active" : ""
+                      }
+                      onClick={() =>
+                        setAlertMutation.mutate({
+                          watchlistId: item.id,
+                          alertType: "odds_change",
+                          threshold: 0.05,
+                          enabled: !alertEnabled(item.id, "odds_change"),
+                        })
+                      }
+                      aria-label="اعلان تغییر ضریب"
+                    >
+                      <Sparkles size={14} /> ضریب
+                    </button>
+                    <button
+                      type="button"
+                      className="watchlist-remove"
+                      onClick={() =>
+                        removeWatchMutation.mutate({ watchlistId: item.id })
+                      }
+                      aria-label="حذف مسابقه از پیگیری"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="data-state">
+              هنوز مسابقه‌ای برای پیگیری ذخیره نشده است.
+            </p>
+          )}
+          <div className="watchlist-note">
+            <small>
+              اعلان‌ها فقط پس از اجرای trigger واقعی backend ساخته می‌شوند؛ در
+              این مرحله داده یا فعالیت ساختگی نمایش داده نمی‌شود.
+            </small>
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new Event("nexus:notifications-open"))
+              }
+            >
+              بازکردن صندوق اعلان‌ها <Bell size={13} />
+            </button>
+          </div>
+        </section>
+      )}
+      {overviewQuery.error && (
+        <div className="inline-alert">
+          اطلاعات حساب فعلاً از backend دریافت نشد.
+        </div>
+      )}
+    </PageShell>
+  );
+}
+function FileClockIcon() {
+  return <LockKeyhole size={21} />;
+}

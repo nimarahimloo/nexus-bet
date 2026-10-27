@@ -1,0 +1,61 @@
+import { existsSync, readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), "utf8");
+
+describe("hero asset and font recovery", () => {
+  it("assigns unique route hero assets for promotions, tournaments, rewards, casino and account", () => {
+    const features = read("../client/src/pages/FeaturePages.tsx");
+    const supporting = read("../client/src/pages/SupportingPages.tsx");
+    expect(features).toContain("nexus-bet-promotions-hero-v3_65559fc7.png");
+    expect(features).toContain("nexus-bet-tournaments-hero-v3_d13dd980.png");
+    expect(features).toContain("nexus-bet-rewards-hero-v3_92731f27.png");
+    expect(features).toContain("nexus-bet-casino-hero-v3_e26e607d.png");
+    expect(supporting).toContain("nexus-bet-account-hero-v2_f471d0ea.jpg");
+  });
+
+  it("keeps image overlays readable yet bright and prevents font fallback in the product shell", () => {
+    const css = read("../client/src/index.css");
+    expect(css).toContain(
+      ".subpage-art img { opacity: .9 !important; filter: brightness(1.12) saturate(1.05); }"
+    );
+    // Behaviour, not an exact hex: the overlay must stay a dark, semi-opaque
+    // scrim so hero art stays readable without washing it out.
+    const brand = read("../client/src/ui-brand.css");
+    const overlay = `${css}\n${brand}`.match(
+      /\.art-overlay\s*\{[^}]*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/
+    );
+    expect(overlay).not.toBeNull();
+    const [, r, g, b, alpha] = overlay as unknown as string[];
+    expect(Math.max(Number(r), Number(g), Number(b))).toBeLessThanOrEqual(40);
+    expect(Number(alpha)).toBeGreaterThanOrEqual(0.3);
+    expect(css).toContain(".nexus-shell, .nexus-shell *");
+    expect(css).toContain("font-family: var(--font-body) !important");
+  });
+
+  it("uses project-owned public assets instead of the removed storage proxy", () => {
+    const home = read("../client/src/pages/Home.tsx");
+    const shell = read("../client/src/components/PageShell.tsx");
+    const css = read("../client/src/index.css");
+    expect(home).toContain("/brand/nexus-bet-hero_64d33d2f.jpg");
+    expect(shell).toContain("/brand/nexus-bet-logo_92fe8c09.png");
+    expect(css).toContain("/fonts/Peyda-Regular.woff2");
+    expect(css).toContain("/fonts/Kalameh-Regular.woff2");
+    expect(home).not.toContain("/manus-storage/");
+    expect(shell).not.toContain("/manus-storage/");
+    expect(
+      existsSync(
+        new URL(
+          "../client/public/brand/nexus-bet-hero_64d33d2f.jpg",
+          import.meta.url
+        )
+      )
+    ).toBe(true);
+    expect(
+      existsSync(
+        new URL("../client/public/fonts/Kalameh-Regular.woff2", import.meta.url)
+      )
+    ).toBe(true);
+  });
+});
