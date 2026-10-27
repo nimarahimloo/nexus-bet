@@ -65,6 +65,30 @@ const trpcClient = trpc.createClient({
   ],
 });
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      transformer: superjson,
+      fetch(input, init) {
+        return globalThis.fetch(input, {
+          ...(init ?? {}),
+          credentials: 'include',
+        })
+      },
+    }),
+  ],
+})
+
 function Router() {
   return (
     <Switch>
