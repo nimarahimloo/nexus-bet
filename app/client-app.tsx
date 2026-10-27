@@ -1,5 +1,9 @@
 'use client'
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { httpBatchLink } from '@trpc/client'
+import superjson from 'superjson'
+import { trpc } from '@/lib/trpc'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import NotFound from '@/pages/NotFound'
@@ -27,6 +31,30 @@ import '@/ui-quality.css'
 import '@/ui-fa-rtl.css'
 import '@/ui-system.css'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      transformer: superjson,
+      fetch(input, init) {
+        return globalThis.fetch(input, {
+          ...(init ?? {}),
+          credentials: 'include',
+        })
+      },
+    }),
+  ],
+})
+
 function Router() {
   return (
     <Switch>
@@ -51,13 +79,17 @@ function Router() {
 
 export default function ClientApp() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
-          <Toaster richColors position="top-center" />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary>
+          <ThemeProvider defaultTheme="dark">
+            <TooltipProvider>
+              <Toaster richColors position="top-center" />
+              <Router />
+            </TooltipProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
+      </QueryClientProvider>
+    </trpc.Provider>
   )
 }
