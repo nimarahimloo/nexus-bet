@@ -99,3 +99,66 @@ input:focus, select:focus, textarea:focus { border-color: var(--nx-purple) !impo
   .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .odds-button { min-height: 50px; padding-inline: 5px; }
 }
+
+/* Apple-inspired design system: calm surfaces, system typography, restrained depth. */
+:root {
+  --apple-blue: #007aff;
+  --apple-blue-dark: #0066d6;
+  --apple-bg: #f5f5f7;
+  --apple-surface: rgba(255, 255, 255, 0.82);
+  --apple-surface-solid: #ffffff;
+  --apple-text: #1d1d1f;
+  --apple-muted: #6e6e73;
+  --apple-line: rgba(60, 60, 67, 0.18);
+  --apple-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  --apple-radius: 18px;
+  --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+html { color-scheme: light !important; }
+body, #root, html body { background: var(--apple-bg) !important; color: var(--apple-text) !important; font-family: var(--apple-font) !important; }
+.nexus-shell { background: var(--apple-bg) !important; padding-top: 0; }
+.nexus-shell::before, body::before, body::after { display: none !important; }
+
+.topbar.glass-panel {
+  background: rgba(250, 250, 252, 0.88) !important;
+  border-bottom: 1px solid var(--apple-line) !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+}
+.brand-mark { background: transparent !important; border-radius: 12px !important; }
+.brand-copy b { color: var(--apple-text) !important; }
+.brand-copy small { color: var(--apple-blue) !important; }
+.nav-link { color: var(--apple-muted) !important; border-radius: 10px !important; }
+.nav-link:hover { color: var(--apple-text) !important; background: rgba(0,122,255,.08) !important; }
+.nav-link.is-active { color: var(--apple-blue) !important; background: transparent !important; }
+.icon-button { color: var(--apple-text) !important; background: rgba(118,118,128,.12) !important; border: 0 !important; border-radius: 50% !important; }
+.login-button, .primary-cta, .ds-btn { background: var(--apple-blue) !important; color: #fff !important; border: 0 !important; border-radius: 999px !important; box-shadow: none !important; }
+.login-button:hover, .primary-cta:hover, .ds-btn:hover { background: var(--apple-blue-dark) !important; }
+
+.glass-panel, .ds-surface, .match-card, .feature-hub-card, .stat-card, .vip-card, .sb-panel {
+  background: var(--apple-surface) !important;
+  color: var(--apple-text) !important;
+  border: 1px solid var(--apple-line) !important;
+  border-radius: var(--apple-radius) !important;
+  box-shadow: var(--apple-shadow) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+}
+.match-card:hover { background: var(--apple-surface-solid) !important; border-color: rgba(0,122,255,.35) !important; transform: translateY(-1px); }
+.hero, .subpage-hero { background: var(--apple-surface-solid) !important; border: 1px solid var(--apple-line) !important; border-radius: 24px !important; box-shadow: var(--apple-shadow) !important; }
+.hero h1, .subpage-hero h1, h1, h2, h3, h4 { color: var(--apple-text) !important; letter-spacing: -0.025em; }
+.hero h1 em { background: none !important; color: var(--apple-blue) !important; }
+.hero p, .subpage-hero p, .hero-trust, small, .match-meta { color: var(--apple-muted) !important; }
+.eyebrow, .section-kicker { color: var(--apple-blue) !important; background: rgba(0,122,255,.08) !important; border-color: rgba(0,122,255,.18) !important; }
+.filter-pill, .chip, .sport-chip, .odds-button, .sb-odds-btn { background: rgba(118,118,128,.08) !important; color: var(--apple-muted) !important; border: 1px solid var(--apple-line) !important; border-radius: 999px !important; }
+.filter-pill:hover, .filter-pill.selected, .chip.is-active, .sport-chip.is-active, .sb-odds-btn.is-selected { color: var(--apple-blue) !important; background: rgba(0,122,255,.1) !important; border-color: rgba(0,122,255,.35) !important; box-shadow: none !important; }
+input, select, textarea { background: rgba(118,118,128,.08) !important; color: var(--apple-text) !important; border: 1px solid var(--apple-line) !important; border-radius: 12px !important; }
+input:focus, select:focus, textarea:focus { border-color: var(--apple-blue) !important; box-shadow: 0 0 0 3px rgba(0,122,255,.16) !important; }
+.mobile-bottom-nav, .bottom-dock { background: rgba(250,250,252,.9) !important; border-top: 1px solid var(--apple-line) !important; backdrop-filter: blur(20px) !important; }
+.mobile-bottom-nav a.is-active, .bottom-dock a.is-active { color: var(--apple-blue) !important; }
+
+@media (prefers-reduced-transparency: reduce) {
+  .topbar.glass-panel, .glass-panel, .ds-surface, .mobile-bottom-nav, .bottom-dock { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--apple-surface-solid) !important; }
+}
