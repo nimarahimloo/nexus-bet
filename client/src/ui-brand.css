@@ -1,6 +1,5 @@
-/* Nexus Bet brand layer — matched to the betfa.com reference:
-   near-black canvas, solid (not glassy) panels, electric-yellow primary action,
-   lime secondary, flat borders, no neon glow. */
+/* Nexus Bet brand layer — editorial sportsbook template:
+   graphite canvas, warm paper panels, coral actions, and dense match-day hierarchy. */
 
 :root {
   --nx-void: #07111a;
@@ -476,4 +475,109 @@ textarea:focus {
   .match-card { padding: 14px; }
   .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .odds-button { min-height: 52px; padding-inline: 6px; }
+}
+
+/* Editorial sportsbook template override */
+:root {
+  --nx-void: #151311;
+  --nx-deep: #211d19;
+  --nx-panel: #f4efe7;
+  --nx-panel-strong: #ebe3d8;
+  --nx-border: rgba(35, 29, 24, 0.12);
+  --nx-border-strong: rgba(35, 29, 24, 0.22);
+  --nx-yellow: #ee6b4d;
+  --nx-yellow-bright: #ff8a68;
+  --nx-yellow-dim: #c84d35;
+  --nx-lime: #2f8f83;
+  --nx-lime-soft: #69b8aa;
+  --nx-ink: #211d19;
+  --nx-text: #211d19;
+  --nx-muted: #766f67;
+  --nx-dim: #a49b91;
+}
+html, body, #root { background: #f7f3ed !important; color: #211d19; }
+body { background-image: none; }
+.nexus-shell { background: #f7f3ed !important; color: #211d19; }
+.nexus-shell::before { opacity: .035; }
+.glass-panel, .match-card, .nexus-shell .hero-score { background: #fffdfa !important; border-color: rgba(35,29,24,.12) !important; box-shadow: 0 10px 28px rgba(53,42,32,.07) !important; backdrop-filter: none !important; }
+.nexus-shell .hero-score .hero-art { opacity: .08 !important; mix-blend-mode: multiply; filter: saturate(.5) contrast(.9); }
+.nexus-shell .hero-score::after { display: none !important; }
+.nexus-shell .hero-score::before { background: linear-gradient(135deg, rgba(255,253,250,.96), rgba(255,244,231,.78)) !important; }
+.topbar.glass-panel { background: rgba(247,243,237,.94) !important; border-bottom-color: rgba(35,29,24,.10) !important; box-shadow: 0 1px 0 rgba(35,29,24,.08) !important; }
+.brand b { color: #211d19 !important; }
+.brand small, .eyebrow, .section-kicker { color: #c84d35 !important; }
+.eyebrow { background: rgba(238,107,77,.09); border-color: rgba(238,107,77,.22); }
+.nav-link { color: #766f67 !important; }
+.nav-link:hover { color: #211d19 !important; background: rgba(238,107,77,.08) !important; }
+.nav-link.is-active { color: #fffdfa !important; background: #ee6b4d !important; }
+.icon-button { background: #fffdfa !important; border-color: rgba(35,29,24,.12) !important; color: #766f67 !important; }
+.hero-copy h1, .subpage-copy h1 { color: #211d19 !important; }
+.match-card:hover { background: #fff8f2 !important; border-color: rgba(238,107,77,.42) !important; }
+.odds-button { background: #f4efe7 !important; border-color: rgba(35,29,24,.12) !important; color: #211d19 !important; }
+.odds-button:hover, .odds-button.chosen { background: rgba(238,107,77,.12) !important; border-color: #ee6b4d !important; }
+.odds-button b, .match-time strong { color: #c84d35 !important; }
+.login-button { background: #ee6b4d !important; border-color: #ee6b4d !important; color: #fffdfa !important; }
+.login-button:hover { background: #c84d35 !important; }
+@media (max-width: 760px) {
+  .container { width: min(100% - 20px, 620px); }
+  .topbar.glass-panel { background: #f7f3ed !important; }
+}
+
+/* ABT90-inspired dark sportsbook system: dense sections, purple actions, green live states. */
+:root {
+  --nx-void: #09070f;
+  --nx-deep: #100b1b;
+  --nx-panel: #171126;
+  --nx-panel-strong: #21183a;
+  --nx-border: rgba(207, 193, 255, 0.12);
+  --nx-border-strong: rgba(183, 144, 255, 0.32);
+  --nx-yellow: #9f7aff;
+  --nx-yellow-bright: #b99aff;
+  --nx-lime: #39df9a;
+  --nx-red: #ff5b76;
+  --nx-ink: #110b1b;
+  --nx-text: #f8f5ff;
+  --nx-muted: #a89dbd;
+}
+html, body, #root { background: #09070f !important; color: #f8f5ff !important; }
+body { background-image: radial-gradient(ellipse 80% 42% at 50% -10%, rgba(124,58,237,.22), transparent 65%) !important; }
+.nexus-shell { background: #09070f !important; color: #f8f5ff !important; }
+.nexus-shell::before { opacity: .24 !important; }
+.topbar.glass-panel { background: rgba(16,11,27,.92) !important; border-color: rgba(207,193,255,.13) !important; box-shadow: 0 12px 35px rgba(0,0,0,.24) !important; }
+.brand b, .hero-copy h1, .subpage-copy h1, .section-heading h2, .ai-picks h3 { color: #f8f5ff !important; }
+.brand small, .eyebrow, .section-kicker { color: #39df9a !important; }
+.brand-mark { background: linear-gradient(135deg,#b99aff,#7c3aed) !important; }
+.brand-mark::before { color: #110b1b !important; }
+.nav-link, .nav-link.is-active { color: #c8bddb !important; background: transparent !important; }
+.nav-link:hover { color: #fff !important; background: rgba(159,122,255,.14) !important; }
+.nav-link.is-active { color: #fff !important; box-shadow: inset 0 -2px #9f7aff; }
+.icon-button, .balance-chip { background: rgba(255,255,255,.06) !important; color: #c8bddb !important; border-color: var(--nx-border) !important; }
+.login-button, .primary-cta, button.primary-cta { background: linear-gradient(135deg,#9f7aff,#7c3aed) !important; border-color: #9f7aff !important; color: #fff !important; box-shadow: 0 10px 24px rgba(124,58,237,.28) !important; }
+.hero { gap: 28px !important; padding-block: 36px 30px !important; }
+.hero-score, .glass-panel, .match-card { background: #171126 !important; border-color: var(--nx-border) !important; box-shadow: 0 18px 44px rgba(0,0,0,.22) !important; }
+.hero-score { transform: none !important; border-radius: 18px !important; }
+.hero-score::after { background: linear-gradient(135deg,rgba(124,58,237,.34),rgba(9,7,15,.2)) !important; }
+.hero-copy h1 em { color: #b99aff !important; background: none !important; }
+.hero-copy p, .hero-trust, .match-meta, .feed-status, .ai-subtitle { color: #a89dbd !important; }
+.live-chip, .status-live { color: #39df9a !important; background: rgba(57,223,154,.1) !important; border-color: rgba(57,223,154,.28) !important; }
+.live-dot, .status-live i { background: #39df9a !important; }
+.hero-market, .odds-button { background: #21183a !important; border-color: rgba(159,122,255,.26) !important; color: #d9cdf0 !important; }
+.hero-market b, .odds-button b, .match-time strong { color: #b99aff !important; }
+.hero-market button { background: #39df9a !important; color: #110b1b !important; }
+.filter-pill, .matches-filter-pills button, .filter-control { background: #171126 !important; border-color: var(--nx-border) !important; color: #a89dbd !important; }
+.filter-pill.selected, .matches-filter-pills button.selected { background: #9f7aff !important; border-color: #9f7aff !important; color: #110b1b !important; }
+.match-card:hover, .odds-button:hover, .odds-button.chosen { border-color: #9f7aff !important; background: #21183a !important; }
+.ai-picks { border-color: rgba(57,223,154,.24) !important; }
+.feature-icon, .ai-orb { background: linear-gradient(135deg,#9f7aff,#7c3aed) !important; color: #fff !important; }
+.mobile-bottom-nav, .mobile-nav { background: rgba(16,11,27,.96) !important; border-color: var(--nx-border) !important; }
+.mobile-bottom-nav a.is-active, .mobile-nav a.is-active { color: #9f7aff !important; }
+input, select, textarea { background: #171126 !important; color: #f8f5ff !important; border-color: var(--nx-border) !important; }
+input:focus, select:focus, textarea:focus { border-color: #9f7aff !important; box-shadow: 0 0 0 2px rgba(159,122,255,.2) !important; }
+@media (max-width: 760px) {
+  .topbar.glass-panel { background: rgba(16,11,27,.98) !important; }
+  .hero { padding-block: 22px 18px !important; }
+  .hero-score { min-height: 280px !important; }
+  .content-grid { gap: 18px !important; }
+  .section-heading { margin-bottom: 12px !important; }
+  .match-card { border-radius: 14px !important; }
 }
