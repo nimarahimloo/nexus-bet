@@ -84,6 +84,61 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
+/* Sportsbook UI system: navy surfaces, lime action states, and compact mobile-first controls. */
+:root {
+  --nexus-bg: #07111a;
+  --nexus-panel: #102534;
+  --nexus-line: rgba(148, 190, 208, 0.14);
+  --nexus-purple: #b8f36b;
+  --nexus-purple-bright: #d5ff9d;
+  --nexus-mint: #45e0b5;
+}
+.nexus-shell { background: #07111a; padding-top: 0; }
+.nexus-shell::before { opacity: .12; background-size: 56px 56px; }
+.topbar.glass-panel {
+  width: 100%; min-height: 72px; margin: 0; padding-inline: max(20px, calc((100vw - 1240px) / 2));
+  border-radius: 0; border-inline: 0; background: rgba(7,17,26,.96) !important;
+  position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
+}
+.brand-mark { width: 42px; height: 42px; border-radius: 12px; background: #b8f36b !important; box-shadow: none; }
+.brand-mark img { display: none; }
+.brand-mark::before { content: "N"; color: #07111a; font: 900 22px "Manrope", sans-serif; }
+.brand b { color: #f4fbff; font-size: 16px; }
+.brand small { color: #b8f36b; letter-spacing: 2.3px; }
+.nav-link { color: #9cb2bf; padding: 10px 14px; border-radius: 8px; }
+.nav-link:hover { color: #f4fbff; background: rgba(184,243,107,.08); }
+.nav-link.is-active { color: #07111a !important; background: #b8f36b !important; }
+.nav-link.is-active::after { display: none; }
+.icon-button { width: 38px; height: 38px; border: 1px solid rgba(148,190,208,.14); background: #102534; color: #9cb2bf; }
+.hero { gap: 24px; padding-block: 32px 28px; }
+.hero-copy h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); letter-spacing: -.04em; }
+.match-card { background: #102534 !important; border-color: rgba(148,190,208,.14) !important; border-radius: 12px; }
+.match-card:hover { background: #143043 !important; border-color: rgba(184,243,107,.45) !important; transform: translateY(-1px); }
+.odds-button { min-height: 56px; border-radius: 8px; border: 1px solid rgba(148,190,208,.14); background: #163246; }
+.odds-button:hover, .odds-button.chosen { background: rgba(184,243,107,.13); border-color: #b8f36b; }
+.odds-button b, .match-time strong { color: #b8f36b; }
+.login-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #b8f36b !important;
+  border-radius: 8px;
+  background: #b8f36b !important;
+  color: #07111a !important;
+  box-shadow: none !important;
+  font-weight: 800;
+}
+.login-button:hover { background: #d5ff9d !important; }
+@media (max-width: 760px) {
+  .topbar.glass-panel { min-height: 64px; padding-inline: 14px; }
+  .brand-copy { display: none !important; }
+  .main-nav { display: none; }
+  .container { width: min(100% - 24px, 620px); }
+  .hero { padding-block: 22px 18px; gap: 14px; }
+  .hero-score { min-height: 270px; }
+  .hero-copy h1 { font-size: 2rem; }
+  .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 .nexus-shell {
   min-height: 100vh;
   overflow: hidden;
