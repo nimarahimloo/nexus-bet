@@ -1,31 +1,41 @@
-'use client'
+"use client";
 
-import { Toaster } from '@/components/ui/sonner'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import NotFound from '@/pages/NotFound'
-import { Route, Switch } from 'wouter'
-import ErrorBoundary from '@/components/ErrorBoundary'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import Home from '@/pages/Home'
-import Matches from '@/pages/Matches'
-import Crash from '@/pages/Crash'
-import { AccountPage, AiPage, VipPage, WalletPage } from '@/pages/SupportingPages'
-import { CasinoPage, PromotionsPage, RewardsPage, TournamentsPage } from '@/pages/FeaturePages'
-import { TrustCenterPage } from '@/pages/TrustCenter'
-import AdminPage from '@/pages/AdminPage'
-import { appRoutePaths } from '@shared/routes'
-import '@/fonts.css'
-import '@/index.css'
-import '@/ui-polish.css'
-import '@/ui-micro.css'
-import '@/ui-responsive.css'
-import '@/ui-touch.css'
-import '@/ui-sportsbook.css'
-import '@/ui-iranian.css'
-import '@/ui-brand.css'
-import '@/ui-quality.css'
-import '@/ui-fa-rtl.css'
-import '@/ui-system.css'
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import Home from "@/pages/Home";
+import Matches from "@/pages/Matches";
+import Crash from "@/pages/Crash";
+import {
+  AccountPage,
+  AiPage,
+  VipPage,
+  WalletPage,
+} from "@/pages/SupportingPages";
+import {
+  CasinoPage,
+  PromotionsPage,
+  RewardsPage,
+  TournamentsPage,
+} from "@/pages/FeaturePages";
+import { TrustCenterPage } from "@/pages/TrustCenter";
+import AdminPage from "@/pages/AdminPage";
+import { appRoutePaths } from "@shared/routes";
+import "@/fonts.css";
+import "@/index.css";
+import "@/ui-polish.css";
+import "@/ui-micro.css";
+import "@/ui-responsive.css";
+import "@/ui-touch.css";
+import "@/ui-sportsbook.css";
+import "@/ui-iranian.css";
+import "@/ui-brand.css";
+import "@/ui-quality.css";
+import "@/ui-fa-rtl.css";
+import "@/ui-system.css";
 
 function Router() {
   return (
@@ -46,7 +56,7 @@ function Router() {
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
-  )
+  );
 }
 
 export default function ClientApp() {
@@ -59,5 +69,5 @@ export default function ClientApp() {
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
-  )
+  );
 }
