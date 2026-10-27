@@ -697,6 +697,42 @@ a:focus-visible {
   color: var(--nexus-mint);
 }
 
+/* Editorial sportsbook template: keep legacy hero components legible on paper surfaces. */
+.nexus-shell,
+.nexus-shell main {
+  color: #211d19;
+}
+.hero-score,
+.hero-score::before {
+  background: #211d19 !important;
+}
+.hero-score::after {
+  background: linear-gradient(135deg, rgba(238, 107, 77, 0.82), rgba(33, 29, 25, 0.2)) !important;
+}
+.hero-score .score-center,
+.hero-score .score-center strong,
+.hero-score .score-center span,
+.hero-score .hero-market b {
+  color: #fffdfa !important;
+}
+.hero-market {
+  border-color: rgba(238, 107, 77, 0.34) !important;
+  background: rgba(238, 107, 77, 0.14) !important;
+  color: #ffb09a !important;
+}
+.hero-market button {
+  background: #ee6b4d !important;
+  color: #fffdfa !important;
+}
+.signal-row { color: rgba(255, 253, 250, 0.62) !important; }
+.mobile-nav {
+  background: #211d19 !important;
+  border-color: rgba(238, 107, 77, 0.24) !important;
+}
+.mobile-nav a { color: #c8beb3 !important; }
+.mobile-nav a.is-active { color: #ee6b4d !important; }
+
+
 .content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
@@ -5564,7 +5600,8 @@ button:active,
 }
 .subpage-art,
 .hero-score {
-  background: rgba(27, 27, 30, 0.55);
+  background: #211d19 !important;
+  border-color: rgba(238, 107, 77, 0.28) !important;
 }
 .mobile-bottom-nav {
   padding: 8px 11px calc(8px + env(safe-area-inset-bottom));

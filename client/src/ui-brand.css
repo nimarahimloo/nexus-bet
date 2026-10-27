@@ -1,6 +1,5 @@
-/* Nexus Bet brand layer — matched to the betfa.com reference:
-   near-black canvas, solid (not glassy) panels, electric-yellow primary action,
-   lime secondary, flat borders, no neon glow. */
+/* Nexus Bet brand layer — editorial sportsbook template:
+   graphite canvas, warm paper panels, coral actions, and dense match-day hierarchy. */
 
 :root {
   --nx-void: #07111a;
@@ -476,4 +475,50 @@ textarea:focus {
   .match-card { padding: 14px; }
   .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .odds-button { min-height: 52px; padding-inline: 6px; }
+}
+
+/* Editorial sportsbook template override */
+:root {
+  --nx-void: #151311;
+  --nx-deep: #211d19;
+  --nx-panel: #f4efe7;
+  --nx-panel-strong: #ebe3d8;
+  --nx-border: rgba(35, 29, 24, 0.12);
+  --nx-border-strong: rgba(35, 29, 24, 0.22);
+  --nx-yellow: #ee6b4d;
+  --nx-yellow-bright: #ff8a68;
+  --nx-yellow-dim: #c84d35;
+  --nx-lime: #2f8f83;
+  --nx-lime-soft: #69b8aa;
+  --nx-ink: #211d19;
+  --nx-text: #211d19;
+  --nx-muted: #766f67;
+  --nx-dim: #a49b91;
+}
+html, body, #root { background: #f7f3ed !important; color: #211d19; }
+body { background-image: none; }
+.nexus-shell { background: #f7f3ed !important; color: #211d19; }
+.nexus-shell::before { opacity: .035; }
+.glass-panel, .match-card, .nexus-shell .hero-score { background: #fffdfa !important; border-color: rgba(35,29,24,.12) !important; box-shadow: 0 10px 28px rgba(53,42,32,.07) !important; backdrop-filter: none !important; }
+.nexus-shell .hero-score .hero-art { opacity: .08 !important; mix-blend-mode: multiply; filter: saturate(.5) contrast(.9); }
+.nexus-shell .hero-score::after { display: none !important; }
+.nexus-shell .hero-score::before { background: linear-gradient(135deg, rgba(255,253,250,.96), rgba(255,244,231,.78)) !important; }
+.topbar.glass-panel { background: rgba(247,243,237,.94) !important; border-bottom-color: rgba(35,29,24,.10) !important; box-shadow: 0 1px 0 rgba(35,29,24,.08) !important; }
+.brand b { color: #211d19 !important; }
+.brand small, .eyebrow, .section-kicker { color: #c84d35 !important; }
+.eyebrow { background: rgba(238,107,77,.09); border-color: rgba(238,107,77,.22); }
+.nav-link { color: #766f67 !important; }
+.nav-link:hover { color: #211d19 !important; background: rgba(238,107,77,.08) !important; }
+.nav-link.is-active { color: #fffdfa !important; background: #ee6b4d !important; }
+.icon-button { background: #fffdfa !important; border-color: rgba(35,29,24,.12) !important; color: #766f67 !important; }
+.hero-copy h1, .subpage-copy h1 { color: #211d19 !important; }
+.match-card:hover { background: #fff8f2 !important; border-color: rgba(238,107,77,.42) !important; }
+.odds-button { background: #f4efe7 !important; border-color: rgba(35,29,24,.12) !important; color: #211d19 !important; }
+.odds-button:hover, .odds-button.chosen { background: rgba(238,107,77,.12) !important; border-color: #ee6b4d !important; }
+.odds-button b, .match-time strong { color: #c84d35 !important; }
+.login-button { background: #ee6b4d !important; border-color: #ee6b4d !important; color: #fffdfa !important; }
+.login-button:hover { background: #c84d35 !important; }
+@media (max-width: 760px) {
+  .container { width: min(100% - 20px, 620px); }
+  .topbar.glass-panel { background: #f7f3ed !important; }
 }
