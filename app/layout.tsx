@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'next/og Minimal Example',
-  description: 'A minimal Next.js ImageResponse example.',
+  title: 'OddsPulse — Live sports, sharper picks',
+  description: 'A focused sportsbook experience for exploring live markets and upcoming games.',
   generator: 'v0.app',
   icons: {
     icon: [
