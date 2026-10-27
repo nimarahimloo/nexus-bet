@@ -398,5 +398,82 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--nx-yellow) !important;
-  box-shadow: 0 0 0 2px rgba(242, 222, 26, 0.25) !important;
+  box-shadow: 0 0 0 2px rgba(184, 243, 107, 0.2) !important;
+}
+
+/* Premium sportsbook pass: clearer hierarchy, denser odds surfaces, and calmer navigation. */
+.nexus-shell {
+  background: #07111a;
+  padding-top: 0;
+}
+.nexus-shell::before {
+  opacity: 0.16;
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, black, transparent 48%);
+}
+.topbar.glass-panel {
+  width: 100%;
+  min-height: 72px;
+  padding-inline: max(20px, calc((100vw - 1240px) / 2));
+  border-radius: 0 !important;
+  border-inline: 0 !important;
+  background: rgba(7, 17, 26, 0.96) !important;
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(18px);
+  z-index: 20;
+}
+.container {
+  width: min(1240px, calc(100% - 40px));
+}
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--nx-yellow) !important;
+}
+.brand-mark img { width: 32px; height: 32px; }
+.brand b { color: var(--nx-text); font-size: 16px; }
+.brand small { color: var(--nx-yellow); letter-spacing: 2.3px; }
+.main-nav { gap: 2px; }
+.nav-link { color: var(--nx-muted); padding: 10px 14px; border-radius: 8px; }
+.nav-link:hover { color: var(--nx-text); background: rgba(184, 243, 107, 0.08); }
+.nav-link.is-active { color: var(--nx-ink) !important; background: var(--nx-yellow) !important; }
+.nav-link.is-active::after { display: none; }
+.header-actions { gap: 10px; }
+.icon-button { width: 38px; height: 38px; border: 1px solid var(--nx-border); background: var(--nx-panel); color: var(--nx-muted); }
+.hero { gap: 24px; padding-block: 32px 28px; }
+.hero-copy h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); max-width: 620px; letter-spacing: -0.04em; }
+.hero-score { min-height: 360px; border-radius: 14px; border-color: var(--nx-border-strong); }
+.section-kicker, .eyebrow { color: var(--nx-yellow) !important; }
+.feature-strip { border-radius: 12px; padding: 14px 16px; }
+.ai-picks, .match-card, .live-center, .matches-toolbar { border-radius: 12px; }
+.ai-picks { border-color: rgba(69, 224, 181, 0.3); }
+.ai-heading { padding-bottom: 16px; border-bottom: 1px solid var(--nx-border); }
+.match-list { display: grid; gap: 12px; }
+.match-card { background: #102534 !important; border-color: var(--nx-border) !important; padding: 18px; }
+.match-card:hover { background: #143043 !important; border-color: rgba(184, 243, 107, 0.45) !important; transform: translateY(-1px); }
+.match-meta { color: var(--nx-muted); font-size: 11px; }
+.match-body { gap: 18px; }
+.teams { padding: 8px 0 18px; border-bottom: 1px solid var(--nx-border); }
+.team-badge { width: 38px; height: 38px; border-radius: 10px; background: var(--nx-panel-strong); border: 1px solid var(--nx-border); }
+.match-time strong { color: var(--nx-yellow); font-size: 18px; }
+.market-row { gap: 8px; }
+.odds-button { min-height: 56px; border-radius: 8px; border: 1px solid var(--nx-border); background: #163246; color: var(--nx-text); transition: border-color .16s, background .16s, transform .16s; }
+.odds-button:hover, .odds-button.chosen { background: rgba(184, 243, 107, 0.13); border-color: var(--nx-yellow); transform: translateY(-1px); }
+.odds-button b { color: var(--nx-yellow); font-size: 15px; }
+.filters, .matches-filter-pills { gap: 8px; }
+.filter-pill, .matches-filter-pills button { border: 1px solid var(--nx-border); background: var(--nx-panel); color: var(--nx-muted); border-radius: 999px; padding: 8px 14px; }
+.filter-pill.selected, .matches-filter-pills button.selected { color: var(--nx-ink) !important; }
+@media (max-width: 760px) {
+  .topbar.glass-panel { min-height: 64px; padding-inline: 14px; }
+  .brand-copy { display: none !important; }
+  .main-nav { display: none; }
+  .container { width: min(100% - 24px, 620px); }
+  .hero { padding-block: 22px 18px; gap: 14px; }
+  .hero-score { min-height: 270px; }
+  .hero-copy h1 { font-size: 2rem; }
+  .match-card { padding: 14px; }
+  .market-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .odds-button { min-height: 52px; padding-inline: 6px; }
 }
